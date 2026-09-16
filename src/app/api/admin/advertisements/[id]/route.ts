@@ -55,6 +55,13 @@ export async function PUT(
       category,
       html_code,
       is_active,
+      // Hospital advertiser fields
+      advertiser_name,
+      advertiser_contact,
+      advertiser_type,
+      budget,
+      start_date,
+      end_date,
     } = body;
 
     const result = await sql`
@@ -70,6 +77,12 @@ export async function PUT(
         category = COALESCE(${category}, category),
         html_code = ${html_code !== undefined ? html_code : sql`html_code`},
         is_active = COALESCE(${is_active}, is_active),
+        advertiser_name = ${advertiser_name !== undefined ? advertiser_name : sql`advertiser_name`},
+        advertiser_contact = ${advertiser_contact !== undefined ? advertiser_contact : sql`advertiser_contact`},
+        advertiser_type = ${advertiser_type !== undefined ? advertiser_type : sql`advertiser_type`},
+        budget = ${budget !== undefined ? budget : sql`budget`},
+        start_date = ${start_date !== undefined ? start_date : sql`start_date`},
+        end_date = ${end_date !== undefined ? end_date : sql`end_date`},
         updated_at = CURRENT_TIMESTAMP
       WHERE id = ${params.id}::uuid
       RETURNING *

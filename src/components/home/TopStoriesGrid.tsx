@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Clock, TrendingUp, Flame, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Clock, Flame, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 interface TopStoriesGridProps {
   featuredStory: any;
@@ -35,17 +35,19 @@ export function TopStoriesGrid({
     <section className="w-full py-6 sm:py-8 bg-surface">
       <div className="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* News Portal Section Header */}
-        <div className="flex items-center justify-between pb-3 mb-6 border-b-2 border-[#2E7D32]">
+        {/* News Portal Section Header with Brand Gradient Underline */}
+        <div className="flex items-center justify-between pb-3.5 mb-6 relative">
           <div className="flex items-center gap-2.5">
-            <span className="w-3.5 h-3.5 rounded-xs bg-[#f06d2f]" />
-            <h2 className="font-heading font-extrabold text-xl sm:text-2xl text-[#1B5E20] uppercase tracking-wide">
+            <span className="w-3.5 h-3.5 rounded-xs bg-gradient-to-r from-[#16A34A] to-[#f06d2f]" />
+            <h2 className="font-heading font-extrabold text-xl sm:text-2xl text-slate-900 uppercase tracking-wide">
               TOP STORIES & ANALYSIS
             </h2>
           </div>
-          <span className="text-xs font-mono font-semibold text-[#4A6741] hidden sm:inline">
+          <span className="text-xs font-mono font-semibold text-slate-500 hidden sm:inline">
             UPDATED CONTINUOUSLY • CLINICALLY REVIEWED
           </span>
+          {/* Gradient underline */}
+          <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-gradient-to-r from-[#16A34A] via-[#22C55E] to-[#f06d2f] rounded-full" />
         </div>
 
         {/* 3-Column Desktop News Grid */}
@@ -55,11 +57,11 @@ export function TopStoriesGrid({
           <div className="lg:col-span-5 flex flex-col">
             <Link
               href={`/article/${targetSlug}`}
-              className="group block bg-white rounded-2xl overflow-hidden border border-[#2E7D32]/20 shadow-sm hover:shadow-xl transition-all duration-300"
+              className="group block bg-white rounded-2xl overflow-hidden border border-emerald-500/20 shadow-xs hover:shadow-lg transition-all duration-300"
             >
               {/* Hero Image with Top Story badge overlay */}
-              <div className="relative aspect-[16/10] w-full bg-gray-100 overflow-hidden">
-                {primary.image_url && (
+              <div className="relative aspect-16/10 w-full overflow-hidden bg-gray-100">
+                {primary.image_url ? (
                   <Image
                     src={primary.image_url}
                     alt={primary.title}
@@ -68,27 +70,31 @@ export function TopStoriesGrid({
                     priority
                     unoptimized
                   />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-emerald-50 text-[#16A34A] font-heading font-bold">
+                    HealthGhuru Featured Story
+                  </div>
                 )}
                 {/* Gradient vignette */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-80" />
 
                 {/* Badges */}
-                <div className="absolute top-3 left-3 flex items-center gap-2">
-                  <span className="bg-[#f06d2f] text-white text-[11px] font-heading font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-md">
+                <div className="absolute top-3.5 left-3.5 flex items-center gap-2">
+                  <span className="bg-gradient-to-r from-[#f06d2f] to-[#ea580c] text-white text-[10px] font-heading font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-xs">
                     TOP STORY
                   </span>
                   {primary.category && (
-                    <span className="bg-black/60 backdrop-blur-xs text-white text-[11px] font-heading font-bold px-2.5 py-1 rounded-full uppercase border border-white/20">
+                    <span className="bg-black/60 backdrop-blur-xs text-white text-[10px] font-heading font-bold px-2.5 py-1 rounded-full uppercase tracking-wider border border-white/20">
                       {primary.category}
                     </span>
                   )}
                 </div>
 
-                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-[11px] font-medium">
-                  <span>{primary.source_name || "HealthGhuru Bureau"}</span>
+                <div className="absolute bottom-3.5 left-3.5 right-3.5 flex items-center justify-between text-white text-[11px] font-mono">
+                  <span className="font-semibold">{primary.source_name || "HealthGhuru Bureau"}</span>
                   <span className="flex items-center gap-1">
                     <Clock size={12} />
-                    <span>{typeof primary.published_at === 'string' && primary.published_at.includes('ago') ? primary.published_at : 'Just now'}</span>
+                    <span>Just now</span>
                   </span>
                 </div>
               </div>
@@ -96,18 +102,18 @@ export function TopStoriesGrid({
               {/* Story Content */}
               <div className="p-5 sm:p-6 flex flex-col justify-between">
                 <div>
-                  <h3 className="font-display text-xl sm:text-2xl font-bold text-[#1A2E1A] group-hover:text-[#2E7D32] transition-colors leading-snug">
+                  <h3 className="font-heading font-extrabold text-lg sm:text-xl md:text-2xl text-slate-900 group-hover:text-[#16A34A] transition-colors leading-tight mb-2.5">
                     {primary.title}
                   </h3>
-                  <p className="mt-3 text-sm text-[#4A6741] line-clamp-3 leading-relaxed">
-                    {primary.excerpt || primary.description}
+                  <p className="text-slate-600 text-xs sm:text-sm line-clamp-3 leading-relaxed mb-4">
+                    {primary.excerpt || primary.description || primary.summary}
                   </p>
                 </div>
 
-                <div className="mt-5 pt-4 border-t border-gray-100 flex items-center justify-between">
+                <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <ShieldCheck size={14} className="text-[#2E7D32]" />
-                    <span className="text-xs font-medium text-gray-500">
+                    <CheckCircle2 size={14} className="text-[#16A34A]" />
+                    <span className="text-xs font-medium text-slate-500">
                       {primary.author_name || "Medical Editorial Board"}
                     </span>
                   </div>
@@ -121,9 +127,9 @@ export function TopStoriesGrid({
           </div>
 
           {/* MIDDLE COLUMN (Cols 6-8): Top Stories List */}
-          <div className="lg:col-span-4 flex flex-col divide-y divide-gray-200/80 bg-white rounded-2xl p-4 sm:p-5 border border-[#2E7D32]/15 shadow-xs">
+          <div className="lg:col-span-4 flex flex-col divide-y divide-gray-200/80 bg-white rounded-2xl p-4 sm:p-5 border border-emerald-500/20 shadow-xs">
             <div className="pb-3 mb-2 flex items-center justify-between">
-              <h3 className="font-heading font-extrabold text-sm uppercase tracking-wider text-[#1B5E20]">
+              <h3 className="font-heading font-extrabold text-sm uppercase tracking-wider text-[#16A34A]">
                 Featured Headlines
               </h3>
               <span className="text-[11px] text-gray-400 font-mono">LATEST EDITIONS</span>
@@ -151,10 +157,10 @@ export function TopStoriesGrid({
                           {story.category}
                         </span>
                       )}
-                      <h4 className="font-heading font-bold text-xs sm:text-sm text-[#1A2E1A] group-hover:text-[#2E7D32] transition-colors line-clamp-2 leading-snug">
+                      <h4 className="font-heading font-bold text-xs sm:text-sm text-slate-900 group-hover:text-[#16A34A] transition-colors line-clamp-2 leading-snug">
                         {story.title}
                       </h4>
-                      <div className="flex items-center gap-2 text-[11px] text-gray-400 mt-1">
+                      <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-1">
                         <span className="truncate">{story.source_name || "Health Bureau"}</span>
                         <span>•</span>
                         <span className="shrink-0">3h ago</span>
@@ -167,25 +173,25 @@ export function TopStoriesGrid({
           </div>
 
           {/* RIGHT COLUMN (Cols 9-12): TRENDING 🔥 01-05 */}
-          <div className="lg:col-span-3 flex flex-col bg-gradient-to-b from-[#1A2E1A] to-[#0f240f] text-white rounded-2xl p-5 shadow-md border border-emerald-900/50">
+          <div className="lg:col-span-3 flex flex-col bg-white text-slate-900 rounded-2xl p-5 shadow-xs border border-emerald-500/20">
             {/* Header */}
-            <div className="flex items-center justify-between pb-3 mb-4 border-b border-emerald-800/60">
+            <div className="flex items-center justify-between pb-3 mb-4 border-b border-gray-100">
               <div className="flex items-center gap-2">
                 <Flame size={18} className="text-[#f06d2f] fill-[#f06d2f]" />
-                <h3 className="font-heading font-extrabold text-sm uppercase tracking-wider text-white">
+                <h3 className="font-heading font-extrabold text-sm uppercase tracking-wider text-slate-900">
                   TRENDING 🔥
                 </h3>
               </div>
               <Link
                 href="/trending"
-                className="text-[10px] font-mono font-bold text-emerald-300 hover:text-white uppercase tracking-wider"
+                className="text-[10px] font-mono font-bold text-[#16A34A] hover:text-[#15803D] uppercase tracking-wider"
               >
                 VIEW ALL
               </Link>
             </div>
 
             {/* Numbered Stories 01 to 05 */}
-            <div className="divide-y divide-emerald-900/60 space-y-3">
+            <div className="divide-y divide-gray-100 space-y-3">
               {trendingStories && trendingStories.slice(0, 5).map((story, index) => {
                 const rank = String(index + 1).padStart(2, '0');
                 const slug = story.slug || `trending-${index}`;
@@ -197,19 +203,19 @@ export function TopStoriesGrid({
                   >
                     <div className="flex items-start gap-3">
                       {/* Big Bold Rank Number */}
-                      <span className="font-display font-black text-2xl sm:text-3xl text-emerald-500/70 group-hover:text-[#f06d2f] transition-colors leading-none shrink-0 w-8">
+                      <span className="font-display font-black text-2xl sm:text-3xl text-emerald-600/50 group-hover:text-[#f06d2f] transition-colors leading-none shrink-0 w-8">
                         {rank}
                       </span>
                       <div className="flex-1 min-w-0">
                         {story.category && (
-                          <span className="text-[10px] font-mono uppercase font-bold text-emerald-400">
+                          <span className="text-[10px] font-mono uppercase font-bold text-[#f06d2f]">
                             {story.category}
                           </span>
                         )}
-                        <h4 className="font-heading font-bold text-xs sm:text-sm text-gray-100 group-hover:text-emerald-200 transition-colors line-clamp-2 leading-snug mt-0.5">
+                        <h4 className="font-heading font-bold text-xs sm:text-sm text-slate-900 group-hover:text-[#16A34A] transition-colors line-clamp-2 leading-snug mt-0.5">
                           {story.title}
                         </h4>
-                        <div className="flex items-center gap-2 text-[10px] font-mono text-emerald-400/70 mt-1">
+                        <div className="flex items-center gap-2 text-[10px] font-mono text-slate-400 mt-1">
                           <span>{story.view_count ? `${story.view_count} reads` : '4.2k reads'}</span>
                           <span>•</span>
                           <span>Trending</span>
@@ -222,11 +228,11 @@ export function TopStoriesGrid({
             </div>
 
             {/* Sidebar Promo Ad card inside trending box */}
-            <div className="mt-5 pt-4 border-t border-emerald-800/60 bg-white/5 rounded-xl p-3 text-center">
-              <span className="text-[9px] uppercase font-mono tracking-widest text-emerald-400 block mb-1">
+            <div className="mt-5 pt-4 border-t border-gray-100 bg-emerald-50/70 rounded-xl p-3 text-center border border-emerald-200/60">
+              <span className="text-[9px] uppercase font-mono tracking-widest text-[#16A34A] font-bold block mb-1">
                 NEWSLETTER BRIEFING
               </span>
-              <p className="text-xs font-bold text-white leading-tight">
+              <p className="text-xs font-bold text-slate-900 leading-tight">
                 Daily Doctor-Curated Health Digest
               </p>
               <Link

@@ -10,31 +10,31 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#2E7D32",
-          light: "#4CAF50",
-          dark: "#1B5E20",
+          DEFAULT: "#16A34A",
+          light: "#22C55E",
+          dark: "#15803D",
         },
-        secondary: "#66BB6A",
+        secondary: "#4ADE80",
         accent: {
           DEFAULT: "#f06d2f",
           light: "#ffd6c1",
         },
         surface: {
-          DEFAULT: "#F5FAF5",
-          alt: "#EBF5EB",
+          DEFAULT: "#F8FAFC",
+          alt: "#F1F5F9",
         },
         dark: {
-          DEFAULT: "#1A2E1A",
-          80: "rgba(26,46,26,0.8)",
+          DEFAULT: "#0F172A",
+          80: "rgba(15,23,42,0.8)",
         },
         text: {
-          primary: "#1A2E1A",
-          secondary: "#4A6741",
-          muted: "#78909C",
+          primary: "#0F172A",
+          secondary: "#334155",
+          muted: "#64748B",
         },
         border: {
-          DEFAULT: "rgba(46,125,50,0.15)",
-          strong: "rgba(46,125,50,0.30)",
+          DEFAULT: "rgba(22,163,74,0.15)",
+          strong: "rgba(22,163,74,0.30)",
         },
         chart: {
           nutrition: "var(--chart-nutrition)",
@@ -60,10 +60,13 @@ const config: Config = {
         mono: ["var(--font-mono)"],
       },
       backgroundImage: {
-        "gradient-primary": "linear-gradient(135deg, #2E7D32 0%, #66BB6A 100%)",
-        "gradient-hero": "linear-gradient(135deg, #1B5E20 0%, #2E7D32 60%, #388E3C 100%)",
-        "gradient-dark": "linear-gradient(180deg, #1A2E1A 0%, #0D1F0D 100%)",
-        "gradient-surface": "linear-gradient(180deg, #F5FAF5 0%, #EBF5EB 100%)",
+        "gradient-primary": "linear-gradient(135deg, #16A34A 0%, #22C55E 100%)",
+        "gradient-hero": "linear-gradient(135deg, #15803D 0%, #16A34A 60%, #22C55E 100%)",
+        "gradient-brand": "linear-gradient(90deg, #16A34A 0%, #15803D 45%, #ea580c 100%)",
+        "gradient-brand-smooth": "linear-gradient(90deg, #16A34A 0%, #22C55E 35%, #f06d2f 80%, #ea580c 100%)",
+        "gradient-brand-subtle": "linear-gradient(90deg, rgba(22,163,74,0.08) 0%, rgba(255,255,255,0.9) 50%, rgba(240,109,47,0.08) 100%)",
+        "gradient-dark": "linear-gradient(180deg, #0F172A 0%, #1E293B 100%)",
+        "gradient-surface": "linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)",
         "gradient-accent": "linear-gradient(135deg, #f06d2f 0%, #ff8a57 100%)",
       },
       boxShadow: {

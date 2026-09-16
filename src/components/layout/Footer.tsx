@@ -20,19 +20,22 @@ export default function Footer() {
   }
 
   return (
-    <footer className="bg-[#0f2412] text-gray-200 pt-12 sm:pt-16 pb-8 border-t-4 border-[#2E7D32]">
+    <footer className="bg-slate-950 text-slate-300 pt-12 sm:pt-16 pb-8 relative">
+      {/* 4px Signature Brand Gradient Top Line */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#16A34A] via-[#22C55E] to-[#f06d2f]" />
+
       <div className="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Top Newsletter & Subscription Strip */}
-        <div className="bg-[#18391d] rounded-2xl p-6 sm:p-8 mb-12 border border-emerald-700/40 shadow-xl flex flex-col lg:flex-row items-center justify-between gap-6">
+        {/* Top Newsletter & Subscription Strip with Ambient Gradient */}
+        <div className="bg-gradient-to-r from-emerald-950/90 via-slate-900 to-orange-950/70 rounded-2xl p-6 sm:p-8 mb-12 border border-emerald-500/30 shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-6">
           <div>
-            <span className="text-[10px] font-mono font-bold tracking-widest text-[#ffd6c1] uppercase bg-white/10 px-2 py-0.5 rounded">
+            <span className="text-[10px] font-mono font-bold tracking-widest text-orange-200 uppercase bg-white/10 px-2.5 py-0.5 rounded border border-white/10">
               DAILY CLINICAL DISPATCH
             </span>
-            <h3 className="font-heading font-extrabold text-xl sm:text-2xl text-white mt-1.5">
+            <h3 className="font-heading font-extrabold text-xl sm:text-2xl text-white mt-2">
               Live Better. Feel Stronger. Every Day.
             </h3>
-            <p className="text-xs sm:text-sm text-emerald-200/90 mt-1 max-w-xl">
+            <p className="text-xs sm:text-sm text-emerald-200/80 mt-1 max-w-xl">
               Get the latest peer-reviewed medical breakthroughs, physician interviews, and wellness news delivered to your inbox every morning.
             </p>
           </div>
@@ -41,7 +44,7 @@ export default function Footer() {
             <input
               type="email"
               placeholder="Enter your email address..."
-              className="w-full sm:w-72 px-4 py-2.5 rounded-full bg-black/40 border border-emerald-500/40 text-white text-xs placeholder-gray-400 outline-none focus:border-[#f06d2f]"
+              className="w-full sm:w-72 px-4 py-2.5 rounded-full bg-slate-900/80 border border-emerald-500/40 text-white text-xs placeholder-slate-400 outline-none focus:border-[#f06d2f]"
               required
             />
             <button

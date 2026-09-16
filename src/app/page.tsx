@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { sql } from '@/lib/db';
 import { BreakingNewsTicker } from '@/components/media/BreakingNewsTicker';
-import { FlashUpdatesStrip } from '@/components/media/FlashUpdatesStrip';
 import { TopStoriesGrid } from '@/components/home/TopStoriesGrid';
 import { LatestNewsFeed } from '@/components/home/LatestNewsFeed';
 import { CategorySectionBlock } from '@/components/home/CategorySectionBlock';
@@ -255,10 +254,7 @@ export default async function Home() {
       {/* 1. Breaking News Ticker */}
       <BreakingNewsTicker items={breakingNews.length > 0 ? breakingNews : topItems} />
 
-      {/* 2. Flash Health Updates Strip */}
-      <FlashUpdatesStrip updates={latestNews.slice(0, 5) as any} />
-
-      {/* 3. Homepage Hero: 3-Column Top Stories Grid (Featured + List + Trending 01-05) */}
+      {/* 2. Homepage Hero: 3-Column Top Stories Grid (Featured + List + Trending 01-05) */}
       <TopStoriesGrid
         featuredStory={featuredStory}
         topStories={topStoriesList}

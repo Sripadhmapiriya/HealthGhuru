@@ -71,6 +71,13 @@ export async function POST(request: NextRequest) {
       category = 'All',
       html_code,
       is_active = true,
+      // Hospital / Doctor advertiser fields
+      advertiser_name,
+      advertiser_contact,
+      advertiser_type,
+      budget,
+      start_date,
+      end_date,
     } = body;
 
     if (!title || !placement) {
@@ -91,7 +98,13 @@ export async function POST(request: NextRequest) {
         cta_text,
         category,
         html_code,
-        is_active
+        is_active,
+        advertiser_name,
+        advertiser_contact,
+        advertiser_type,
+        budget,
+        start_date,
+        end_date
       ) VALUES (
         ${title},
         ${placement},
@@ -102,7 +115,13 @@ export async function POST(request: NextRequest) {
         ${cta_text || 'Learn More'},
         ${category || 'All'},
         ${html_code || null},
-        ${is_active}
+        ${is_active},
+        ${advertiser_name || null},
+        ${advertiser_contact || null},
+        ${advertiser_type || null},
+        ${budget || null},
+        ${start_date || null},
+        ${end_date || null}
       )
       RETURNING *
     `;

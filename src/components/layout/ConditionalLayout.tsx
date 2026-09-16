@@ -21,7 +21,6 @@ export default function ConditionalLayout({
 
   return (
     <>
-      {!isAdmin && <TopAdBar />}
       {!isAdmin && navbar}
       <main className="flex-grow">
         {children}

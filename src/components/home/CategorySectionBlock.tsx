@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Clock, ShieldCheck } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 interface CategorySectionBlockProps {
   title: string;
@@ -18,7 +18,6 @@ export function CategorySectionBlock({
   categorySlug,
   description,
   items,
-  accentColor = "#2E7D32"
 }: CategorySectionBlockProps) {
   if (!items || items.length === 0) return null;
 
@@ -27,16 +26,16 @@ export function CategorySectionBlock({
 
   return (
     <section className="w-full py-6 sm:py-8">
-      {/* Category Header with accent line and View All */}
-      <div className="flex items-center justify-between pb-3 mb-5 border-b-2 border-[#2E7D32]/20">
+      {/* Category Header with Gradient Underline and View All */}
+      <div className="flex items-center justify-between pb-3.5 mb-6 relative">
         <div className="flex items-center gap-3">
-          <span className="w-2.5 h-6 rounded-full bg-[#f06d2f]" />
+          <span className="w-2.5 h-6 rounded-full bg-gradient-to-b from-[#16A34A] to-[#f06d2f]" />
           <div>
-            <h2 className="font-heading font-extrabold text-xl sm:text-2xl text-[#1A2E1A] tracking-tight uppercase">
+            <h2 className="font-heading font-extrabold text-xl sm:text-2xl text-slate-900 tracking-tight uppercase">
               {title}
             </h2>
             {description && (
-              <p className="text-xs text-[#4A6741] font-medium hidden sm:block">
+              <p className="text-xs text-slate-500 font-medium hidden sm:block">
                 {description}
               </p>
             )}
@@ -45,11 +44,14 @@ export function CategorySectionBlock({
 
         <Link
           href={`/category/${categorySlug}`}
-          className="inline-flex items-center gap-1.5 text-xs font-heading font-bold text-[#1B5E20] hover:text-[#f06d2f] transition-colors py-1 px-3 rounded-full hover:bg-[#F5FAF5]"
+          className="inline-flex items-center gap-1.5 text-xs font-heading font-bold text-[#16A34A] hover:text-[#f06d2f] transition-colors py-1.5 px-3.5 rounded-full hover:bg-emerald-50 border border-emerald-500/20"
         >
           <span>View All {title}</span>
           <ArrowRight size={13} />
         </Link>
+
+        {/* Brand Gradient Underline */}
+        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#16A34A] via-[#22C55E] to-[#f06d2f] rounded-full opacity-70" />
       </div>
 
       {/* Grid: 1 Large Story (left) + 2 or 3 Supporting Stories (right) */}
@@ -59,7 +61,7 @@ export function CategorySectionBlock({
           <div className="lg:col-span-6 flex flex-col">
             <Link
               href={`/article/${featured.slug}`}
-              className="group block bg-white rounded-2xl overflow-hidden border border-[#2E7D32]/15 shadow-xs hover:shadow-md transition-all duration-300 h-full flex flex-col justify-between"
+              className="group block bg-white rounded-2xl overflow-hidden border border-emerald-500/20 shadow-xs hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between"
             >
               <div className="relative aspect-[16/10] w-full bg-gray-100 overflow-hidden">
                 {featured.image_url && (
@@ -72,7 +74,7 @@ export function CategorySectionBlock({
                   />
                 )}
                 <div className="absolute top-3 left-3">
-                  <span className="bg-[#1B5E20] text-white text-[10px] font-heading font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                  <span className="bg-gradient-to-r from-[#16A34A] to-[#15803D] text-white text-[10px] font-heading font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-xs">
                     {title}
                   </span>
                 </div>
@@ -80,17 +82,20 @@ export function CategorySectionBlock({
 
               <div className="p-5 flex flex-col justify-between flex-1">
                 <div>
-                  <h3 className="font-heading font-bold text-base sm:text-lg text-[#1A2E1A] group-hover:text-[#2E7D32] transition-colors line-clamp-2 leading-snug">
+                  <h3 className="font-heading font-bold text-base sm:text-lg text-slate-900 group-hover:text-[#16A34A] transition-colors line-clamp-2 leading-snug">
                     {featured.title}
                   </h3>
-                  <p className="text-xs text-[#4A6741] line-clamp-2 mt-2 leading-relaxed">
-                    {featured.excerpt || featured.description}
+                  <p className="text-xs text-slate-600 line-clamp-2 mt-2 leading-relaxed">
+                    {featured.excerpt || featured.description || featured.summary}
                   </p>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-500">
+                <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-slate-400">
                   <span className="truncate">{featured.source_name || "HealthGhuru Bureau"}</span>
-                  <span className="text-[#f06d2f] font-bold">Read More →</span>
+                  <span className="text-[#f06d2f] font-bold group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
+                    <span>Read More</span>
+                    <ArrowRight size={11} />
+                  </span>
                 </div>
               </div>
             </Link>
@@ -102,11 +107,11 @@ export function CategorySectionBlock({
           {supporting.map((item, idx) => (
             <article
               key={item.id || idx}
-              className="group bg-white rounded-xl p-3.5 sm:p-4 border border-[#2E7D32]/15 hover:border-[#2E7D32]/40 shadow-2xs hover:shadow-xs transition-all duration-200"
+              className="group bg-white rounded-xl p-3.5 sm:p-4 border border-emerald-500/15 hover:border-emerald-500/40 shadow-xs hover:shadow-md transition-all duration-200"
             >
               <Link href={`/article/${item.slug}`} className="flex gap-3 sm:gap-4 items-center">
                 {item.image_url && (
-                  <div className="relative w-20 h-20 sm:w-24 sm:h-20 rounded-lg overflow-hidden shrink-0 bg-gray-100">
+                  <div className="relative w-20 h-20 sm:w-24 sm:h-20 rounded-lg overflow-hidden shrink-0 bg-gray-100 border border-gray-100">
                     <Image
                       src={item.image_url}
                       alt={item.title}
@@ -120,10 +125,10 @@ export function CategorySectionBlock({
                   <span className="text-[10px] font-mono text-[#f06d2f] font-bold uppercase tracking-wider">
                     {item.subcategory || title}
                   </span>
-                  <h4 className="font-heading font-bold text-xs sm:text-sm text-[#1A2E1A] group-hover:text-[#2E7D32] transition-colors line-clamp-2 leading-snug mt-0.5">
+                  <h4 className="font-heading font-bold text-xs sm:text-sm text-slate-900 group-hover:text-[#16A34A] transition-colors line-clamp-2 leading-snug mt-0.5">
                     {item.title}
                   </h4>
-                  <div className="flex items-center gap-2 text-[10px] sm:text-[11px] text-gray-400 mt-1 font-medium">
+                  <div className="flex items-center gap-2 text-[10px] sm:text-[11px] text-slate-400 mt-1 font-medium">
                     <span className="truncate">{item.source_name || "Clinical Wire"}</span>
                     <span>•</span>
                     <span>Recent</span>

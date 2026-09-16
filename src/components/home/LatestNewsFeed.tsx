@@ -59,41 +59,44 @@ export function LatestNewsFeed({ initialItems }: LatestNewsFeedProps) {
     <section className="w-full py-8 sm:py-10 bg-white border-t border-b border-[#2E7D32]/15">
       <div className="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Section Header & Subtitle */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between pb-4 border-b-2 border-[#2E7D32] gap-4 mb-6">
+        {/* Section Header & Subtitle with Brand Gradient Underline */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between pb-4 relative gap-4 mb-6">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="w-3 h-3 rounded-full bg-[#f06d2f]" />
-              <span className="text-xs font-mono uppercase tracking-widest text-[#2E7D32] font-bold">
+              <span className="w-3 h-3 rounded-full bg-gradient-to-r from-[#16A34A] to-[#f06d2f]" />
+              <span className="text-xs font-mono uppercase tracking-widest text-[#16A34A] font-bold">
                 REAL-TIME CLINICAL WIRE
               </span>
             </div>
-            <h2 className="font-heading font-extrabold text-2xl sm:text-3xl text-[#1A2E1A] tracking-tight">
+            <h2 className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
               LATEST HEALTH NEWS
             </h2>
           </div>
 
           {/* Sort Tabs (Latest, Most Read, Trending) */}
-          <div className="flex items-center gap-1 bg-[#F5FAF5] p-1 rounded-xl border border-[#2E7D32]/20 shrink-0">
+          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-emerald-500/20 shrink-0">
             {SORT_OPTIONS.map((sort) => (
               <button
                 key={sort.value}
                 onClick={() => setSelectedSort(sort.value)}
                 className={`text-xs font-heading font-bold px-3 py-1.5 rounded-lg transition-all ${
                   selectedSort === sort.value
-                    ? "bg-[#1B5E20] text-white shadow-xs"
-                    : "text-[#4A6741] hover:text-[#1A2E1A]"
+                    ? "bg-[#16A34A] text-white shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 {sort.label}
               </button>
             ))}
           </div>
+
+          {/* Gradient Underline */}
+          <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-gradient-to-r from-[#16A34A] via-[#22C55E] to-[#f06d2f] rounded-full" />
         </div>
 
         {/* Data-Driven Category Filters Bar */}
         <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-4 mb-6 border-b border-gray-100">
-          <span className="flex items-center gap-1 text-xs font-bold text-gray-400 mr-2 shrink-0">
+          <span className="flex items-center gap-1 text-xs font-bold text-slate-400 mr-2 shrink-0">
             <Filter size={13} />
             <span>Filter:</span>
           </span>
@@ -101,10 +104,10 @@ export function LatestNewsFeed({ initialItems }: LatestNewsFeedProps) {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`text-xs font-heading font-semibold whitespace-nowrap px-3 py-1.5 rounded-full transition-all ${
+              className={`text-xs font-heading font-semibold whitespace-nowrap px-3.5 py-1.5 rounded-full transition-all ${
                 selectedCategory === cat
-                  ? "bg-[#f06d2f] text-white shadow-xs font-bold"
-                  : "bg-[#F5FAF5] text-[#4A6741] hover:bg-[#e7f3e7] border border-[#2E7D32]/15"
+                  ? "bg-gradient-to-r from-[#f06d2f] to-[#ff8a57] text-white shadow-xs font-bold"
+                  : "bg-white text-slate-700 hover:bg-emerald-50 border border-emerald-500/20"
               }`}
             >
               {cat}
@@ -119,12 +122,12 @@ export function LatestNewsFeed({ initialItems }: LatestNewsFeedProps) {
             return (
               <article
                 key={item.id || index}
-                className="group bg-[#F5FAF5] hover:bg-white rounded-2xl p-4 sm:p-5 border border-[#2E7D32]/15 hover:border-[#2E7D32]/40 hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
+                className="group bg-white hover:bg-emerald-50/20 rounded-2xl p-4 sm:p-5 border border-emerald-500/20 hover:border-emerald-500/50 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
               >
                 <div className="flex flex-col sm:flex-row gap-4">
                   {/* Thumbnail Image */}
                   {item.image_url && (
-                    <div className="relative w-full sm:w-36 sm:h-32 aspect-[16/10] sm:aspect-auto rounded-xl overflow-hidden shrink-0 bg-gray-200">
+                    <div className="relative w-full sm:w-36 sm:h-32 aspect-[16/10] sm:aspect-auto rounded-xl overflow-hidden shrink-0 bg-gray-100 border border-gray-100">
                       <Image
                         src={item.image_url}
                         alt={item.title}
@@ -143,32 +146,32 @@ export function LatestNewsFeed({ initialItems }: LatestNewsFeedProps) {
                           {item.category}
                         </span>
                       )}
-                      <span className="text-[11px] text-gray-400 font-mono">
+                      <span className="text-[11px] text-slate-400 font-mono">
                         {item.published_at ? "Today" : "Recent"}
                       </span>
                     </div>
 
                     <Link href={`/article/${slug}`}>
-                      <h3 className="font-heading font-bold text-sm sm:text-base text-[#1A2E1A] group-hover:text-[#2E7D32] transition-colors line-clamp-2 leading-snug">
+                      <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 group-hover:text-[#16A34A] transition-colors line-clamp-2 leading-snug">
                         {item.title}
                       </h3>
                     </Link>
 
-                    <p className="text-xs text-[#4A6741] line-clamp-2 mt-2 leading-relaxed">
-                      {item.excerpt || item.description}
+                    <p className="text-xs text-slate-600 line-clamp-2 mt-2 leading-relaxed">
+                      {item.excerpt || item.description || item.summary}
                     </p>
                   </div>
                 </div>
 
                 {/* Footer / Meta info */}
-                <div className="mt-4 pt-3 border-t border-gray-200/60 flex items-center justify-between text-[11px] text-gray-500 font-medium">
+                <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-slate-400 font-medium">
                   <div className="flex items-center gap-1.5">
-                    <ShieldCheck size={13} className="text-[#2E7D32]" />
+                    <ShieldCheck size={13} className="text-[#16A34A]" />
                     <span className="truncate">{item.source_name || "HealthGhuru Editorial"}</span>
                   </div>
                   <Link
                     href={`/article/${slug}`}
-                    className="inline-flex items-center gap-1 text-[#f06d2f] font-bold group-hover:underline"
+                    className="inline-flex items-center gap-1 text-[#f06d2f] font-bold group-hover:translate-x-0.5 transition-transform"
                   >
                     <span>Read Article</span>
                     <ArrowRight size={12} />
@@ -184,7 +187,7 @@ export function LatestNewsFeed({ initialItems }: LatestNewsFeedProps) {
           <div className="mt-8 text-center">
             <button
               onClick={() => setVisibleCount((prev) => prev + 6)}
-              className="inline-flex items-center gap-2 bg-[#1B5E20] hover:bg-[#2E7D32] text-white font-heading font-bold text-xs sm:text-sm px-6 py-3 rounded-full shadow-sm hover:shadow transition-all active:scale-95"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#16A34A] via-[#22C55E] to-[#f06d2f] hover:brightness-110 text-white font-heading font-bold text-xs sm:text-sm px-7 py-3 rounded-full shadow-md hover:shadow-lg transition-all active:scale-95"
             >
               <span>Load More Health News</span>
               <Layers size={14} />
