@@ -2,7 +2,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useRef } from 'react';
-import { ArrowRight, Sparkles, ExternalLink } from 'lucide-react';
+import { ArrowRight, Sparkles, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Advertisement } from '@/lib/types/advertisement';
 import { trackAdEvent } from './adTracking';
 import Image from 'next/image';
@@ -14,32 +14,61 @@ interface HeroBannerAdProps {
 }
 
 export function HeroBannerAd({ initialAd, category, className = '' }: HeroBannerAdProps) {
-  const [ad, setAd] = useState<Advertisement | null>(initialAd || null);
-  const trackedRef = useRef(false);
+  const [ads, setAds] = useState<Advertisement[]>(initialAd ? [initialAd] : []);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [fade, setFade] = useState(true);
+  const [rotationSeconds, setRotationSeconds] = useState(8);
+  const [isPaused, setIsPaused] = useState(false);
+  const trackedMap = useRef<Record<string, boolean>>({});
 
   useEffect(() => {
     if (!initialAd) {
-      const fetchAd = async () => {
+      const fetchAds = async () => {
         try {
           const url = category
-            ? `/api/ads/active?placement=hero_banner&category=${category}`
-            : `/api/ads/active?placement=hero_banner`;
-          const res = await fetch(url);
+            ? `/api/ads/active?placement=hero_banner&category=${category}&t=${Date.now()}`
+            : `/api/ads/active?placement=hero_banner&t=${Date.now()}`;
+          const res = await fetch(url, {
+            cache: 'no-store',
+            headers: { 'Cache-Control': 'no-cache' },
+          });
           const json = await res.json();
-          if (json.success && json.ads && json.ads.length > 0) {
-            setAd(json.ads[0]);
+          if (json.success && Array.isArray(json.ads) && json.ads.length > 0) {
+            setAds(json.ads);
+            if (json.rotation_interval && typeof json.rotation_interval === 'number') {
+              setRotationSeconds(json.rotation_interval);
+            }
+          } else {
+            setAds([]);
           }
         } catch {
-          // ignore
+          setAds([]);
         }
       };
-      fetchAd();
+      fetchAds();
     }
   }, [initialAd, category]);
 
+  // Auto-rotation timer
   useEffect(() => {
-    if (ad && !trackedRef.current) {
-      trackedRef.current = true;
+    if (ads.length <= 1 || isPaused) return;
+
+    const interval = setInterval(() => {
+      setFade(false);
+      setTimeout(() => {
+        setCurrentIndex((prev) => (prev + 1) % ads.length);
+        setFade(true);
+      }, 300);
+    }, Math.max(3000, rotationSeconds * 1000));
+
+    return () => clearInterval(interval);
+  }, [ads.length, rotationSeconds, isPaused]);
+
+  const ad = ads[currentIndex] || null;
+
+  useEffect(() => {
+    if (ad && !trackedMap.current[ad.id]) {
+      trackedMap.current[ad.id] = true;
       trackAdEvent(ad.id, 'impression');
     }
   }, [ad]);
@@ -50,6 +79,26 @@ export function HeroBannerAd({ initialAd, category, className = '' }: HeroBanner
     if (ad) {
       trackAdEvent(ad.id, 'click');
     }
+  };
+
+  const handlePrev = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setFade(false);
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev - 1 + ads.length) % ads.length);
+      setFade(true);
+    }, 200);
+  };
+
+  const handleNext = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setFade(false);
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev + 1) % ads.length);
+      setFade(true);
+    }, 200);
   };
 
   if (ad.html_code) {
@@ -66,13 +115,21 @@ export function HeroBannerAd({ initialAd, category, className = '' }: HeroBanner
   }
 
   return (
-    <div className={`site-container my-8 sm:my-12 ${className}`}>
+    <div
+      className={`site-container my-8 sm:my-12 ${className}`}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
       <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-primary/20 bg-gradient-to-br from-[#0c1a0f] via-[#162e1a] to-[#0d2112] shadow-xl group">
         {/* Decorative ambient radial light */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent/15 rounded-full blur-3xl pointer-events-none -ml-20 -mb-20" />
 
-        <div className="relative z-10 p-6 sm:p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-10">
+        <div
+          className={`relative z-10 p-6 sm:p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-10 transition-all duration-300 ${
+            fade ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'
+          }`}
+        >
           {/* Text Content */}
           <div className="flex-1 space-y-3.5 text-center md:text-left">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 text-emerald-300 border border-white/10 text-[11px] font-mono uppercase tracking-wider">
@@ -89,7 +146,7 @@ export function HeroBannerAd({ initialAd, category, className = '' }: HeroBanner
               </p>
             )}
 
-            <div className="pt-2">
+            <div className="pt-2 flex items-center justify-center md:justify-start gap-4 flex-wrap">
               <a
                 href={ad.target_url}
                 target="_blank"
@@ -99,6 +156,47 @@ export function HeroBannerAd({ initialAd, category, className = '' }: HeroBanner
               >
                 {ad.cta_text || 'Learn More'} <ArrowRight size={15} />
               </a>
+
+              {/* Multi-ad indicator pills */}
+              {ads.length > 1 && (
+                <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+                  <button
+                    type="button"
+                    onClick={handlePrev}
+                    className="text-white/60 hover:text-white transition-colors p-0.5"
+                    title="Previous banner"
+                  >
+                    <ChevronLeft size={14} />
+                  </button>
+                  <div className="flex items-center gap-1">
+                    {ads.map((_, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => {
+                          setFade(false);
+                          setTimeout(() => {
+                            setCurrentIndex(idx);
+                            setFade(true);
+                          }, 200);
+                        }}
+                        className={`h-1.5 rounded-full transition-all ${
+                          currentIndex === idx ? 'w-4 bg-emerald-400' : 'w-1.5 bg-white/40 hover:bg-white/70'
+                        }`}
+                        title={`Banner ${idx + 1} of ${ads.length}`}
+                      />
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    className="text-white/60 hover:text-white transition-colors p-0.5"
+                    title="Next banner"
+                  >
+                    <ChevronRight size={14} />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -109,7 +207,7 @@ export function HeroBannerAd({ initialAd, category, className = '' }: HeroBanner
               target="_blank"
               rel="noopener noreferrer"
               onClick={handleClick}
-              className="relative w-full md:w-80 lg:w-96 h-48 sm:h-56 rounded-2xl overflow-hidden border border-white/20 shadow-2xl shrink-0 block group-hover:scale-[1.02] transition-transform duration-300"
+              className="relative w-full md:w-80 lg:w-96 h-48 sm:h-56 rounded-2xl overflow-hidden border border-white/20 shadow-2xl shrink-0 block group-hover:scale-[1.02] transition-transform duration-300 bg-black/40"
             >
               <Image
                 src={ad.image_url}

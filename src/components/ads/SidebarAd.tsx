@@ -2,7 +2,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useRef } from 'react';
-import { ArrowRight, Sparkles, ExternalLink } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import { Advertisement } from '@/lib/types/advertisement';
 import { trackAdEvent } from './adTracking';
 import Image from 'next/image';
@@ -15,32 +15,61 @@ interface SidebarAdProps {
 }
 
 export function SidebarAd({ initialAd, category, className = '', sticky = false }: SidebarAdProps) {
-  const [ad, setAd] = useState<Advertisement | null>(initialAd || null);
-  const trackedRef = useRef(false);
+  const [ads, setAds] = useState<Advertisement[]>(initialAd ? [initialAd] : []);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [fade, setFade] = useState(true);
+  const [rotationSeconds, setRotationSeconds] = useState(8);
+  const [isPaused, setIsPaused] = useState(false);
+  const trackedMap = useRef<Record<string, boolean>>({});
 
   useEffect(() => {
     if (!initialAd) {
-      const fetchAd = async () => {
+      const fetchAds = async () => {
         try {
           const url = category
-            ? `/api/ads/active?placement=sidebar&category=${category}`
-            : `/api/ads/active?placement=sidebar`;
-          const res = await fetch(url);
+            ? `/api/ads/active?placement=sidebar&category=${category}&t=${Date.now()}`
+            : `/api/ads/active?placement=sidebar&t=${Date.now()}`;
+          const res = await fetch(url, {
+            cache: 'no-store',
+            headers: { 'Cache-Control': 'no-cache' },
+          });
           const json = await res.json();
-          if (json.success && json.ads && json.ads.length > 0) {
-            setAd(json.ads[0]);
+          if (json.success && Array.isArray(json.ads) && json.ads.length > 0) {
+            setAds(json.ads);
+            if (json.rotation_interval && typeof json.rotation_interval === 'number') {
+              setRotationSeconds(json.rotation_interval);
+            }
+          } else {
+            setAds([]);
           }
         } catch {
-          // ignore
+          setAds([]);
         }
       };
-      fetchAd();
+      fetchAds();
     }
   }, [initialAd, category]);
 
+  // Auto-rotation timer
   useEffect(() => {
-    if (ad && !trackedRef.current) {
-      trackedRef.current = true;
+    if (ads.length <= 1 || isPaused) return;
+
+    const interval = setInterval(() => {
+      setFade(false);
+      setTimeout(() => {
+        setCurrentIndex((prev) => (prev + 1) % ads.length);
+        setFade(true);
+      }, 250);
+    }, Math.max(3000, rotationSeconds * 1000));
+
+    return () => clearInterval(interval);
+  }, [ads.length, rotationSeconds, isPaused]);
+
+  const ad = ads[currentIndex] || null;
+
+  useEffect(() => {
+    if (ad && !trackedMap.current[ad.id]) {
+      trackedMap.current[ad.id] = true;
       trackAdEvent(ad.id, 'impression');
     }
   }, [ad]);
@@ -65,13 +94,40 @@ export function SidebarAd({ initialAd, category, className = '', sticky = false 
   }
 
   return (
-    <div className={`bg-white rounded-2xl border border-border/80 shadow-sm overflow-hidden group hover:shadow-md transition-shadow ${sticky ? 'sticky top-28' : ''} ${className}`}>
-      {/* Top Tag */}
+    <div
+      className={`bg-white rounded-2xl border border-border/80 shadow-sm overflow-hidden group hover:shadow-md transition-shadow ${sticky ? 'sticky top-28' : ''} ${className}`}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      {/* Top Tag & Rotation Indicators */}
       <div className="px-4 py-2 bg-surface/60 border-b border-border/60 flex items-center justify-between">
         <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary flex items-center gap-1">
           <Sparkles size={10} /> SPONSORED
         </span>
-        <span className="text-[10px] text-text-muted">Ad</span>
+
+        {ads.length > 1 ? (
+          <div className="flex items-center gap-1 bg-gray-100 px-2 py-0.5 rounded-full">
+            {ads.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => {
+                  setFade(false);
+                  setTimeout(() => {
+                    setCurrentIndex(idx);
+                    setFade(true);
+                  }, 200);
+                }}
+                className={`h-1.5 rounded-full transition-all ${
+                  currentIndex === idx ? 'w-3 bg-primary' : 'w-1 bg-gray-300'
+                }`}
+                title={`Ad ${idx + 1} of ${ads.length}`}
+              />
+            ))}
+          </div>
+        ) : (
+          <span className="text-[10px] text-text-muted">Ad</span>
+        )}
       </div>
 
       <a
@@ -79,7 +135,9 @@ export function SidebarAd({ initialAd, category, className = '', sticky = false 
         target="_blank"
         rel="noopener noreferrer"
         onClick={handleClick}
-        className="block p-5 space-y-4"
+        className={`block p-5 space-y-4 transition-all duration-300 ${
+          fade ? 'opacity-100' : 'opacity-0'
+        }`}
       >
         {/* Creative Image */}
         {ad.image_url && (

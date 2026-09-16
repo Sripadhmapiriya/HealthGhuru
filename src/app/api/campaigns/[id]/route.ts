@@ -35,6 +35,79 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       RETURNING *
     `;
 
+    if (rows.length === 0) {
+      return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 });
+    }
+
+    const campaign = rows[0];
+    const isNowActive = campaign.status === 'active' || campaign.status === 'approved';
+
+    // If rejected, refund the money to user's wallet
+    if (campaign.status === 'rejected') {
+      try {
+        const refundAmount = parseFloat(campaign.total_amount || '0');
+        if (campaign.contact_email && refundAmount > 0) {
+          await sql`
+            INSERT INTO user_wallets (email, balance, updated_at)
+            VALUES (${campaign.contact_email}, ${refundAmount}, CURRENT_TIMESTAMP)
+            ON CONFLICT (email)
+            DO UPDATE SET balance = user_wallets.balance + ${refundAmount}, updated_at = CURRENT_TIMESTAMP
+          `;
+        }
+      } catch (err) {
+        console.error('Wallet refund error:', err);
+      }
+    }
+
+    // Promote or update in advertisements table
+    try {
+      const existingAds = await sql`
+        SELECT id FROM advertisements WHERE title = ${campaign.campaign_title}
+      `;
+
+      if (existingAds.length > 0) {
+        await sql`
+          UPDATE advertisements
+          SET is_active = ${isNowActive},
+              status = ${campaign.status},
+              payment_status = ${campaign.payment_status},
+              updated_at = CURRENT_TIMESTAMP
+          WHERE title = ${campaign.campaign_title}
+        `;
+      } else if (isNowActive) {
+        // Insert new active advertisement if not exists
+        await sql`
+          INSERT INTO advertisements (
+            title, placement, image_url, target_url,
+            headline, cta_text, category, is_active,
+            advertiser_name, advertiser_contact, advertiser_type,
+            budget, start_date, end_date, status, payment_status, payment_method, priority
+          ) VALUES (
+            ${campaign.campaign_title},
+            ${campaign.placement},
+            ${campaign.banner_image_url ?? null},
+            ${campaign.target_url},
+            ${campaign.campaign_title},
+            'Book Appointment',
+            'All',
+            TRUE,
+            ${campaign.advertiser_name},
+            ${campaign.contact_name + ' (' + campaign.contact_email + ')'},
+            ${campaign.advertiser_type ?? 'hospital'},
+            ${campaign.total_amount ?? 0},
+            ${campaign.start_date},
+            ${campaign.end_date},
+            'active',
+            ${campaign.payment_status},
+            ${campaign.payment_method ?? 'upi'},
+            'Medium'
+          )
+        `;
+      }
+    } catch (syncErr) {
+      console.error('Warning: could not sync campaign to advertisements:', syncErr);
+    }
+
     return NextResponse.json({ success: true, campaign: rows[0] });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unknown error';

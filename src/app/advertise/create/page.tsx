@@ -36,8 +36,8 @@ export default async function CreateCampaignPage() {
   return (
     <div className="min-h-screen bg-[#F4F6F8]">
       {/* Back nav */}
-      <div className="bg-white border-b border-border px-4 sm:px-6 py-3">
-        <div className="max-w-4xl mx-auto">
+      <div className="bg-white border-b border-border px-4 sm:px-6 lg:px-8 py-3.5 shadow-xs">
+        <div className="max-w-7xl mx-auto">
           <Link
             href="/advertise"
             className="inline-flex items-center gap-2 text-sm font-heading font-semibold text-primary hover:text-primary-dark transition-colors"
@@ -47,7 +47,7 @@ export default async function CreateCampaignPage() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <CreateCampaignForm pricingSlots={pricing} />
       </div>
     </div>

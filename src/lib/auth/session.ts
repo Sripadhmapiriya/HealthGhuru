@@ -20,14 +20,27 @@ export const requireAdmin = cache(async () => {
   }
   
   // Real DB check to ensure immediate revocation works even with JWT
-  const users = await sql`SELECT role FROM users WHERE id = ${session.user.id}::uuid`;
-  const user = users[0];
-  
-  if (!user || user.role !== 'admin') {
+  try {
+    const users = await sql`SELECT role FROM users WHERE id = ${session.user.id}::uuid`;
+    const user = users[0];
+    
+    if (!user || user.role !== 'admin') {
+      redirect('/admin/login');
+    }
+    
+    // Attach the freshest role to the session object
+    session.user.role = user.role;
+    return session;
+  } catch (err: any) {
+    // If it was a redirect, rethrow it
+    if (err?.digest?.startsWith('NEXT_REDIRECT') || err?.message === 'NEXT_REDIRECT') {
+      throw err;
+    }
+    console.warn('DB check in requireAdmin had an error, falling back to session JWT role:', err);
+    // Fallback to JWT verified role
+    if (session.user.role === 'admin') {
+      return session;
+    }
     redirect('/admin/login');
   }
-  
-  // Attach the freshest role to the session object
-  session.user.role = user.role;
-  return session;
 });

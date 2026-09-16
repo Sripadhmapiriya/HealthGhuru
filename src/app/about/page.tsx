@@ -15,13 +15,19 @@ export const metadata: Metadata = {
 };
 
 export default async function AboutPage() {
-  const sources = await sql`
-    SELECT name, type, website_url, trust_score, item_count,
-           LOWER(REPLACE(name, ' ', '-')) as slug
-    FROM content_sources 
-    WHERE enabled = TRUE 
-    ORDER BY priority ASC, name ASC
-  `;
+  let sources: any[] = [];
+  try {
+    const rows = await sql`
+      SELECT name, type, website_url, trust_score, item_count,
+             LOWER(REPLACE(name, ' ', '-')) as slug
+      FROM content_sources 
+      WHERE enabled = TRUE 
+      ORDER BY priority ASC, name ASC
+    `;
+    sources = rows as any[];
+  } catch {
+    // Fallback if network or table error
+  }
   return (
     <>
       {/* Hero Banner */}

@@ -12,61 +12,69 @@ interface FloatingFooterAdProps {
   category?: string;
 }
 
-// Default rich health advertisement fallback so it is ALWAYS visible immediately
-const DEFAULT_FALLBACK_AD: Advertisement = {
-  id: '575ba51f-eca2-4bc9-a732-be90401b9fab',
-  title: 'ZenMind Deep Sleep Guide',
-  placement: 'floating_footer',
-  image_url: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80',
-  target_url: '/blog/sleep-quality-guide',
-  headline: 'Better Sleep Tonight — Download HealthGhuru 7-Day Sleep & Calm Protocol',
-  description: 'Evidence-backed breathwork, magnesium timing, and circadian rhythm optimization.',
-  cta_text: 'Get Free Guide',
-  category: 'Mental Health',
-  html_code: null,
-  is_active: true,
-  impressions_count: 0,
-  clicks_count: 0,
-  created_at: new Date().toISOString(),
-  updated_at: new Date().toISOString(),
-};
-
 export function FloatingFooterAd({ initialAd, category }: FloatingFooterAdProps) {
-  const [ad, setAd] = useState<Advertisement | null>(initialAd || DEFAULT_FALLBACK_AD);
+  const [ads, setAds] = useState<Advertisement[]>(initialAd ? [initialAd] : []);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [fade, setFade] = useState(true);
+  const [rotationSeconds, setRotationSeconds] = useState(8);
+  const [isPaused, setIsPaused] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const [visible, setVisible] = useState(false);
-  const trackedRef = useRef(false);
+  const trackedMap = useRef<Record<string, boolean>>({});
 
   useEffect(() => {
-    // Show smoothly immediately upon mounting
     const timer = setTimeout(() => {
       setVisible(true);
     }, 300);
 
-    // Fetch dynamic ad from database
-    const fetchAd = async () => {
+    const fetchAds = async () => {
       try {
         const url = category
-          ? `/api/ads/active?placement=floating_footer&category=${category}`
-          : `/api/ads/active?placement=floating_footer`;
-        const res = await fetch(url);
+          ? `/api/ads/active?placement=floating_footer&category=${category}&t=${Date.now()}`
+          : `/api/ads/active?placement=floating_footer&t=${Date.now()}`;
+        const res = await fetch(url, {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' },
+        });
         const json = await res.json();
-        if (json.success && json.ads && json.ads.length > 0) {
-          setAd(json.ads[0]);
+        if (json.success && Array.isArray(json.ads) && json.ads.length > 0) {
+          setAds(json.ads);
+          if (json.rotation_interval && typeof json.rotation_interval === 'number') {
+            setRotationSeconds(json.rotation_interval);
+          }
+        } else {
+          setAds([]);
         }
       } catch {
-        // Fallback to initial/default
+        setAds([]);
       }
     };
 
-    fetchAd();
+    fetchAds();
 
     return () => clearTimeout(timer);
   }, [category]);
 
+  // Auto-rotation timer
   useEffect(() => {
-    if (ad && !dismissed && visible && !trackedRef.current) {
-      trackedRef.current = true;
+    if (ads.length <= 1 || isPaused || dismissed) return;
+
+    const interval = setInterval(() => {
+      setFade(false);
+      setTimeout(() => {
+        setCurrentIndex((prev) => (prev + 1) % ads.length);
+        setFade(true);
+      }, 250);
+    }, Math.max(3000, rotationSeconds * 1000));
+
+    return () => clearInterval(interval);
+  }, [ads.length, rotationSeconds, isPaused, dismissed]);
+
+  const ad = ads[currentIndex] || null;
+
+  useEffect(() => {
+    if (ad && !dismissed && visible && !trackedMap.current[ad.id]) {
+      trackedMap.current[ad.id] = true;
       trackAdEvent(ad.id, 'impression');
     }
   }, [ad, dismissed, visible]);
@@ -91,6 +99,8 @@ export function FloatingFooterAd({ initialAd, category }: FloatingFooterAdProps)
   return (
     <aside
       aria-label="Bottom Right Floating Advertisement"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
       className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-32px)] sm:w-[360px] md:w-[380px] max-w-[380px] pointer-events-auto transition-all duration-500 transform ${
         visible ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-12 opacity-0 scale-95'
       }`}
@@ -103,15 +113,38 @@ export function FloatingFooterAd({ initialAd, category }: FloatingFooterAdProps)
             <span>SPONSORED</span>
           </div>
 
-          {/* Prominent Close Button */}
-          <button
-            onClick={handleDismiss}
-            className="w-6 h-6 flex items-center justify-center bg-black/70 hover:bg-black text-white rounded-full transition-transform hover:scale-110 active:scale-95 shadow-md"
-            aria-label="Close Floating Banner"
-            title="Dismiss Advertisement"
-          >
-            <X size={13} />
-          </button>
+          <div className="flex items-center gap-2">
+            {ads.length > 1 && (
+              <div className="flex items-center gap-1 bg-gray-100 px-2 py-0.5 rounded-full">
+                {ads.map((_, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => {
+                      setFade(false);
+                      setTimeout(() => {
+                        setCurrentIndex(idx);
+                        setFade(true);
+                      }, 200);
+                    }}
+                    className={`h-1.5 rounded-full transition-all ${
+                      currentIndex === idx ? 'w-3 bg-primary' : 'w-1 bg-gray-300'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Prominent Close Button */}
+            <button
+              onClick={handleDismiss}
+              className="w-6 h-6 flex items-center justify-center bg-black/70 hover:bg-black text-white rounded-full transition-transform hover:scale-110 active:scale-95 shadow-md"
+              aria-label="Close Floating Banner"
+              title="Dismiss Advertisement"
+            >
+              <X size={13} />
+            </button>
+          </div>
         </div>
 
         {/* Ad Body Link */}
@@ -120,7 +153,9 @@ export function FloatingFooterAd({ initialAd, category }: FloatingFooterAdProps)
           target="_blank"
           rel="noopener noreferrer"
           onClick={handleClick}
-          className="block p-4 sm:p-5 space-y-3.5 cursor-pointer"
+          className={`block p-4 sm:p-5 space-y-3.5 cursor-pointer transition-all duration-300 ${
+            fade ? 'opacity-100' : 'opacity-0'
+          }`}
         >
           {/* Large Creative Image */}
           {ad.image_url && (
@@ -153,9 +188,9 @@ export function FloatingFooterAd({ initialAd, category }: FloatingFooterAdProps)
 
           {/* Full-Width Large Gradient CTA Button */}
           <div className="pt-1">
-            <div className="w-full py-3 sm:py-3.5 px-5 bg-gradient-to-r from-accent via-[#ff6f3c] to-[#ff8a57] hover:brightness-105 text-white rounded-xl sm:rounded-2xl text-xs sm:text-sm font-heading font-bold text-center transition-all flex items-center justify-center gap-2 shadow-lg shadow-accent/25 group-hover:scale-[1.02] active:scale-95">
-              <span>{ad.cta_text || 'Shop Wellness'}</span>
-              <ArrowRight size={15} />
+            <div className="w-full py-3 px-5 rounded-2xl font-heading font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-primary via-[#16a34a] to-emerald-600 hover:brightness-110 shadow-lg shadow-primary/25 group-hover:shadow-primary/40 flex items-center justify-center gap-2 transition-all group-hover:scale-[1.01] active:scale-[0.99]">
+              <span>{ad.cta_text || 'Book Appointment'}</span>
+              <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
         </a>

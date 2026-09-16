@@ -19,7 +19,7 @@ export default async function AdSlotPricingPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in duration-300">
+    <div className="w-full space-y-6 animate-in fade-in duration-300">
       <ScrollReveal>
         <SectionHeader
           title="Ad Slot Pricing"

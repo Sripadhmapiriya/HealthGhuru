@@ -14,13 +14,17 @@ export interface Advertisement {
   is_active: boolean;
   impressions_count: number;
   clicks_count: number;
-  // Hospital / Doctor Advertiser fields
+  // Hospital / Doctor Advertiser & Campaign fields
   advertiser_name?: string | null;
   advertiser_contact?: string | null;
   advertiser_type?: 'hospital' | 'doctor' | 'clinic' | 'pharmacy' | null;
   budget?: number | null;
   start_date?: string | null;
   end_date?: string | null;
+  status?: 'active' | 'pending' | 'expired' | 'unpublished' | 'rejected' | string | null;
+  payment_status?: 'paid' | 'pending' | 'failed' | string | null;
+  payment_method?: string | null;
+  priority?: 'Low' | 'Medium' | 'High' | string | null;
   created_at: string;
   updated_at: string;
 }

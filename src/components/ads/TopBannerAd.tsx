@@ -12,50 +12,61 @@ interface TopBannerAdProps {
   category?: string;
 }
 
-const DEFAULT_TOP_BANNER_AD: Advertisement = {
-  id: '959aff6d-88b4-4fce-b1ae-58598857b38f',
-  title: 'Top Banner - LivePure Nutrition',
-  placement: 'top_banner',
-  image_url: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1200&q=80',
-  target_url: '/blog/boost-immune-system',
-  headline: 'LivePure Organic Superfoods — 25% Off Plant Protein & Daily Greens',
-  description: 'Doctor-formulated, clean 100% organic ingredients with no artificial additives.',
-  cta_text: 'Claim 25% Off',
-  category: 'Nutrition',
-  html_code: null,
-  is_active: true,
-  impressions_count: 0,
-  clicks_count: 0,
-  created_at: new Date().toISOString(),
-  updated_at: new Date().toISOString(),
-};
-
 export function TopBannerAd({ initialAd, category }: TopBannerAdProps) {
-  const [ad, setAd] = useState<Advertisement | null>(initialAd || DEFAULT_TOP_BANNER_AD);
-  const trackedRef = useRef(false);
+  const [ads, setAds] = useState<Advertisement[]>(initialAd ? [initialAd] : []);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [fade, setFade] = useState(true);
+  const [rotationSeconds, setRotationSeconds] = useState(8);
+  const [isPaused, setIsPaused] = useState(false);
+  const trackedMap = useRef<Record<string, boolean>>({});
 
   useEffect(() => {
-    const fetchAd = async () => {
+    const fetchAds = async () => {
       try {
         const url = category
-          ? `/api/ads/active?placement=top_banner&category=${category}`
-          : `/api/ads/active?placement=top_banner`;
-        const res = await fetch(url);
+          ? `/api/ads/active?placement=top_banner&category=${category}&t=${Date.now()}`
+          : `/api/ads/active?placement=top_banner&t=${Date.now()}`;
+        const res = await fetch(url, {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' },
+        });
         const json = await res.json();
-        if (json.success && json.ads && json.ads.length > 0) {
-          setAd(json.ads[0]);
+        if (json.success && Array.isArray(json.ads) && json.ads.length > 0) {
+          setAds(json.ads);
+          if (json.rotation_interval && typeof json.rotation_interval === 'number') {
+            setRotationSeconds(json.rotation_interval);
+          }
+        } else {
+          setAds([]);
         }
       } catch {
-        // keep fallback
+        setAds([]);
       }
     };
 
-    fetchAd();
+    fetchAds();
   }, [category]);
 
+  // Auto-rotation timer
   useEffect(() => {
-    if (ad && !trackedRef.current) {
-      trackedRef.current = true;
+    if (ads.length <= 1 || isPaused) return;
+
+    const interval = setInterval(() => {
+      setFade(false);
+      setTimeout(() => {
+        setCurrentIndex((prev) => (prev + 1) % ads.length);
+        setFade(true);
+      }, 250);
+    }, Math.max(3000, rotationSeconds * 1000));
+
+    return () => clearInterval(interval);
+  }, [ads.length, rotationSeconds, isPaused]);
+
+  const ad = ads[currentIndex] || null;
+
+  useEffect(() => {
+    if (ad && !trackedMap.current[ad.id]) {
+      trackedMap.current[ad.id] = true;
       trackAdEvent(ad.id, 'impression');
     }
   }, [ad]);
@@ -80,9 +91,17 @@ export function TopBannerAd({ initialAd, category }: TopBannerAdProps) {
   }
 
   return (
-    <div className="w-full py-1 sm:py-2 px-2 sm:px-6 flex items-center justify-center bg-transparent z-40">
+    <div
+      className="w-full py-1 sm:py-2 px-2 sm:px-6 flex items-center justify-center bg-transparent z-40"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
       {/* Contained Centered Sleek Pill Banner */}
-      <div className="max-w-5xl lg:max-w-6xl xl:max-w-7xl 2xl:max-w-[1600px] w-full mx-auto bg-gradient-to-r from-[#0a1b0e] via-[#143419] to-[#0a1b0e] text-white border border-primary/40 rounded-full shadow-md px-2.5 sm:px-6 py-1 sm:py-2 transition-all hover:border-primary/60 hover:shadow-lg">
+      <div
+        className={`max-w-5xl lg:max-w-6xl xl:max-w-7xl 2xl:max-w-[1600px] w-full mx-auto bg-gradient-to-r from-[#0a1b0e] via-[#143419] to-[#0a1b0e] text-white border border-primary/40 rounded-full shadow-md px-2.5 sm:px-6 py-1 sm:py-2 transition-all duration-300 hover:border-primary/60 hover:shadow-lg ${
+          fade ? 'opacity-100 scale-100' : 'opacity-0 scale-[0.99]'
+        }`}
+      >
         <a
           href={ad.target_url}
           target="_blank"
@@ -118,8 +137,27 @@ export function TopBannerAd({ initialAd, category }: TopBannerAdProps) {
             </p>
           </div>
 
-          {/* Right: Sleek Gradient CTA Button */}
-          <div className="shrink-0">
+          {/* Right: Sleek Gradient CTA Button & Indicators */}
+          <div className="flex items-center gap-2 shrink-0">
+            {ads.length > 1 && (
+              <div className="hidden sm:flex items-center gap-1 bg-white/10 px-2 py-1 rounded-full">
+                {ads.map((_, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setCurrentIndex(idx);
+                    }}
+                    className={`h-1 rounded-full transition-all ${
+                      currentIndex === idx ? 'w-3 bg-emerald-400' : 'w-1 bg-white/40'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+
             <span className="inline-flex items-center justify-center gap-1 text-[10px] sm:text-xs font-heading font-bold text-white bg-gradient-to-r from-accent via-[#ff6f3c] to-[#ff8a57] hover:brightness-110 px-2.5 sm:px-5 py-1 sm:py-2 rounded-full shadow-sm group-hover:scale-105 active:scale-95 transition-all whitespace-nowrap">
               <span>{ad.cta_text || 'Claim Offer'}</span>
               <ArrowRight size={12} className="hidden xs:inline" />

@@ -78,6 +78,10 @@ export async function POST(request: NextRequest) {
       budget,
       start_date,
       end_date,
+      status = 'active',
+      payment_status = 'paid',
+      payment_method = 'upi',
+      priority = 'Medium',
     } = body;
 
     if (!title || !placement) {
@@ -86,6 +90,8 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    const calculatedStatus = status || (is_active ? 'active' : 'unpublished');
 
     const result = await sql`
       INSERT INTO advertisements (
@@ -104,7 +110,11 @@ export async function POST(request: NextRequest) {
         advertiser_type,
         budget,
         start_date,
-        end_date
+        end_date,
+        status,
+        payment_status,
+        payment_method,
+        priority
       ) VALUES (
         ${title},
         ${placement},
@@ -121,7 +131,11 @@ export async function POST(request: NextRequest) {
         ${advertiser_type || null},
         ${budget || null},
         ${start_date || null},
-        ${end_date || null}
+        ${end_date || null},
+        ${calculatedStatus},
+        ${payment_status},
+        ${payment_method},
+        ${priority}
       )
       RETURNING *
     `;

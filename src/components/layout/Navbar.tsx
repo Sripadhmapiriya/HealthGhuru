@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import { DateUtilityBar } from "./DateUtilityBar";
 import { MegaMenu } from "./MegaMenu";
+import { NavbarHeaderAd } from "./NavbarHeaderAd";
 
 const PRIMARY_CATEGORIES = [
   { label: "Home", href: "/", icon: Home },
@@ -149,42 +150,8 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Center: High-Impact Leaderboard Sponsor Banner (728x90 style) */}
-          <div className="hidden lg:flex flex-1 items-center justify-center max-w-2xl xl:max-w-3xl px-2">
-            <a
-              href="/hospitals/apex-heart-vascular-institute"
-              className="w-full bg-gradient-to-r from-emerald-950 via-slate-900 to-orange-950 text-white rounded-xl p-2.5 px-4 flex items-center justify-between gap-4 group transition-all shadow-sm hover:shadow-md border border-slate-700/50"
-            >
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0 border border-emerald-400/30">
-                  <Image
-                    src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=200&q=80"
-                    alt="Apex Heart Institute"
-                    fill
-                    className="object-cover"
-                    unoptimized
-                  />
-                </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-mono uppercase tracking-wider font-bold bg-[#f06d2f] text-white px-1.5 py-0.5 rounded">
-                      ADVERTISEMENT
-                    </span>
-                    <span className="text-xs font-bold text-amber-300 truncate">
-                      Apex Heart & Vascular Institute
-                    </span>
-                  </div>
-                  <p className="text-xs font-heading font-semibold text-white group-hover:text-emerald-300 truncate mt-0.5">
-                    Comprehensive 64–Slice Cardiac CT & Preventive Lipid Screening
-                  </p>
-                </div>
-              </div>
-              <span className="shrink-0 bg-gradient-to-r from-[#f06d2f] to-[#ff8a57] text-white text-xs font-bold px-3.5 py-2 rounded-lg group-hover:brightness-110 shadow-sm inline-flex items-center gap-1">
-                <span>Explore</span>
-                <ArrowRight size={12} />
-              </span>
-            </a>
-          </div>
+          {/* Center: Dynamic High-Impact Leaderboard Sponsor Banner (728x90 style) */}
+          <NavbarHeaderAd />
 
           {/* Right: Search, Dark Mode, Avatar, Subscribe, Login */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
