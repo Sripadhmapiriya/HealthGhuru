@@ -8,6 +8,9 @@ export async function getActiveAds(placement?: AdPlacement, category?: string): 
       ads = await sql`
         SELECT * FROM advertisements
         WHERE is_active = TRUE
+          AND (status = 'active' OR status IS NULL)
+          AND (start_date IS NULL OR start_date <= CURRENT_DATE)
+          AND (end_date IS NULL OR end_date >= CURRENT_DATE)
           AND placement = ${placement}
           AND (category = ${category} OR category = 'All' OR category IS NULL)
         ORDER BY created_at DESC
@@ -16,6 +19,9 @@ export async function getActiveAds(placement?: AdPlacement, category?: string): 
       ads = await sql`
         SELECT * FROM advertisements
         WHERE is_active = TRUE
+          AND (status = 'active' OR status IS NULL)
+          AND (start_date IS NULL OR start_date <= CURRENT_DATE)
+          AND (end_date IS NULL OR end_date >= CURRENT_DATE)
           AND placement = ${placement}
         ORDER BY created_at DESC
       `;
@@ -23,6 +29,9 @@ export async function getActiveAds(placement?: AdPlacement, category?: string): 
       ads = await sql`
         SELECT * FROM advertisements
         WHERE is_active = TRUE
+          AND (status = 'active' OR status IS NULL)
+          AND (start_date IS NULL OR start_date <= CURRENT_DATE)
+          AND (end_date IS NULL OR end_date >= CURRENT_DATE)
         ORDER BY created_at DESC
       `;
     }

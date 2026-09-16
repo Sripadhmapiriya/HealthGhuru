@@ -45,6 +45,7 @@ const PAYMENT_STATUS: Record<string, { label: string; color: string }> = {
 
 export function CampaignManagerPage({ pricingSlots }: { pricingSlots: AdSlotPricing[] }) {
   const [campaigns, setCampaigns] = useState<CampaignRequest[]>([]);
+  const [walletBalance, setWalletBalance] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -53,6 +54,11 @@ export function CampaignManagerPage({ pricingSlots }: { pricingSlots: AdSlotPric
       .then((d) => { if (d.success) setCampaigns(d.campaigns); })
       .catch(() => {})
       .finally(() => setLoading(false));
+
+    fetch('/api/wallet')
+      .then((r) => r.json())
+      .then((d) => { if (d.success && d.balance !== undefined) setWalletBalance(d.balance); })
+      .catch(() => {});
   }, []);
 
   const formatINR = (n: number) =>
@@ -77,10 +83,10 @@ export function CampaignManagerPage({ pricingSlots }: { pricingSlots: AdSlotPric
             </div>
 
             <div className="flex items-center gap-3">
-              {/* Wallet balance badge (placeholder) */}
+              {/* Dynamic Wallet balance badge */}
               <div className="flex items-center gap-2 px-4 py-2 bg-surface border border-border rounded-xl text-xs font-heading font-semibold text-text-secondary">
                 <span className="text-[10px] font-mono text-text-muted uppercase tracking-wide">Wallet Balance</span>
-                <span className="font-bold text-dark">₹0</span>
+                <span className={`font-bold ${walletBalance > 0 ? 'text-primary' : 'text-dark'}`}>{formatINR(walletBalance)}</span>
               </div>
               <Link
                 href="/advertise/create"

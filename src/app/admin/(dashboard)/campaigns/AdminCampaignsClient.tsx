@@ -73,7 +73,7 @@ export function AdminCampaignsClient({ initialCampaigns }: { initialCampaigns: a
   const pendingCount = campaigns.filter((c) => c.status === 'pending').length;
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="w-full space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-heading font-bold text-xl text-dark flex items-center gap-2">
@@ -172,24 +172,40 @@ export function AdminCampaignsClient({ initialCampaigns }: { initialCampaigns: a
 
                 {/* Admin actions */}
                 <div className="space-y-2">
-                  <p className="text-[10px] font-heading font-bold text-text-muted uppercase">Update Status</p>
+                  <p className="text-[10px] font-heading font-bold text-text-muted uppercase">Admin Approval &amp; Publishing</p>
                   <div className="grid grid-cols-2 gap-2">
-                    {[
-                      { status: 'approved', label: 'Approve', cls: 'bg-blue-600 text-white hover:bg-blue-700' },
-                      { status: 'active',   label: 'Set Live', cls: 'bg-primary text-white hover:bg-primary-dark' },
-                      { status: 'rejected', label: 'Reject',  cls: 'bg-red-600 text-white hover:bg-red-700' },
-                      { status: 'completed',label: 'Complete',cls: 'bg-gray-500 text-white hover:bg-gray-600' },
-                    ].map(({ status, label, cls }) => (
-                      <button
-                        key={status}
-                        type="button"
-                        disabled={updating === selected.id}
-                        onClick={() => updateStatus(selected.id, status, status === 'active' ? 'paid' : undefined)}
-                        className={`py-2 rounded-lg text-xs font-heading font-bold transition-all ${cls} disabled:opacity-50`}
-                      >
-                        {label}
-                      </button>
-                    ))}
+                    <button
+                      type="button"
+                      disabled={updating === selected.id}
+                      onClick={() => updateStatus(selected.id, 'active', 'paid')}
+                      className="py-2.5 px-3 rounded-xl text-xs font-heading font-bold transition-all bg-primary hover:bg-primary-dark text-white shadow-sm disabled:opacity-50 flex items-center justify-center gap-1.5 col-span-2"
+                    >
+                      <CheckCircle2 size={14} /> Approve &amp; Publish Live
+                    </button>
+                    <button
+                      type="button"
+                      disabled={updating === selected.id}
+                      onClick={() => updateStatus(selected.id, 'pending', 'pending')}
+                      className="py-2 rounded-xl text-xs font-heading font-bold transition-all bg-amber-500 hover:bg-amber-600 text-white disabled:opacity-50"
+                    >
+                      Mark Pending
+                    </button>
+                    <button
+                      type="button"
+                      disabled={updating === selected.id}
+                      onClick={() => updateStatus(selected.id, 'rejected')}
+                      className="py-2 rounded-xl text-xs font-heading font-bold transition-all bg-red-600 hover:bg-red-700 text-white disabled:opacity-50"
+                    >
+                      Reject
+                    </button>
+                    <button
+                      type="button"
+                      disabled={updating === selected.id}
+                      onClick={() => updateStatus(selected.id, 'completed')}
+                      className="py-2 rounded-xl text-xs font-heading font-bold transition-all bg-gray-600 hover:bg-gray-700 text-white disabled:opacity-50 col-span-2"
+                    >
+                      Mark Completed / Expired
+                    </button>
                   </div>
                 </div>
               </div>

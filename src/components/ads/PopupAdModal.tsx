@@ -27,15 +27,20 @@ export function PopupAdModal({ initialAd, category, delayMs = 6000 }: PopupAdMod
     const fetchAd = async () => {
       try {
         const url = category
-          ? `/api/ads/active?placement=popup&category=${category}`
-          : `/api/ads/active?placement=popup`;
-        const res = await fetch(url);
+          ? `/api/ads/active?placement=popup&category=${category}&t=${Date.now()}`
+          : `/api/ads/active?placement=popup&t=${Date.now()}`;
+        const res = await fetch(url, {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' },
+        });
         const json = await res.json();
         if (json.success && json.ads && json.ads.length > 0) {
           setAd(json.ads[0]);
+        } else {
+          setAd(null);
         }
       } catch {
-        // ignore
+        setAd(null);
       }
     };
 

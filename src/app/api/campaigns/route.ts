@@ -34,7 +34,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Missing required fields' }, { status: 400 });
     }
 
-    const rows = await sql`
+    const contactSummary = `${contact_name} (${contact_email}${contact_phone ? ' / ' + contact_phone : ''})`;
+
+    // 1. Insert into campaign_requests
+    const requestRows = await sql`
       INSERT INTO campaign_requests (
         campaign_title, advertiser_name, advertiser_type,
         contact_name, contact_email, contact_phone,
@@ -48,12 +51,59 @@ export async function POST(req: NextRequest) {
         ${target_url}, ${placement}, ${duration_plan ?? 'weekly'},
         ${start_date}, ${end_date}, ${banner_image_url ?? null},
         ${base_price ?? 0}, ${gst_amount ?? 0}, ${total_amount ?? 0}, ${payment_method ?? 'upi'},
-        'pending', 'pending'
+        'paid', 'pending'
       )
       RETURNING *
     `;
 
-    return NextResponse.json({ success: true, campaign: rows[0] }, { status: 201 });
+    // 2. Also insert into advertisements table as pending (is_active = FALSE until admin approves!)
+    try {
+      await sql`
+        INSERT INTO advertisements (
+          title,
+          placement,
+          image_url,
+          target_url,
+          headline,
+          cta_text,
+          category,
+          is_active,
+          advertiser_name,
+          advertiser_contact,
+          advertiser_type,
+          budget,
+          start_date,
+          end_date,
+          status,
+          payment_status,
+          payment_method,
+          priority
+        ) VALUES (
+          ${campaign_title},
+          ${placement},
+          ${banner_image_url ?? null},
+          ${target_url},
+          ${campaign_title},
+          'Book Appointment',
+          'All',
+          FALSE,
+          ${advertiser_name},
+          ${contactSummary},
+          ${advertiser_type ?? 'hospital'},
+          ${total_amount ?? 0},
+          ${start_date},
+          ${end_date},
+          'pending',
+          'paid',
+          ${payment_method ?? 'upi'},
+          'Medium'
+        )
+      `;
+    } catch (adSyncError) {
+      console.error('Warning: could not sync campaign to advertisements table:', adSyncError);
+    }
+
+    return NextResponse.json({ success: true, campaign: requestRows[0] }, { status: 201 });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     return NextResponse.json({ success: false, error: message }, { status: 500 });
