@@ -81,4 +81,12 @@ async function main() {
   });
 }
 
-main().catch(console.error);
+main()
+  .then(() => {
+    console.log('Ingestion completed successfully.');
+    process.exit(0);
+  })
+  .catch((err) => {
+    console.error('Ingestion failed:', err);
+    process.exit(1);
+  });

@@ -20,21 +20,32 @@ import {
   Stethoscope,
   Sparkles,
   ArrowRight,
+  Home,
+  Newspaper,
+  Activity,
+  Heart,
+  Baby,
+  Brain,
+  Flame,
+  Utensils,
+  Leaf,
+  Moon,
 } from "lucide-react";
 import { DateUtilityBar } from "./DateUtilityBar";
 import { MegaMenu } from "./MegaMenu";
 
 const PRIMARY_CATEGORIES = [
-  { label: "HOME", href: "/" },
-  { label: "LATEST", href: "/latest" },
-  { label: "CANCER", href: "/category/cancer" },
-  { label: "HEART", href: "/category/heart" },
-  { label: "DIABETES", href: "/category/diabetes" },
-  { label: "WOMEN'S HEALTH", href: "/category/womens-health" },
-  { label: "PEDIATRICS", href: "/category/pediatrics" },
-  { label: "MENTAL HEALTH", href: "/category/mental-health" },
-  { label: "FITNESS", href: "/category/fitness" },
-  { label: "NUTRITION", href: "/category/nutrition" },
+  { label: "Home", href: "/", icon: Home },
+  { label: "Latest News", href: "/latest", icon: Newspaper },
+  { label: "Cancer", href: "/category/cancer", icon: Activity },
+  { label: "Heart", href: "/category/heart", icon: Heart },
+  { label: "Diabetes", href: "/category/diabetes", icon: Stethoscope },
+  { label: "Women's Health", href: "/category/womens-health", icon: Sparkles },
+  { label: "Pediatrics", href: "/category/pediatrics", icon: Baby },
+  { label: "Mental Health", href: "/category/mental-health", icon: Brain },
+  { label: "Fitness", href: "/category/fitness", icon: Flame },
+  { label: "Nutrition", href: "/category/nutrition", icon: Utensils },
+  { label: "Ayurveda", href: "/category/ayurveda", icon: Leaf },
 ];
 
 export default function Navbar() {
@@ -91,7 +102,7 @@ export default function Navbar() {
         .join("")
         .toUpperCase()
         .slice(0, 2)
-    : "U";
+    : "SA";
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,28 +112,25 @@ export default function Navbar() {
   };
 
   return (
-    <header className="w-full bg-white text-[#1A2E1A] shadow-xs sticky top-0 z-40">
-      {/* 1. Dynamic Date & Utility Bar */}
-      <DateUtilityBar />
-
-      {/* 2. Main Portal Header */}
-      <div className="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3.5">
-        <div className="flex items-center justify-between gap-3 md:gap-6">
+    <header className="w-full bg-white text-slate-900 shadow-sm sticky top-0 z-40">
+      {/* 1. Main Portal Header Row */}
+      <div className="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div className="flex items-center justify-between gap-4">
           {/* Left: Hamburger + Logo */}
           <div className="flex items-center gap-3 shrink-0">
-            {/* Hamburger Button (Mobile Drawer & Mega Menu Toggle) */}
+            {/* Hamburger Button */}
             <button
               onClick={() => setMobileDrawerOpen(!mobileDrawerOpen)}
-              className="p-2 -ml-1 text-[#1B5E20] hover:bg-[#F5FAF5] rounded-xl transition-colors focus:outline-none"
+              className="p-2 -ml-1 text-slate-800 hover:text-[#16A34A] hover:bg-slate-100 rounded-xl transition-colors focus:outline-none"
               aria-label="Toggle Navigation Menu"
             >
-              <Menu size={22} />
+              <Menu size={26} />
             </button>
 
             {/* HealthGhuru Logo + Tagline */}
             <Link href="/" className="flex flex-col group">
-              <div className="flex items-center gap-2">
-                <div className="relative w-8 h-8 sm:w-9 sm:h-9">
+              <div className="flex items-center gap-2.5">
+                <div className="relative w-11 h-11 sm:w-14 sm:h-14 shrink-0">
                   <Image
                     src="/images/logo_transparent.png"
                     alt="HealthGhuru Logo"
@@ -131,90 +139,98 @@ export default function Navbar() {
                     priority
                   />
                 </div>
-                <span className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-[#1B5E20] group-hover:text-[#2E7D32] transition-colors leading-none">
+                <span className="font-display text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-[#16A34A] group-hover:text-[#15803D] transition-colors leading-none">
                   HEALTH<span className="text-[#f06d2f]">GHURU</span>
                 </span>
               </div>
-              <span className="text-[10px] sm:text-[11px] font-heading font-semibold text-[#4A6741] tracking-wide mt-0.5 hidden xs:block">
+              <span className="text-[11px] sm:text-xs font-heading font-semibold text-emerald-800 tracking-wide mt-0.5 hidden xs:block">
                 Live Better. Feel Stronger. Every Day.
               </span>
             </Link>
           </div>
 
-          {/* Center: Header Advertisement Banner (Hospital / Healthcare Sponsor) */}
-          <div className="hidden md:flex flex-1 items-center justify-center max-w-xl xl:max-w-2xl px-2">
+          {/* Center: High-Impact Leaderboard Sponsor Banner (728x90 style) */}
+          <div className="hidden lg:flex flex-1 items-center justify-center max-w-2xl xl:max-w-3xl px-2">
             <a
-              href="/hospitals/national-cancer-research-care-centre"
-              className="w-full bg-[#F5FAF5] hover:bg-[#eaf5ea] border border-[#2E7D32]/20 rounded-xl p-2 flex items-center justify-between gap-3 group transition-all"
+              href="/hospitals/apex-heart-vascular-institute"
+              className="w-full bg-gradient-to-r from-emerald-950 via-slate-900 to-orange-950 text-white rounded-xl p-2.5 px-4 flex items-center justify-between gap-4 group transition-all shadow-sm hover:shadow-md border border-slate-700/50"
             >
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-gray-200">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0 border border-emerald-400/30">
                   <Image
-                    src="https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&w=200&q=80"
-                    alt="National Cancer Research Center"
+                    src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=200&q=80"
+                    alt="Apex Heart Institute"
                     fill
                     className="object-cover"
                     unoptimized
                   />
                 </div>
                 <div className="min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[9px] font-mono uppercase tracking-wider font-bold bg-[#1B5E20] text-white px-1 py-0.5 rounded">
-                      SPONSORED
+                  <div className="flex items-center gap-2">
+                    <span className="text-[9px] font-mono uppercase tracking-wider font-bold bg-[#f06d2f] text-white px-1.5 py-0.5 rounded">
+                      ADVERTISEMENT
                     </span>
-                    <span className="text-[11px] font-semibold text-gray-500 truncate">
-                      National Cancer Care Centre
+                    <span className="text-xs font-bold text-amber-300 truncate">
+                      Apex Heart & Vascular Institute
                     </span>
                   </div>
-                  <p className="text-xs font-heading font-bold text-[#1A2E1A] group-hover:text-[#2E7D32] truncate">
-                    Molecular Biomarker & Early Screening Panels Open
+                  <p className="text-xs font-heading font-semibold text-white group-hover:text-emerald-300 truncate mt-0.5">
+                    Comprehensive 64–Slice Cardiac CT & Preventive Lipid Screening
                   </p>
                 </div>
               </div>
-              <span className="shrink-0 bg-[#f06d2f] text-white text-[11px] font-bold px-3 py-1.5 rounded-full group-hover:brightness-110 shadow-xs hidden lg:inline-flex items-center gap-1">
-                <span>Evaluate</span>
-                <ArrowRight size={10} />
+              <span className="shrink-0 bg-gradient-to-r from-[#f06d2f] to-[#ff8a57] text-white text-xs font-bold px-3.5 py-2 rounded-lg group-hover:brightness-110 shadow-sm inline-flex items-center gap-1">
+                <span>Explore</span>
+                <ArrowRight size={12} />
               </span>
             </a>
           </div>
 
-          {/* Right: Search, Auth, Subscribe */}
+          {/* Right: Search, Dark Mode, Avatar, Subscribe, Login */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {/* Search Trigger */}
             <button
               onClick={() => setSearchOpen(!searchOpen)}
-              className="p-2 text-[#4A6741] hover:text-[#1B5E20] hover:bg-[#F5FAF5] rounded-full transition-colors"
+              className="p-2 text-slate-700 hover:text-[#f06d2f] hover:bg-slate-100 rounded-full transition-colors"
               aria-label="Search Health News"
             >
-              <Search size={19} />
+              <Search size={20} />
             </button>
 
-            {/* User Account / Login */}
+            {/* Dark Mode Indicator Icon */}
+            <button
+              className="p-2 text-slate-700 hover:text-[#f06d2f] hover:bg-slate-100 rounded-full transition-colors hidden sm:block"
+              aria-label="Toggle Theme"
+              title="Theme Toggle"
+            >
+              <Moon size={18} />
+            </button>
+
+            {/* User Profile Avatar / Dropdown */}
             {status === "loading" ? (
               <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse" />
             ) : user ? (
               <div className="relative" ref={userMenuRef}>
                 <button
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="flex items-center gap-1.5 p-1 rounded-full hover:ring-2 hover:ring-[#2E7D32]/30 transition-all"
+                  className="flex items-center gap-1.5 p-0.5 rounded-full hover:ring-2 hover:ring-[#f06d2f]/40 transition-all"
                   aria-label="User profile menu"
                 >
-                  <div className="w-8 h-8 rounded-full bg-[#1B5E20] text-white flex items-center justify-center text-xs font-bold font-heading">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#f06d2f] to-[#ea580c] text-white flex items-center justify-center text-xs font-bold font-heading shadow-xs">
                     {userInitials}
                   </div>
-                  <ChevronDown size={14} className="text-gray-500 hidden sm:block" />
                 </button>
 
                 {userDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-2xl shadow-xl py-2 z-50">
                     <div className="px-4 py-2 border-b border-gray-100">
-                      <p className="text-xs font-bold text-[#1A2E1A] truncate">{user.name}</p>
+                      <p className="text-xs font-bold text-slate-900 truncate">{user.name}</p>
                       <p className="text-[11px] text-gray-500 truncate">{user.email}</p>
                     </div>
                     {user.role === "admin" && (
                       <Link
                         href="/admin"
-                        className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-[#1B5E20] hover:bg-[#F5FAF5]"
+                        className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-[#16A34A] hover:bg-emerald-50"
                       >
                         <LayoutDashboard size={14} />
                         <span>Admin News CMS</span>
@@ -222,14 +238,14 @@ export default function Navbar() {
                     )}
                     <Link
                       href="/profile"
-                      className="flex items-center gap-2 px-4 py-2 text-xs text-gray-700 hover:bg-[#F5FAF5]"
+                      className="flex items-center gap-2 px-4 py-2 text-xs text-gray-700 hover:bg-emerald-50"
                     >
                       <User size={14} />
                       <span>My Profile</span>
                     </Link>
                     <Link
                       href="/profile#saved"
-                      className="flex items-center gap-2 px-4 py-2 text-xs text-gray-700 hover:bg-[#F5FAF5]"
+                      className="flex items-center gap-2 px-4 py-2 text-xs text-gray-700 hover:bg-emerald-50"
                     >
                       <Bookmark size={14} />
                       <span>Saved Articles</span>
@@ -245,21 +261,36 @@ export default function Navbar() {
                 )}
               </div>
             ) : (
-              <Link
-                href="/login"
-                className="text-xs font-heading font-bold text-[#1B5E20] hover:text-[#2E7D32] px-2.5 py-1.5 rounded-lg transition-colors hidden sm:block"
-              >
-                Login
-              </Link>
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#f06d2f] to-[#ea580c] text-white flex items-center justify-center text-xs font-bold font-heading shadow-xs hidden sm:flex">
+                SA
+              </div>
             )}
+
+            {/* Start Advertising Button */}
+            <Link
+              href="/advertise"
+              className="bg-[#f06d2f] hover:bg-[#e05a1b] text-white text-xs sm:text-sm font-heading font-bold px-3.5 sm:px-4 py-2 rounded-lg shadow-xs hover:shadow transition-all inline-flex items-center gap-1"
+            >
+              <span>Advertise With Us</span>
+            </Link>
 
             {/* Subscribe Button */}
             <Link
               href="/subscribe"
-              className="inline-flex items-center gap-1.5 bg-gradient-to-r from-[#f06d2f] to-[#ff8a57] hover:brightness-110 text-white text-xs font-heading font-bold px-3.5 sm:px-4 py-2 rounded-full shadow-sm hover:shadow transition-all"
+              className="bg-[#16A34A] hover:bg-[#15803D] text-white text-xs sm:text-sm font-heading font-bold px-3.5 sm:px-4 py-2 rounded-lg shadow-xs hover:shadow transition-all hidden sm:inline-flex items-center"
             >
-              <span>Subscribe</span>
+              Subscribe
             </Link>
+
+            {/* Login Button */}
+            {!user && (
+              <Link
+                href="/login"
+                className="bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-heading font-bold px-3.5 sm:px-4 py-2 rounded-lg shadow-xs hover:shadow transition-all hidden sm:inline-flex items-center"
+              >
+                Login
+              </Link>
+            )}
           </div>
         </div>
 
@@ -279,13 +310,13 @@ export default function Navbar() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search health news, clinical research, doctors, hospitals, treatments..."
-                className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-[#2E7D32]/30 focus:border-[#2E7D32] focus:ring-1 focus:ring-[#2E7D32] outline-none"
+                className="w-full pl-9 pr-4 py-2.5 text-xs sm:text-sm rounded-xl border border-emerald-500/30 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none"
                 autoFocus
               />
             </div>
             <button
               type="submit"
-              className="bg-[#1B5E20] text-white text-xs font-bold px-4 py-2 rounded-xl hover:bg-[#2E7D32] transition-colors"
+              className="bg-[#16A34A] text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-xl hover:bg-[#15803D] transition-colors"
             >
               Search
             </button>
@@ -293,13 +324,14 @@ export default function Navbar() {
         )}
       </div>
 
-      {/* 3. Main Category Navigation (News Portal Category Bar) */}
-      <nav className="w-full bg-[#1B5E20] text-white border-t border-b border-[#144718] relative shadow-inner">
-        <div className="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            {/* Category Links List */}
-            <div className="flex items-center overflow-x-auto scrollbar-none py-0.5 text-xs font-heading font-bold tracking-wider">
+      {/* 2. Main Category Navigation (Clean White Theme with Equal Spacing & Crisp Icons) */}
+      <nav className="w-full bg-white text-slate-800 border-t border-b border-gray-200/90 relative shadow-2xs">
+        <div className="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-2 sm:px-4 lg:px-6">
+          <div className="flex items-center w-full">
+            {/* Category Links List with Icons & Equal Spacing */}
+            <div className="flex items-center justify-between w-full overflow-x-auto scrollbar-none text-xs sm:text-sm lg:text-[14.5px] font-heading font-bold tracking-wide">
               {PRIMARY_CATEGORIES.map((cat) => {
+                const IconComponent = cat.icon;
                 const isActive =
                   cat.href === "/"
                     ? pathname === "/"
@@ -309,13 +341,14 @@ export default function Navbar() {
                   <Link
                     key={cat.label}
                     href={cat.href}
-                    className={`whitespace-nowrap px-3 sm:px-4 py-2.5 border-b-2 transition-all duration-150 ${
+                    className={`flex-1 min-w-fit whitespace-nowrap px-2.5 sm:px-3 lg:px-4 py-4 sm:py-5 flex items-center justify-center gap-1.5 transition-all duration-150 relative text-center group ${
                       isActive
-                        ? "border-[#f06d2f] text-white bg-white/10"
-                        : "border-transparent text-emerald-100/90 hover:text-white hover:bg-white/5 hover:border-white/40"
+                        ? "text-[#16A34A] bg-emerald-50/90 font-black after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[3.5px] after:bg-[#16A34A] shadow-2xs"
+                        : "text-slate-700 hover:text-[#16A34A] hover:bg-emerald-50/50"
                     }`}
                   >
-                    {cat.label}
+                    <IconComponent size={16} className={`shrink-0 transition-colors ${isActive ? "text-[#16A34A]" : "text-slate-500 group-hover:text-[#16A34A]"}`} />
+                    <span>{cat.label}</span>
                   </Link>
                 );
               })}
@@ -323,27 +356,21 @@ export default function Navbar() {
               {/* "MORE ▼" Mega Menu Trigger */}
               <button
                 onClick={() => setMegaMenuOpen(!megaMenuOpen)}
-                className={`flex items-center gap-1 whitespace-nowrap px-3 sm:px-4 py-2.5 border-b-2 transition-all font-heading font-bold text-xs uppercase tracking-wider ${
+                className={`flex-1 min-w-fit whitespace-nowrap px-2.5 sm:px-3 lg:px-4 py-4 sm:py-5 flex items-center justify-center gap-1.5 transition-all font-heading font-bold text-xs sm:text-sm lg:text-[14.5px] uppercase tracking-wider relative text-center group ${
                   megaMenuOpen
-                    ? "border-[#f06d2f] text-[#ffd6c1] bg-white/15"
-                    : "border-transparent text-emerald-100 hover:text-white hover:bg-white/5"
+                    ? "text-[#16A34A] bg-emerald-50/90 font-black after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[3.5px] after:bg-[#16A34A]"
+                    : "text-slate-700 hover:text-[#16A34A] hover:bg-emerald-50/50"
                 }`}
                 aria-expanded={megaMenuOpen}
               >
                 <span>MORE</span>
                 <ChevronDown
-                  size={13}
+                  size={15}
                   className={`transition-transform duration-200 ${
-                    megaMenuOpen ? "rotate-180" : ""
+                    megaMenuOpen ? "rotate-180 text-[#16A34A]" : "text-slate-500 group-hover:text-[#16A34A]"
                   }`}
                 />
               </button>
-            </div>
-
-            {/* Quick Live Breaking Tag on desktop right */}
-            <div className="hidden xl:flex items-center gap-2 pl-4 py-1 shrink-0 text-[11px] font-mono text-emerald-200">
-              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-              <span>LIVE EDITIONS</span>
             </div>
           </div>
         </div>
@@ -364,8 +391,8 @@ export default function Navbar() {
           {/* Drawer Content */}
           <div className="relative w-full max-w-sm bg-white h-full overflow-y-auto z-10 shadow-2xl flex flex-col p-6">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-              <div className="flex items-center gap-2">
-                <div className="relative w-7 h-7">
+              <div className="flex items-center gap-2.5">
+                <div className="relative w-9 h-9 shrink-0">
                   <Image
                     src="/images/logo_transparent.png"
                     alt="HealthGhuru"
@@ -373,7 +400,7 @@ export default function Navbar() {
                     className="object-contain"
                   />
                 </div>
-                <span className="font-display font-bold text-xl text-[#1B5E20]">
+                <span className="font-display font-black text-2xl text-[#16A34A]">
                   HEALTH<span className="text-[#f06d2f]">GHURU</span>
                 </span>
               </div>
@@ -397,7 +424,7 @@ export default function Navbar() {
                       key={cat.label}
                       href={cat.href}
                       onClick={() => setMobileDrawerOpen(false)}
-                      className="p-2 rounded-lg hover:bg-[#F5FAF5] text-[#1B5E20]"
+                      className="p-2 rounded-lg hover:bg-emerald-50 text-[#16A34A]"
                     >
                       {cat.label}
                     </Link>
@@ -414,23 +441,23 @@ export default function Navbar() {
                   <Link
                     href="/doctors"
                     onClick={() => setMobileDrawerOpen(false)}
-                    className="flex items-center gap-2 p-2 rounded-lg text-gray-700 hover:bg-[#F5FAF5]"
+                    className="flex items-center gap-2 p-2 rounded-lg text-gray-700 hover:bg-emerald-50"
                   >
-                    <Stethoscope size={15} className="text-[#2E7D32]" />
+                    <Stethoscope size={15} className="text-[#16A34A]" />
                     <span>Doctor Directory</span>
                   </Link>
                   <Link
                     href="/hospitals"
                     onClick={() => setMobileDrawerOpen(false)}
-                    className="flex items-center gap-2 p-2 rounded-lg text-gray-700 hover:bg-[#F5FAF5]"
+                    className="flex items-center gap-2 p-2 rounded-lg text-gray-700 hover:bg-emerald-50"
                   >
-                    <Building2 size={15} className="text-[#2E7D32]" />
+                    <Building2 size={15} className="text-[#16A34A]" />
                     <span>Hospitals & Facilities</span>
                   </Link>
                   <Link
                     href="/research"
                     onClick={() => setMobileDrawerOpen(false)}
-                    className="flex items-center gap-2 p-2 rounded-lg text-gray-700 hover:bg-[#F5FAF5]"
+                    className="flex items-center gap-2 p-2 rounded-lg text-gray-700 hover:bg-emerald-50"
                   >
                     <Sparkles size={15} className="text-[#f06d2f]" />
                     <span>Medical Research Feed</span>
@@ -438,17 +465,17 @@ export default function Navbar() {
                   <Link
                     href="/tools"
                     onClick={() => setMobileDrawerOpen(false)}
-                    className="flex items-center gap-2 p-2 rounded-lg text-gray-700 hover:bg-[#F5FAF5]"
+                    className="flex items-center gap-2 p-2 rounded-lg text-gray-700 hover:bg-emerald-50"
                   >
-                    <Sparkles size={15} className="text-[#2E7D32]" />
+                    <Sparkles size={15} className="text-[#16A34A]" />
                     <span>Health Calculators (BMI, BMR)</span>
                   </Link>
                   <Link
                     href="/magazines"
                     onClick={() => setMobileDrawerOpen(false)}
-                    className="flex items-center gap-2 p-2 rounded-lg text-gray-700 hover:bg-[#F5FAF5]"
+                    className="flex items-center gap-2 p-2 rounded-lg text-gray-700 hover:bg-emerald-50"
                   >
-                    <ShieldCheck size={15} className="text-[#2E7D32]" />
+                    <ShieldCheck size={15} className="text-[#16A34A]" />
                     <span>Health Magazines</span>
                   </Link>
                   <Link
@@ -478,7 +505,7 @@ export default function Navbar() {
                 <Link
                   href="/login"
                   onClick={() => setMobileDrawerOpen(false)}
-                  className="block w-full py-2.5 text-center text-xs font-bold text-white bg-[#1B5E20] hover:bg-[#2E7D32] rounded-xl"
+                  className="block w-full py-2.5 text-center text-xs font-bold text-white bg-[#16A34A] hover:bg-[#15803D] rounded-xl"
                 >
                   Sign In to HealthGhuru
                 </Link>

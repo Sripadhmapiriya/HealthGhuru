@@ -270,6 +270,7 @@ export function AdvertisementsClient({ initialAds }: AdvertisementsClientProps) 
               <thead>
                 <tr className="bg-surface/50 border-b border-border text-[11px] font-heading font-semibold text-text-secondary uppercase tracking-wider">
                   <th className="py-3.5 px-6">Campaign & Creative</th>
+                  <th className="py-3.5 px-4">Hospital / Doctor</th>
                   <th className="py-3.5 px-4">Placement</th>
                   <th className="py-3.5 px-4">Category</th>
                   <th className="py-3.5 px-4">Target Link</th>
@@ -322,6 +323,22 @@ export function AdvertisementsClient({ initialAds }: AdvertisementsClientProps) 
                             )}
                           </div>
                         </div>
+                      </td>
+
+                      {/* Hospital / Doctor Advertiser */}
+                      <td className="py-4 px-4 whitespace-nowrap">
+                        {ad.advertiser_name ? (
+                          <div>
+                            <span className="font-heading font-semibold text-xs text-dark block line-clamp-1">
+                              {ad.advertiser_name}
+                            </span>
+                            {ad.advertiser_type && (
+                              <span className="text-[10px] text-text-secondary capitalize">{ad.advertiser_type}</span>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-[11px] text-text-muted">—</span>
+                        )}
                       </td>
 
                       {/* Placement */}

@@ -5,32 +5,32 @@
 :root {
   /* Design Tokens */
   /* Brand Greens */
-  --color-primary:        #2E7D32;
-  --color-primary-light:  #4CAF50;
-  --color-secondary:      #66BB6A;
-  --color-primary-dark:   #1B5E20;
+  --color-primary:        #16A34A;
+  --color-primary-light:  #22C55E;
+  --color-secondary:      #4ADE80;
+  --color-primary-dark:   #15803D;
 
   /* Accent */
   --color-accent:         #f06d2f;
   --color-accent-light:   #ffd6c1;
 
   /* Surfaces */
-  --color-surface:        #F5FAF5;
-  --color-surface-alt:    #EBF5EB;
+  --color-surface:        #F8FAFC;
+  --color-surface-alt:    #F1F5F9;
   --color-white:          #FFFFFF;
 
   /* Dark */
-  --color-dark:           #1A2E1A;
-  --color-dark-80:        rgba(26,46,26,0.8);
+  --color-dark:           #0F172A;
+  --color-dark-80:        rgba(15,23,42,0.8);
 
   /* Text */
-  --color-text-primary:   #1A2E1A;
-  --color-text-secondary: #4A6741;
-  --color-text-muted:     #78909C;
+  --color-text-primary:   #0F172A;
+  --color-text-secondary: #334155;
+  --color-text-muted:     #64748B;
 
   /* Borders */
-  --color-border:         rgba(46,125,50,0.15);
-  --color-border-strong:  rgba(46,125,50,0.30);
+  --color-border:         rgba(22,163,74,0.15);
+  --color-border-strong:  rgba(22,163,74,0.30);
 
   /* Scale */
   --text-hero:    clamp(2.5rem, 5vw, 4rem);
@@ -42,39 +42,40 @@
   --text-xs:      0.75rem;
 
   /* Component Tokens */
-  --btn-primary-bg:     linear-gradient(135deg, #2E7D32 0%, #66BB6A 100%);
-  --btn-primary-shadow: 0 4px 0 #1B5E20;
+  --btn-primary-bg:     linear-gradient(135deg, #16A34A 0%, #22C55E 100%);
+  --btn-primary-shadow: 0 4px 0 #15803D;
   --btn-accent-bg:      linear-gradient(135deg, #f06d2f 0%, #ff8a57 100%);
   --btn-accent-shadow:  0 4px 0 #b24920;
   --btn-radius:         9999px;
   --card-radius:        14px;
-  --card-shadow:        0 4px 24px rgba(46,125,50,0.08);
-  --card-shadow-hover:  0 12px 40px rgba(46,125,50,0.18);
+  --card-shadow:        0 4px 24px rgba(22,163,74,0.06);
+  --card-shadow-hover:  0 12px 40px rgba(22,163,74,0.12);
   --section-py:         clamp(4rem, 8vw, 7rem);
 
   /* Gradients */
-  --gradient-primary:   linear-gradient(135deg, #2E7D32 0%, #66BB6A 100%);
-  --gradient-hero:      linear-gradient(135deg, #1B5E20 0%, #2E7D32 60%, #388E3C 100%);
-  --gradient-dark:      linear-gradient(180deg, #1A2E1A 0%, #0D1F0D 100%);
-  --gradient-surface:   linear-gradient(180deg, #F5FAF5 0%, #EBF5EB 100%);
+  --gradient-primary:   linear-gradient(135deg, #16A34A 0%, #22C55E 100%);
+  --gradient-hero:      linear-gradient(135deg, #15803D 0%, #16A34A 60%, #22C55E 100%);
+  --gradient-brand:     linear-gradient(90deg, #15803D 0%, #16A34A 35%, #059669 65%, #ea580c 100%);
+  --gradient-dark:      linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
+  --gradient-surface:   linear-gradient(180deg, #F0FDF4 0%, #FFFFFF 12%, #F8FAFC 85%, #FFF7ED 100%);
   --gradient-accent:    linear-gradient(135deg, #f06d2f 0%, #ff8a57 100%);
 
   /* Dashboard - Sidebar */
   --sidebar-width:        260px;
   --sidebar-collapsed:    72px;
-  --sidebar-bg:           #1A2E1A;
+  --sidebar-bg:           #0F172A;
 
   /* Dashboard - Chart colors */
-  --chart-nutrition:      #4CAF50;
-  --chart-sleep:          #7C4DFF;
+  --chart-nutrition:      #22C55E;
+  --chart-sleep:          #8B5CF6;
   --chart-fitness:        #f06d2f;
-  --chart-mood:           #FF6B6B;
-  --chart-water:          #29B6F6;
+  --chart-mood:           #EC4899;
+  --chart-water:          #06B6D4;
 
   /* Dashboard - Status colors */
-  --status-good:          #4CAF50;
+  --status-good:          #22C55E;
   --status-warning:       #f06d2f;
-  --status-danger:        #EF5350;
+  --status-danger:        #EF4444;
 }
 
 @layer base {
@@ -88,8 +89,11 @@
   }
 
   body {
-    @apply font-body text-text-primary bg-surface;
-    background-color: var(--color-surface);
+    @apply font-body text-text-primary;
+    background: linear-gradient(180deg, #EDF8F1 0%, #F4FAF6 35%, #EAF6EF 75%, #F0FDF4 100%);
+    background-color: #F2FAF5;
+    background-attachment: fixed;
+    min-height: 100vh;
   }
 
   h1, h2 {

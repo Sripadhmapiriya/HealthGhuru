@@ -2,7 +2,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
-import { X, Upload, ExternalLink, Image as ImageIcon, Sparkles, Check, AlertCircle } from 'lucide-react';
+import { X, Upload, ExternalLink, Sparkles, Check, AlertCircle, Hospital, Phone, Wallet, Calendar } from 'lucide-react';
 import { Advertisement, AdPlacement } from '@/lib/types/advertisement';
 import Image from 'next/image';
 
@@ -22,18 +22,16 @@ const PLACEMENTS: { id: AdPlacement; label: string; desc: string; size: string }
 ];
 
 const HEALTH_CATEGORIES = [
-  'All',
-  'Nutrition',
-  'Fitness',
-  'Mental Health',
-  'Wellness',
-  'Medicine',
-  'Sleep',
-  'Heart Health',
-  'Ayurveda',
-  'Medical Research',
-  'Skin Care',
-  'Immunity',
+  'All', 'Cardiology', 'Orthopedics', 'Neurology', 'Oncology', 'Pediatrics',
+  'Dermatology', 'Nutrition', 'Mental Health', 'Ayurveda', 'Fitness', 'Wellness',
+  'Gynecology', 'Ophthalmology', 'Dentistry', 'General Medicine',
+];
+
+const ADVERTISER_TYPES = [
+  { value: 'hospital', label: '🏥 Hospital' },
+  { value: 'doctor', label: '👨‍⚕️ Doctor / Specialist' },
+  { value: 'clinic', label: '🏪 Clinic' },
+  { value: 'pharmacy', label: '💊 Pharmacy' },
 ];
 
 export function AdFormModal({ isOpen, onClose, adToEdit, onSaved }: AdFormModalProps) {
@@ -44,10 +42,17 @@ export function AdFormModal({ isOpen, onClose, adToEdit, onSaved }: AdFormModalP
     target_url: 'https://',
     headline: '',
     description: '',
-    cta_text: 'Learn More',
+    cta_text: 'Book Appointment',
     category: 'All',
     html_code: '',
     is_active: true,
+    // Hospital advertiser fields
+    advertiser_name: '',
+    advertiser_contact: '',
+    advertiser_type: 'hospital',
+    budget: '',
+    start_date: '',
+    end_date: '',
   });
 
   const [uploading, setUploading] = useState(false);
@@ -63,10 +68,16 @@ export function AdFormModal({ isOpen, onClose, adToEdit, onSaved }: AdFormModalP
         target_url: adToEdit.target_url || 'https://',
         headline: adToEdit.headline || '',
         description: adToEdit.description || '',
-        cta_text: adToEdit.cta_text || 'Learn More',
+        cta_text: adToEdit.cta_text || 'Book Appointment',
         category: adToEdit.category || 'All',
         html_code: adToEdit.html_code || '',
         is_active: adToEdit.is_active ?? true,
+        advertiser_name: adToEdit.advertiser_name || '',
+        advertiser_contact: adToEdit.advertiser_contact || '',
+        advertiser_type: adToEdit.advertiser_type || 'hospital',
+        budget: adToEdit.budget?.toString() || '',
+        start_date: adToEdit.start_date ? adToEdit.start_date.split('T')[0] : '',
+        end_date: adToEdit.end_date ? adToEdit.end_date.split('T')[0] : '',
       });
     } else {
       setFormData({
@@ -76,10 +87,16 @@ export function AdFormModal({ isOpen, onClose, adToEdit, onSaved }: AdFormModalP
         target_url: 'https://',
         headline: '',
         description: '',
-        cta_text: 'Learn More',
+        cta_text: 'Book Appointment',
         category: 'All',
         html_code: '',
         is_active: true,
+        advertiser_name: '',
+        advertiser_contact: '',
+        advertiser_type: 'hospital',
+        budget: '',
+        start_date: '',
+        end_date: '',
       });
     }
     setError(null);
@@ -122,6 +139,10 @@ export function AdFormModal({ isOpen, onClose, adToEdit, onSaved }: AdFormModalP
       setError('Campaign title is required');
       return;
     }
+    if (!formData.advertiser_name.trim()) {
+      setError('Hospital / Doctor name is required');
+      return;
+    }
 
     setLoading(true);
     setError(null);
@@ -132,10 +153,17 @@ export function AdFormModal({ isOpen, onClose, adToEdit, onSaved }: AdFormModalP
         : `/api/admin/advertisements`;
       const method = adToEdit ? 'PUT' : 'POST';
 
+      const payload = {
+        ...formData,
+        budget: formData.budget ? parseFloat(formData.budget) : null,
+        start_date: formData.start_date || null,
+        end_date: formData.end_date || null,
+      };
+
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       const json = await res.json();
@@ -162,7 +190,7 @@ export function AdFormModal({ isOpen, onClose, adToEdit, onSaved }: AdFormModalP
               {adToEdit ? 'Edit Advertisement Campaign' : 'Create New Advertisement'}
             </h2>
             <p className="text-xs text-text-secondary mt-0.5">
-              Configure placement slot, targeting, image banner creative, and click destination.
+              For hospitals, doctors, clinics & pharmacies — configure placement, creative, and campaign schedule.
             </p>
           </div>
           <button
@@ -183,7 +211,100 @@ export function AdFormModal({ isOpen, onClose, adToEdit, onSaved }: AdFormModalP
 
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-6 flex-1">
-          {/* Placement Selection */}
+
+          {/* ── SECTION 1: Hospital / Doctor Advertiser Info ── */}
+          <div className="space-y-3 p-4 bg-blue-50/50 rounded-xl border border-blue-200">
+            <span className="text-xs font-heading font-bold text-blue-800 flex items-center gap-1.5">
+              <Hospital size={14} className="text-blue-700" /> Hospital / Doctor Advertiser Details
+            </span>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="block text-[11px] font-heading font-semibold text-dark">
+                  Advertiser Name * <span className="text-text-secondary font-normal">(Hospital / Doctor)</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.advertiser_name}
+                  onChange={(e) => setFormData({ ...formData, advertiser_name: e.target.value })}
+                  placeholder="e.g. Apollo Hospitals, Dr. Ramesh Kumar"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-[11px] font-heading font-semibold text-dark">
+                  Advertiser Type *
+                </label>
+                <select
+                  value={formData.advertiser_type}
+                  onChange={(e) => setFormData({ ...formData, advertiser_type: e.target.value })}
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-white"
+                >
+                  {ADVERTISER_TYPES.map((t) => (
+                    <option key={t.value} value={t.value}>{t.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-[11px] font-heading font-semibold text-dark flex items-center gap-1">
+                  <Phone size={11} /> Contact Number / Email
+                </label>
+                <input
+                  type="text"
+                  value={formData.advertiser_contact}
+                  onChange={(e) => setFormData({ ...formData, advertiser_contact: e.target.value })}
+                  placeholder="+91 98765 43210 or admin@hospital.com"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-[11px] font-heading font-semibold text-dark flex items-center gap-1">
+                  <Wallet size={11} /> Campaign Budget (₹)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="100"
+                  value={formData.budget}
+                  onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
+                  placeholder="e.g. 10000"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Campaign Dates */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="block text-[11px] font-heading font-semibold text-dark flex items-center gap-1">
+                  <Calendar size={11} /> Start Date
+                </label>
+                <input
+                  type="date"
+                  value={formData.start_date}
+                  onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="block text-[11px] font-heading font-semibold text-dark flex items-center gap-1">
+                  <Calendar size={11} /> End Date
+                </label>
+                <input
+                  type="date"
+                  value={formData.end_date}
+                  onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* ── SECTION 2: Placement Selection ── */}
           <div className="space-y-2">
             <label className="block text-xs font-heading font-semibold text-dark uppercase tracking-wider">
               Ad Placement Slot *
@@ -216,7 +337,7 @@ export function AdFormModal({ isOpen, onClose, adToEdit, onSaved }: AdFormModalP
             </div>
           </div>
 
-          {/* Campaign Title & Target Category */}
+          {/* ── SECTION 3: Campaign Title & Target Category ── */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="sm:col-span-2 space-y-1.5">
               <label className="block text-xs font-heading font-semibold text-dark">
@@ -227,14 +348,14 @@ export function AdFormModal({ isOpen, onClose, adToEdit, onSaved }: AdFormModalP
                 required
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder="e.g. LivePure Organic Protein - Summer Promo"
+                placeholder="e.g. Apollo Heart Surgery — Summer 2025"
                 className="w-full px-3.5 py-2 text-sm rounded-lg border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
               />
             </div>
 
             <div className="space-y-1.5">
               <label className="block text-xs font-heading font-semibold text-dark">
-                Target Category
+                Health Category
               </label>
               <select
                 value={formData.category}
@@ -242,19 +363,17 @@ export function AdFormModal({ isOpen, onClose, adToEdit, onSaved }: AdFormModalP
                 className="w-full px-3.5 py-2 text-sm rounded-lg border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-white transition-all"
               >
                 {HEALTH_CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
+                  <option key={cat} value={cat}>{cat}</option>
                 ))}
               </select>
             </div>
           </div>
 
-          {/* Target Destination Link */}
+          {/* ── SECTION 4: Target URL ── */}
           <div className="space-y-1.5">
             <label className="block text-xs font-heading font-semibold text-dark flex items-center justify-between">
               <span>Target Click Destination URL *</span>
-              <span className="text-[11px] text-text-secondary font-normal">Where user lands upon click</span>
+              <span className="text-[11px] text-text-secondary font-normal">Where user lands upon click (appointment page, hospital website)</span>
             </label>
             <div className="relative">
               <input
@@ -262,14 +381,14 @@ export function AdFormModal({ isOpen, onClose, adToEdit, onSaved }: AdFormModalP
                 required
                 value={formData.target_url}
                 onChange={(e) => setFormData({ ...formData, target_url: e.target.value })}
-                placeholder="https://brand.com/offer or /stay-healthy"
+                placeholder="https://apollohospitals.com/book-appointment"
                 className="w-full pl-9 pr-3.5 py-2 text-sm rounded-lg border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
               />
               <ExternalLink size={15} className="absolute left-3 top-3 text-text-secondary" />
             </div>
           </div>
 
-          {/* Banner Creative Image / Upload */}
+          {/* ── SECTION 5: Banner Creative ── */}
           <div className="space-y-3 p-4 bg-surface/60 rounded-xl border border-border">
             <div className="flex items-center justify-between">
               <label className="block text-xs font-heading font-semibold text-dark">
@@ -278,11 +397,10 @@ export function AdFormModal({ isOpen, onClose, adToEdit, onSaved }: AdFormModalP
               <span className="text-[11px] text-text-secondary">Upload file or enter image URL</span>
             </div>
 
-            {/* Direct Upload Dropzone */}
             <div className="flex flex-col sm:flex-row items-center gap-3">
               <label className="w-full sm:w-auto cursor-pointer bg-primary/10 hover:bg-primary/20 text-primary border-2 border-dashed border-primary/40 hover:border-primary px-5 py-3 rounded-xl text-xs font-heading font-semibold flex items-center justify-center gap-2 transition-all shadow-sm shrink-0">
                 <Upload size={16} className={uploading ? 'animate-bounce text-primary' : 'text-primary'} />
-                <span>{uploading ? 'Uploading image...' : 'Choose Banner Image File'}</span>
+                <span>{uploading ? 'Uploading...' : 'Choose Banner File'}</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -297,18 +415,15 @@ export function AdFormModal({ isOpen, onClose, adToEdit, onSaved }: AdFormModalP
                   type="text"
                   value={formData.image_url}
                   onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                  placeholder="Or paste image URL (https://images.unsplash.com/...)"
+                  placeholder="Or paste image URL (https://...)"
                   className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-white transition-all font-mono"
                 />
               </div>
             </div>
 
-            {/* Live Creative Image Preview */}
             {formData.image_url && (
               <div className="mt-2 space-y-1.5">
-                <span className="text-[11px] font-heading font-semibold text-text-secondary block">
-                  Creative Preview:
-                </span>
+                <span className="text-[11px] font-heading font-semibold text-text-secondary block">Creative Preview:</span>
                 <div className="relative w-full h-40 sm:h-44 rounded-xl overflow-hidden border-2 border-primary/20 bg-dark/5 shadow-md">
                   <Image
                     src={formData.image_url}
@@ -331,10 +446,10 @@ export function AdFormModal({ isOpen, onClose, adToEdit, onSaved }: AdFormModalP
             )}
           </div>
 
-          {/* Rich Content & Popups (Headline, Description, CTA) */}
+          {/* ── SECTION 6: Rich Content (Headline, CTA, Description) ── */}
           <div className="space-y-3 p-4 bg-surface/30 rounded-xl border border-border">
             <span className="text-xs font-heading font-bold text-dark flex items-center gap-1.5">
-              <Sparkles size={14} className="text-primary" /> Rich Text & Call to Action (For Hero, Sidebar, Footer & Popups)
+              <Sparkles size={14} className="text-primary" /> Ad Copy & Call to Action
             </span>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -346,7 +461,7 @@ export function AdFormModal({ isOpen, onClose, adToEdit, onSaved }: AdFormModalP
                   type="text"
                   value={formData.headline}
                   onChange={(e) => setFormData({ ...formData, headline: e.target.value })}
-                  placeholder="e.g. Save 25% on Clean Organic Supergreens"
+                  placeholder="e.g. World-Class Cardiac Care at Apollo"
                   className="w-full px-3 py-1.5 text-xs rounded-lg border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-white"
                 />
               </div>
@@ -359,7 +474,7 @@ export function AdFormModal({ isOpen, onClose, adToEdit, onSaved }: AdFormModalP
                   type="text"
                   value={formData.cta_text}
                   onChange={(e) => setFormData({ ...formData, cta_text: e.target.value })}
-                  placeholder="e.g. Claim Offer, Shop Now, Get Free Guide"
+                  placeholder="Book Appointment, Learn More, Call Now"
                   className="w-full px-3 py-1.5 text-xs rounded-lg border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-white"
                 />
               </div>
@@ -373,17 +488,17 @@ export function AdFormModal({ isOpen, onClose, adToEdit, onSaved }: AdFormModalP
                 rows={2}
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Doctor-formulated organic plant protein and daily vital minerals with zero artificial additives."
+                placeholder="NABH-accredited hospital with 25+ years of cardiac excellence. 24/7 emergency care available."
                 className="w-full px-3 py-1.5 text-xs rounded-lg border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-white"
               />
             </div>
           </div>
 
-          {/* Optional HTML/AdSense Embed Code */}
+          {/* ── SECTION 7: Custom HTML (Optional) ── */}
           <div className="space-y-1.5">
             <label className="block text-xs font-heading font-semibold text-text-secondary flex items-center justify-between">
-              <span>Custom HTML / AdSense Script (Optional)</span>
-              <span className="text-[10px] text-text-muted">Use if serving Google AdSense or HTML iframe ads</span>
+              <span>Custom HTML / Embed Code (Optional)</span>
+              <span className="text-[10px] text-text-muted">Use for Google AdSense or iframe ads</span>
             </label>
             <textarea
               rows={2}
@@ -394,7 +509,7 @@ export function AdFormModal({ isOpen, onClose, adToEdit, onSaved }: AdFormModalP
             />
           </div>
 
-          {/* Active Status Switch */}
+          {/* ── SECTION 8: Active Status ── */}
           <div className="flex items-center justify-between p-3 bg-surface rounded-xl border border-border">
             <div>
               <span className="font-heading font-semibold text-xs text-dark block">Campaign Active Status</span>
