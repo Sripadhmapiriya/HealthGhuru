@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Mastering Nutrient Timing</title>
+  <desc id="desc">Nutrition article cover</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#18463f"/>
+      <stop offset="100%" stop-color="#66bb6a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <rect x="0" y="500" width="1200" height="175" fill="#ffffff" fill-opacity="0.08"/>
+  <rect x="72" y="80" width="280" height="42" rx="21" fill="#ffffff" fill-opacity="0.16"/>
+  <text x="102" y="108" fill="#ffffff" font-size="24" font-family="Arial, sans-serif" font-weight="700">NUTRITION</text>
+  <text x="72" y="284" fill="#ffffff" font-size="58" font-family="Arial, sans-serif" font-weight="700">Mastering Nutrient</text>
+  <text x="72" y="350" fill="#ffffff" font-size="58" font-family="Arial, sans-serif" font-weight="700">Timing</text>
+  <text x="72" y="420" fill="#e8fff0" font-size="30" font-family="Arial, sans-serif">Optimize your diet for peak performance</text>
+</svg>

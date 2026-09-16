@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Hydration Myths Debunked</title>
+  <desc id="desc">Nutrition article cover</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#145374"/>
+      <stop offset="100%" stop-color="#2e7d32"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <ellipse cx="940" cy="320" rx="240" ry="180" fill="#ffffff" fill-opacity="0.12"/>
+  <rect x="72" y="80" width="280" height="42" rx="21" fill="#ffffff" fill-opacity="0.16"/>
+  <text x="102" y="108" fill="#ffffff" font-size="24" font-family="Arial, sans-serif" font-weight="700">NUTRITION</text>
+  <text x="72" y="284" fill="#ffffff" font-size="58" font-family="Arial, sans-serif" font-weight="700">Hydration Myths</text>
+  <text x="72" y="350" fill="#ffffff" font-size="58" font-family="Arial, sans-serif" font-weight="700">Debunked</text>
+  <text x="72" y="420" fill="#dff6ff" font-size="30" font-family="Arial, sans-serif">How much water do you really need?</text>
+</svg>

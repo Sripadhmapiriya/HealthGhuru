@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Sleep Quality Guide</title>
+  <desc id="desc">Sleep article cover</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#132238"/>
+      <stop offset="100%" stop-color="#2e7d32"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <circle cx="1000" cy="130" r="95" fill="#f06d2f" opacity="0.35"/>
+  <circle cx="1040" cy="115" r="85" fill="#132238"/>
+  <rect x="72" y="80" width="220" height="42" rx="21" fill="#ffffff" fill-opacity="0.16"/>
+  <text x="102" y="108" fill="#ffffff" font-size="24" font-family="Arial, sans-serif" font-weight="700">SLEEP</text>
+  <text x="72" y="288" fill="#ffffff" font-size="58" font-family="Arial, sans-serif" font-weight="700">Sleep Quality</text>
+  <text x="72" y="356" fill="#ffffff" font-size="58" font-family="Arial, sans-serif" font-weight="700">Matters Most</text>
+  <text x="72" y="430" fill="#d4e8ff" font-size="30" font-family="Arial, sans-serif">Better rest beats longer restless nights</text>
+</svg>

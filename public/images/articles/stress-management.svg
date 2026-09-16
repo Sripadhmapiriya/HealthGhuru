@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Stress Management</title>
+  <desc id="desc">Mental health article cover</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2b213e"/>
+      <stop offset="100%" stop-color="#2e7d32"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <path d="M0 540 C 200 470, 350 610, 600 540 C 860 465, 980 610, 1200 540 L1200 675 L0 675 Z" fill="#ffffff" fill-opacity="0.08"/>
+  <rect x="72" y="80" width="315" height="42" rx="21" fill="#ffffff" fill-opacity="0.16"/>
+  <text x="102" y="108" fill="#ffffff" font-size="24" font-family="Arial, sans-serif" font-weight="700">MENTAL HEALTH</text>
+  <text x="72" y="284" fill="#ffffff" font-size="58" font-family="Arial, sans-serif" font-weight="700">The Science of</text>
+  <text x="72" y="350" fill="#ffffff" font-size="58" font-family="Arial, sans-serif" font-weight="700">Stress</text>
+  <text x="72" y="420" fill="#ece1ff" font-size="30" font-family="Arial, sans-serif">How chronic stress impacts your health</text>
+</svg>

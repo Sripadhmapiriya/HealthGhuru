@@ -1,0 +1,350 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Design Tokens */
+  /* Brand Greens */
+  --color-primary:        #2E7D32;
+  --color-primary-light:  #4CAF50;
+  --color-secondary:      #66BB6A;
+  --color-primary-dark:   #1B5E20;
+
+  /* Accent */
+  --color-accent:         #f06d2f;
+  --color-accent-light:   #ffd6c1;
+
+  /* Surfaces */
+  --color-surface:        #F5FAF5;
+  --color-surface-alt:    #EBF5EB;
+  --color-white:          #FFFFFF;
+
+  /* Dark */
+  --color-dark:           #1A2E1A;
+  --color-dark-80:        rgba(26,46,26,0.8);
+
+  /* Text */
+  --color-text-primary:   #1A2E1A;
+  --color-text-secondary: #4A6741;
+  --color-text-muted:     #78909C;
+
+  /* Borders */
+  --color-border:         rgba(46,125,50,0.15);
+  --color-border-strong:  rgba(46,125,50,0.30);
+
+  /* Scale */
+  --text-hero:    clamp(2.5rem, 5vw, 4rem);
+  --text-h1:      clamp(2rem, 4vw, 3rem);
+  --text-h2:      clamp(1.5rem, 3vw, 2.25rem);
+  --text-h3:      clamp(1.25rem, 2vw, 1.75rem);
+  --text-body:    1rem;
+  --text-sm:      0.875rem;
+  --text-xs:      0.75rem;
+
+  /* Component Tokens */
+  --btn-primary-bg:     linear-gradient(135deg, #2E7D32 0%, #66BB6A 100%);
+  --btn-primary-shadow: 0 4px 0 #1B5E20;
+  --btn-accent-bg:      linear-gradient(135deg, #f06d2f 0%, #ff8a57 100%);
+  --btn-accent-shadow:  0 4px 0 #b24920;
+  --btn-radius:         9999px;
+  --card-radius:        14px;
+  --card-shadow:        0 4px 24px rgba(46,125,50,0.08);
+  --card-shadow-hover:  0 12px 40px rgba(46,125,50,0.18);
+  --section-py:         clamp(4rem, 8vw, 7rem);
+
+  /* Gradients */
+  --gradient-primary:   linear-gradient(135deg, #2E7D32 0%, #66BB6A 100%);
+  --gradient-hero:      linear-gradient(135deg, #1B5E20 0%, #2E7D32 60%, #388E3C 100%);
+  --gradient-dark:      linear-gradient(180deg, #1A2E1A 0%, #0D1F0D 100%);
+  --gradient-surface:   linear-gradient(180deg, #F5FAF5 0%, #EBF5EB 100%);
+  --gradient-accent:    linear-gradient(135deg, #f06d2f 0%, #ff8a57 100%);
+
+  /* Dashboard - Sidebar */
+  --sidebar-width:        260px;
+  --sidebar-collapsed:    72px;
+  --sidebar-bg:           #1A2E1A;
+
+  /* Dashboard - Chart colors */
+  --chart-nutrition:      #4CAF50;
+  --chart-sleep:          #7C4DFF;
+  --chart-fitness:        #f06d2f;
+  --chart-mood:           #FF6B6B;
+  --chart-water:          #29B6F6;
+
+  /* Dashboard - Status colors */
+  --status-good:          #4CAF50;
+  --status-warning:       #f06d2f;
+  --status-danger:        #EF5350;
+}
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    overflow-x: clip;
+    max-width: 100vw;
+  }
+
+  body {
+    @apply font-body text-text-primary bg-surface;
+    background-color: var(--color-surface);
+  }
+
+  h1, h2 {
+    @apply font-display text-text-primary;
+  }
+  
+  h3, h4 {
+    @apply font-heading text-text-primary;
+  }
+
+  a, button, [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  a:focus, a:focus-visible,
+  button:focus, button:focus-visible {
+    outline: none;
+  }
+}
+
+@layer components {
+  /* Master Responsive Site Container (Standard Pages, Hubs, Feeds) */
+  .site-container {
+    @apply w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 3xl:px-16 max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] 3xl:max-w-[1800px];
+  }
+
+  /* Editorial & Article Container (Optimized for 2-column wide layout on desktop) */
+  .site-container-article {
+    @apply w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1560px];
+  }
+
+  /* Interactive Tool & Calculator Container */
+  .site-container-tool {
+    @apply w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 max-w-6xl xl:max-w-7xl 2xl:max-w-[1560px];
+  }
+
+  /* Focused Narrow Container (for centered auth, single-column reading, short forms) */
+  .site-container-narrow {
+    @apply w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 max-w-4xl xl:max-w-5xl 2xl:max-w-6xl;
+  }
+
+  /* Wide Video Theater / Full-Width Container */
+  .site-container-wide {
+    @apply w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 max-w-[1560px] 2xl:max-w-[1680px] 3xl:max-w-[1880px];
+  }
+
+  /* Wide Dashboard / Data Grid Container */
+  .site-container-fluid {
+    @apply w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 3xl:px-20;
+  }
+}
+
+@layer utilities {
+  .text-hero { font-size: var(--text-hero); line-height: 1.1; }
+  .text-h1 { font-size: var(--text-h1); line-height: 1.2; }
+  .text-h2 { font-size: var(--text-h2); line-height: 1.25; }
+  .text-h3 { font-size: var(--text-h3); line-height: 1.3; }
+  .text-body { font-size: var(--text-body); line-height: 1.6; }
+  
+  .section-padding { padding-top: var(--section-py); padding-bottom: var(--section-py); }
+
+  /* Hide scrollbar for horizontal scrolling elements */
+  .hide-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Hide the native scrollbar entirely to prevent layout shifts, as SmoothScroll handles scrolling */
+::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* --- MOBILE TYPOGRAPHY & TOUCH OPTIMIZATION --- */
+
+@media (max-width: 640px) {
+  :root {
+    /* HEADINGS */
+    --text-hero:  2rem;
+    --text-h1:    1.75rem;
+    --text-h2:    1.5rem;
+    --text-h3:    1.25rem;
+
+    /* BODY */
+    --text-body:        1rem;
+    --text-body-article: 1.0625rem;
+    --text-sm:    0.9375rem;
+    --text-xs:    0.8125rem;
+
+    /* LINE HEIGHT */
+    --leading-heading: 1.25;
+    --leading-body:    1.7;
+    --leading-tight:   1.35;
+
+    /* LETTER SPACING */
+    --tracking-display: -0.01em;
+  }
+
+  /* TOUCH TARGETS */
+  button, a[role="button"], .btn, [data-cursor="button"], [data-cursor="tab"] {
+    min-height: 48px;
+    min-width: 48px;
+  }
+
+  .icon-button-mobile-target {
+    min-height: 48px;
+    min-width: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  input, select, textarea {
+    font-size: 16px !important;
+    min-height: 48px;
+  }
+
+  .tap-target-group > * + * {
+    margin-left: 8px;
+  }
+
+  /* PUBLIC SITE */
+  .hero-eyebrow-pill { font-size: 0.8125rem; padding: 6px 14px; }
+  .hero-headline { font-size: var(--text-hero); line-height: var(--leading-heading); }
+  .hero-subtext { font-size: var(--text-body); line-height: var(--leading-body); max-width: 100%; }
+  .hero-floating-badges { font-size: 0.75rem; padding: 4px 10px; }
+  .hero-cta-primary { width: 100%; min-height: 52px; font-size: 1rem; }
+  .hero-cta-secondary { width: 100%; min-height: 52px; font-size: 1rem; }
+  
+  .trust-bar-number { font-size: 1.75rem; }
+  .trust-bar-label { font-size: 0.75rem; letter-spacing: 0.06em; }
+
+  .article-h1 { font-size: var(--text-h1); line-height: 1.2; }
+  .article-category-pill { font-size: 0.8125rem; min-height: 32px; }
+  .article-byline-name { font-size: 0.9375rem; }
+  .article-byline-meta { font-size: 0.8125rem; }
+  .article-body-text { font-size: var(--text-body-article); line-height: var(--leading-body); }
+  .article-h2-block { font-size: 1.375rem; margin-top: 2.5rem; margin-bottom: 1.25rem; }
+  .article-h3-block { font-size: 1.125rem; margin-top: 1.75rem; }
+  .article-quote-block { font-size: 1.0625rem; padding: 1.25rem; }
+  .article-callout-title { font-size: 1rem; }
+  .article-callout-text { font-size: 0.9375rem; line-height: 1.65; }
+  .article-takeaways-heading { font-size: 1.125rem; }
+  .article-takeaways-item { font-size: 0.9375rem; line-height: 1.65; }
+  .article-share-icon { width: 44px; height: 44px; }
+
+  .blog-hero-h1 { font-size: var(--text-h1); }
+  .category-filter-pill { font-size: 0.875rem; min-height: 40px; padding: 0 16px; }
+  .blog-card-title { font-size: 1.125rem; line-height: 1.35; }
+  .blog-card-excerpt { font-size: 0.9375rem; line-height: 1.6; }
+  .blog-card-meta { font-size: 0.8125rem; }
+
+  .form-card-heading { font-size: 1.5rem; }
+  .form-card-subtitle { font-size: 0.9375rem; }
+  .form-label { font-size: 0.875rem; font-weight: 600; margin-bottom: 6px; }
+  .form-input { font-size: 16px; min-height: 48px; padding: 0 16px; }
+  .form-helper-text { font-size: 0.8125rem; }
+  .form-error-text { font-size: 0.8125rem; }
+  .plan-selection-card { padding: 16px; }
+  .plan-card-title { font-size: 1.0625rem; }
+  .plan-card-price { font-size: 1.375rem; }
+  .plan-card-feature { font-size: 0.875rem; line-height: 1.6; }
+
+  /* VAULT */
+  .bento-card-title { font-size: 1.0625rem; }
+  .bento-card-value { font-size: 1.5rem; }
+  .bento-card-label { font-size: 0.8125rem; }
+  .activity-timeline-text { font-size: 0.9375rem; line-height: 1.6; }
+  .welcome-card-heading { font-size: 1.375rem; }
+  .welcome-card-body { font-size: 0.9375rem; }
+
+  .page-section-heading { font-size: 1.375rem; }
+  .record-card-title { font-size: 1.0625rem; }
+  .record-card-meta { font-size: 0.8125rem; }
+  .goal-card-title { font-size: 1.0625rem; }
+  .goal-card-progress-label { font-size: 0.8125rem; }
+  .goal-card-value-large { font-size: 1.125rem; }
+  .library-article-title { font-size: 1.0625rem; line-height: 1.35; }
+  .library-article-excerpt { font-size: 0.9375rem; line-height: 1.6; }
+  .filter-pill-vault { font-size: 0.875rem; min-height: 40px; }
+
+  .profile-tab-label { font-size: 0.9375rem; min-height: 48px; }
+  .profile-section-heading { font-size: 1.25rem; }
+  .profile-form-label { font-size: 0.875rem; }
+  .profile-form-input { font-size: 16px; min-height: 48px; }
+  .subscription-plan-name { font-size: 1.0625rem; }
+  .subscription-price { font-size: 1.5rem; }
+
+  /* GLOBAL COMPONENTS */
+  .pill-badge { font-size: 0.8125rem; padding: 4px 12px; min-height: 28px; }
+  .toast-message { font-size: 0.9375rem; }
+  .toast-description { font-size: 0.8125rem; }
+  .dialog-title { font-size: 1.0625rem; }
+  .dialog-description { font-size: 0.9375rem; line-height: 1.6; }
+  .dialog-button { min-height: 48px; font-size: 0.9375rem; }
+  .dialog-card { width: 90vw; padding: 20px; }
+  .empty-state-heading { font-size: 1.125rem; }
+  .empty-state-body { font-size: 0.9375rem; line-height: 1.6; }
+}
+
+@media (max-width: 768px) {
+  .vault-bottom-nav-item-label { font-size: 0.6875rem; }
+  .vault-bottom-nav-icon { width: 24px; height: 24px; }
+  .vault-bottom-nav-item { min-height: 56px; min-width: 56px; }
+
+  .vault-topbar-title { font-size: 1.125rem; }
+  .vault-plan-status-strip { font-size: 0.8125rem; padding: 6px 12px; min-height: 32px; }
+  .vault-streak-label { font-size: 0.8125rem; }
+  .vault-search-input { font-size: 16px; min-height: 44px; }
+}
+
+/* HAMBURGER DRAWER */
+.mobile-nav-link {
+  font-size: 1.125rem;
+  font-family: var(--font-heading, "Plus Jakarta Sans", sans-serif);
+  font-weight: 600;
+  line-height: 1.35;
+  padding: 16px 24px;
+  min-height: 56px;
+}
+
+/* ENSURE UNRESTRICTED INTERACTION ON IFRAMES & MEDIA */
+iframe,
+video,
+[data-cursor-ignore] {
+  pointer-events: auto;
+}
+

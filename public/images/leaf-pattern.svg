@@ -1,0 +1,10 @@
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="leafPattern" width="80" height="80" patternUnits="userSpaceOnUse">
+      <path d="M18 54C30 24 47 15 61 18C58 34 50 50 35 61C28 66 20 68 14 67C13 62 14 59 18 54Z" fill="#4CAF50" fill-opacity="0.24"/>
+      <path d="M24 58C34 48 45 38 57 26" stroke="#2E7D32" stroke-opacity="0.22" stroke-width="2" stroke-linecap="round"/>
+      <path d="M61 18C52 18 43 21 35 27" stroke="#2E7D32" stroke-opacity="0.16" stroke-width="2" stroke-linecap="round"/>
+    </pattern>
+  </defs>
+  <rect width="240" height="240" fill="url(#leafPattern)"/>
+</svg>

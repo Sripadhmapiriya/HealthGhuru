@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Morning Routine</title>
+  <desc id="desc">Fitness article cover</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#5d3f17"/>
+      <stop offset="100%" stop-color="#2e7d32"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <circle cx="965" cy="170" r="120" fill="#f06d2f" opacity="0.5"/>
+  <rect x="72" y="80" width="250" height="42" rx="21" fill="#ffffff" fill-opacity="0.16"/>
+  <text x="102" y="108" fill="#ffffff" font-size="24" font-family="Arial, sans-serif" font-weight="700">FITNESS</text>
+  <text x="72" y="284" fill="#ffffff" font-size="58" font-family="Arial, sans-serif" font-weight="700">7 Morning Habits</text>
+  <text x="72" y="350" fill="#ffffff" font-size="58" font-family="Arial, sans-serif" font-weight="700">for a Better Day</text>
+  <text x="72" y="420" fill="#fff4d8" font-size="30" font-family="Arial, sans-serif">Start stronger and stay energized</text>
+</svg>
