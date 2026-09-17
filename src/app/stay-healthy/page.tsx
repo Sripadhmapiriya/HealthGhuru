@@ -135,7 +135,7 @@ export default async function StayHealthyPage() {
               </div>
             </ScrollReveal>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {pillarGuides.map((item: any) => (
                 <ContentCard key={item.id} item={item} />
               ))}
