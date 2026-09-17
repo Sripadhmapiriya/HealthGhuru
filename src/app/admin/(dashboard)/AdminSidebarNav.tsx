@@ -4,23 +4,23 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
-  Users,
-  FileText,
-  Settings,
-  CreditCard,
-  Rss,
-  Activity,
-  CheckSquare,
-  Layers,
+  Tag,
   Megaphone,
   BarChart2,
   ListFilter,
   PlusCircle,
-  Tag,
+  Newspaper,
+  FileText,
+  Sparkles,
+  CheckSquare,
+  Rss,
+  Zap,
+  Users,
+  CreditCard,
+  ClipboardList,
+  Settings,
   ChevronDown,
   ChevronRight,
-  ClipboardList,
-  Newspaper,
 } from 'lucide-react';
 import { useState } from 'react';
 import { IconAction } from '@/components/ui/IconAction';
@@ -37,51 +37,66 @@ export function AdminSidebarNav() {
   const isAdsSection = pathname.startsWith('/admin/advertisements');
   const [adsOpen, setAdsOpen] = useState(isAdsSection);
 
-  const links = [
+  // Top navigation links matching the original HealthGhuru sidebar,
+  // with the two new pages: Add News & All News seamlessly integrated
+  const navLinks = [
     { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/admin/categories', label: 'Categories', icon: Tag },
+    // Advertisements accordion rendered separately right here
     { href: '/admin/content', label: 'Content Library', icon: FileText },
-    { href: '/admin/sponsored-articles', label: 'Sponsored Articles', icon: Newspaper },
+    { href: '/admin/add-news', label: 'Add News', icon: PlusCircle },
+    { href: '/admin/all-news', label: 'All News', icon: Newspaper },
+    { href: '/admin/sponsored-articles', label: 'Sponsored Articles', icon: Sparkles },
     { href: '/admin/review-queue', label: 'Review Queue', icon: CheckSquare },
     { href: '/admin/sources', label: 'Content Sources', icon: Rss },
-    { href: '/admin/ingestion', label: 'Ingestion Runs', icon: Activity },
-    { href: '/admin/categories', label: 'Taxonomy', icon: Layers },
+    { href: '/admin/ingestion', label: 'Ingestion Runs', icon: Zap },
     { href: '/admin/users', label: 'Users', icon: Users },
     { href: '/admin/subscriptions', label: 'Subscriptions', icon: CreditCard },
     { href: '/admin/campaigns', label: 'Campaign Requests', icon: ClipboardList },
   ];
 
+  const renderLink = (link: { href: string; label: string; icon: any }) => {
+    const Icon = link.icon;
+    const isActive =
+      link.href === '/admin'
+        ? pathname === '/admin'
+        : pathname === link.href || pathname.startsWith(`${link.href}/`);
+
+    return (
+      <Link
+        key={link.href}
+        href={link.href}
+        prefetch={true}
+        data-cursor="tab"
+        className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-heading font-medium text-sm transition-all duration-150 border-l-4 ${
+          isActive
+            ? 'bg-primary/10 text-primary border-primary font-semibold'
+            : 'text-text-secondary hover:text-dark hover:bg-surface border-transparent'
+        }`}
+      >
+        <IconAction context="nav">
+          <Icon size={18} className={isActive ? 'text-primary' : 'text-text-secondary'} />
+        </IconAction>
+        <span>{link.label}</span>
+      </Link>
+    );
+  };
+
   return (
     <>
-      <nav className="space-y-1 mt-4 flex-1">
-        {/* Regular Links */}
-        {links.slice(0, 2).map((link) => {
-          const Icon = link.icon;
-          const isActive = pathname === link.href || (link.href !== '/admin' && pathname.startsWith(link.href));
-          return (
-            <Link
-              key={link.href}
-              href={link.href}
-              prefetch={true}
-              data-cursor="tab"
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-heading font-medium text-sm transition-all duration-150 border-l-4 ${
-                isActive
-                  ? 'bg-primary/10 text-primary border-primary font-semibold'
-                  : 'text-text-secondary hover:text-dark hover:bg-surface border-transparent'
-              }`}
-            >
-              <IconAction context="nav">
-                <Icon size={18} className={isActive ? 'text-primary' : 'text-text-secondary'} />
-              </IconAction>
-              {link.label}
-            </Link>
-          );
-        })}
+      <nav className="space-y-1 mt-2 flex-1 overflow-y-auto min-h-0 pr-1">
+        {/* Dashboard */}
+        {renderLink(navLinks[0])}
+
+        {/* Categories */}
+        {renderLink(navLinks[1])}
 
         {/* ── ADVERTISEMENTS collapsible group ── */}
         <div>
           <button
+            type="button"
             onClick={() => setAdsOpen((o) => !o)}
-            className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-heading font-medium text-sm transition-all duration-150 border-l-4 ${
+            className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-heading font-medium text-sm transition-all duration-150 border-l-4 cursor-pointer ${
               isAdsSection
                 ? 'bg-primary/10 text-primary border-primary font-semibold'
                 : 'text-text-secondary hover:text-dark hover:bg-surface border-transparent'
@@ -100,9 +115,10 @@ export function AdminSidebarNav() {
             <div className="ml-6 mt-1 space-y-0.5 border-l-2 border-border pl-3">
               {AD_SUB_LINKS.map((sub) => {
                 const Icon = sub.icon;
-                const isSubActive = sub.href === '/admin/advertisements'
-                  ? pathname === '/admin/advertisements'
-                  : pathname.startsWith(sub.href);
+                const isSubActive =
+                  sub.href === '/admin/advertisements'
+                    ? pathname === '/admin/advertisements'
+                    : pathname.startsWith(sub.href);
                 return (
                   <Link
                     key={sub.href}
@@ -115,7 +131,7 @@ export function AdminSidebarNav() {
                     }`}
                   >
                     <Icon size={14} className={isSubActive ? 'text-primary' : 'text-text-secondary'} />
-                    {sub.label}
+                    <span>{sub.label}</span>
                   </Link>
                 );
               })}
@@ -123,32 +139,12 @@ export function AdminSidebarNav() {
           )}
         </div>
 
-        {/* Remaining links */}
-        {links.slice(2).map((link) => {
-          const Icon = link.icon;
-          const isActive = pathname === link.href || (link.href !== '/admin' && pathname.startsWith(link.href));
-          return (
-            <Link
-              key={link.href}
-              href={link.href}
-              prefetch={true}
-              data-cursor="tab"
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-heading font-medium text-sm transition-all duration-150 border-l-4 ${
-                isActive
-                  ? 'bg-primary/10 text-primary border-primary font-semibold'
-                  : 'text-text-secondary hover:text-dark hover:bg-surface border-transparent'
-              }`}
-            >
-              <IconAction context="nav">
-                <Icon size={18} className={isActive ? 'text-primary' : 'text-text-secondary'} />
-              </IconAction>
-              {link.label}
-            </Link>
-          );
-        })}
+        {/* Content Library, Add News, All News, and remaining links */}
+        {navLinks.slice(2).map((link) => renderLink(link))}
       </nav>
 
-      <div className="mt-auto pt-4 border-t border-border">
+      {/* Settings at the bottom */}
+      <div className="mt-auto pt-3 border-t border-border shrink-0">
         <Link
           href="/admin/settings"
           prefetch={true}
@@ -160,9 +156,12 @@ export function AdminSidebarNav() {
           }`}
         >
           <IconAction context="nav">
-            <Settings size={18} className={pathname.startsWith('/admin/settings') ? 'text-primary' : 'text-text-secondary'} />
+            <Settings
+              size={18}
+              className={pathname.startsWith('/admin/settings') ? 'text-primary' : 'text-text-secondary'}
+            />
           </IconAction>
-          Settings
+          <span>Settings</span>
         </Link>
       </div>
     </>

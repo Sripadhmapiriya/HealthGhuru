@@ -90,7 +90,20 @@ export default async function ArticlePage({
 
   let article: any = null;
   if (contentItems.length > 0) {
-    article = contentItems[0];
+    let rawMeta = {};
+    try {
+      rawMeta = typeof contentItems[0].raw_metadata === 'string'
+        ? JSON.parse(contentItems[0].raw_metadata)
+        : contentItems[0].raw_metadata || {};
+    } catch {
+      rawMeta = {};
+    }
+
+    article = {
+      ...contentItems[0],
+      ...(legacyArticles.length > 0 ? { blocks: legacyArticles[0].blocks } : {}),
+      raw_metadata: rawMeta,
+    };
   } else if (legacyArticles.length > 0) {
     const leg = legacyArticles[0];
     article = {
@@ -99,13 +112,15 @@ export default async function ArticlePage({
       category: leg.category || "Wellness",
       excerpt: leg.excerpt,
       description: leg.excerpt,
+      blocks: leg.blocks,
       content: typeof leg.blocks === 'string' ? leg.blocks : JSON.stringify(leg.blocks),
       image_url: leg.hero_image_url,
       author_name: leg.author_name || "HealthGhuru Bureau",
       author_credential: leg.author_credential || "Medical Writer",
       published_at: leg.publish_date || new Date().toISOString(),
       source_name: "HealthGhuru Original",
-      quality_score: 9.5
+      quality_score: 9.5,
+      raw_metadata: {},
     };
   }
 
@@ -212,6 +227,13 @@ export default async function ArticlePage({
               {article.title}
             </h1>
 
+            {/* Subtitle */}
+            {article.raw_metadata?.subtitle && (
+              <p className="mt-2 text-base sm:text-lg font-heading font-semibold text-slate-700">
+                {article.raw_metadata.subtitle}
+              </p>
+            )}
+
             {/* Subheadline / Lead Excerpt */}
             {article.excerpt && (
               <p className="mt-4 text-base sm:text-lg text-[#4A6741] font-medium leading-relaxed border-l-4 border-[#f06d2f] pl-4 italic">
@@ -226,6 +248,14 @@ export default async function ArticlePage({
                   <ShieldCheck size={14} className="text-[#2E7D32]" />
                   <span>Reported by: <span className="text-[#1B5E20] font-bold">{article.author_name || "HealthGhuru Medical Bureau"}</span></span>
                 </div>
+                {article.raw_metadata?.location && (
+                  <>
+                    <span>•</span>
+                    <span className="font-heading font-semibold text-[#f06d2f]">
+                      📍 {article.raw_metadata.location}
+                    </span>
+                  </>
+                )}
                 <span>•</span>
                 <div className="flex items-center gap-1 font-mono">
                   <Calendar size={13} />
@@ -234,7 +264,7 @@ export default async function ArticlePage({
                 <span>•</span>
                 <div className="flex items-center gap-1 font-mono text-gray-400">
                   <Clock size={13} />
-                  <span>5 min read</span>
+                  <span>{article.read_time || 5} min read</span>
                 </div>
               </div>
 
@@ -294,35 +324,43 @@ export default async function ArticlePage({
             )}
 
             {/* Full News Content */}
-            <div className="space-y-4 text-sm sm:text-base text-[#1A2E1A] leading-relaxed font-body">
-              <p>
-                {article.description || article.excerpt}
-              </p>
-
-              <h2 className="font-heading font-bold text-lg sm:text-xl text-[#1B5E20] pt-4">
-                Key Findings & Clinical Implications
-              </h2>
-
-              <p>
-                The primary cohort evaluation demonstrated significant statistical divergence across primary endpoints. Researchers underscored that biological variation and early diagnostic intervention play decisive roles in treatment efficacy and long-term recovery metrics.
-              </p>
-
-              <p>
-                According to senior medical researchers collaborating on the multi-centre trial, proactive screening protocol adaptations mitigate adverse prognostic trajectories by up to 45% compared to late-stage standard intervention timelines.
-              </p>
-
-              <blockquote className="my-6 p-4 rounded-xl bg-[#F5FAF5] border-l-4 border-[#2E7D32] text-sm text-[#1B5E20] font-medium leading-relaxed">
-                "The shift from late-stage systemic management to precision diagnostic interception before clinical symptom escalation is the single most transformative development in modern clinical medicine."
-              </blockquote>
-
-              <h2 className="font-heading font-bold text-lg sm:text-xl text-[#1B5E20] pt-2">
-                What This Means For Patients and Practitioners
-              </h2>
-
-              <p>
-                Physicians recommend integrating personalized biomarker assessments into routine annual screenings. Individuals with familial predispositions should consult board-certified specialists to establish tailored preventive timelines rather than waiting for symptomatic thresholds.
-              </p>
+            <div className="space-y-4 text-sm sm:text-base text-[#1A2E1A] leading-relaxed font-body whitespace-pre-line">
+              {Array.isArray(article.blocks) && article.blocks.length > 0 ? (
+                article.blocks.map((b: any, idx: number) => (
+                  <p key={b.id || idx} className="leading-relaxed">
+                    {b.text}
+                  </p>
+                ))
+              ) : article.description ? (
+                article.description.split('\n\n').map((para: string, idx: number) => (
+                  <p key={idx} className="leading-relaxed">
+                    {para}
+                  </p>
+                ))
+              ) : (
+                <p>{article.excerpt}</p>
+              )}
             </div>
+
+            {/* Gallery Images */}
+            {article.raw_metadata?.gallery_images && article.raw_metadata.gallery_images.length > 0 && (
+              <div className="my-8 pt-6 border-t border-gray-100">
+                <h3 className="font-heading font-bold text-base sm:text-lg text-[#1A2E1A] mb-4">
+                  Story Photo Gallery
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {article.raw_metadata.gallery_images.map((imgUrl: string, idx: number) => (
+                    <div key={idx} className="relative aspect-[4/3] rounded-xl overflow-hidden border border-gray-200 shadow-2xs group">
+                      <img
+                        src={imgUrl}
+                        alt={`Photo ${idx + 1}`}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Doctor / Expert Information Box (Section 18) */}
             <div className="mt-10 p-5 rounded-2xl bg-[#fffbf8] border border-orange-200 flex flex-col sm:flex-row items-center sm:items-start gap-4">
