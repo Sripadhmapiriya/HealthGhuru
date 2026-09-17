@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useAuthModal } from "@/context/AuthModalContext";
 import { motion } from "framer-motion";
-import { Check, Sparkles, Shield, Zap, BookOpen, Star, HelpCircle, ArrowRight, ArrowLeft, CheckCircle2, Lock } from "lucide-react";
+import { Check, Sparkles, Shield, Zap, BookOpen, Star, HelpCircle, ArrowRight, ArrowLeft, CheckCircle2, Lock, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { PillBadge } from "@/components/ui/PillBadge";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
@@ -95,13 +97,36 @@ const FAQS = [
 ];
 
 export default function SubscribePage() {
+  const { data: session } = useSession();
+  const { openLoginModal } = useAuthModal();
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("annual");
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [checkoutStep, setCheckoutStep] = useState<"plans" | "checkout" | "success">("plans");
   const [checkoutEmail, setCheckoutEmail] = useState("");
   const [checkoutName, setCheckoutName] = useState("");
 
+  useEffect(() => {
+    if (session?.user) {
+      setCheckoutEmail(session.user.email || "");
+      setCheckoutName(session.user.name || "");
+    }
+  }, [session]);
+
   const handleSelectPlan = (planId: string) => {
+    if (!session?.user) {
+      openLoginModal({
+        initialMode: "signin",
+        intentTitle: "Member Account Required",
+        intentSubtitle: "Please sign in or create an account to activate your subscription tier.",
+        onSuccess: () => {
+          setSelectedPlan(planId);
+          setCheckoutStep("checkout");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        },
+      });
+      return;
+    }
+
     setSelectedPlan(planId);
     setCheckoutStep("checkout");
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -137,9 +162,19 @@ export default function SubscribePage() {
               priority
             />
           </Link>
-          <Link href="/login" className="text-xs sm:text-sm font-heading font-semibold text-primary hover:underline">
-            Already a member? Sign In
-          </Link>
+          {session?.user ? (
+            <span className="text-xs sm:text-sm font-heading font-semibold text-emerald-800">
+              Signed in as {session.user.name || session.user.email}
+            </span>
+          ) : (
+            <button
+              type="button"
+              onClick={() => openLoginModal({ initialMode: "signin" })}
+              className="text-xs sm:text-sm font-heading font-semibold text-primary hover:underline cursor-pointer"
+            >
+              Already a member? Sign In
+            </button>
+          )}
         </div>
       </header>
 

@@ -1,13 +1,15 @@
 'use client';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
+import { useSession } from 'next-auth/react';
+import { useAuthModal } from '@/context/AuthModalContext';
 import {
   Check, Upload, Calendar, ExternalLink, Phone, Mail,
   Hospital, User, AlertCircle, CheckCircle2, ChevronDown,
   Wallet, Smartphone, Sparkles, Copy, CheckCheck,
-  ArrowRight, ShieldCheck, Clock
+  ArrowRight, ShieldCheck, Clock, LogIn, UserPlus
 } from 'lucide-react';
 import { AdSlotPricing } from '@/lib/types/advertisement';
 
@@ -89,6 +91,8 @@ function SectionHeader({ num, title }: { num: number; title: string }) {
 
 // ── Main Component ──────────────────────────────────────────────────────────
 export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPricing[] }) {
+  const { data: session } = useSession();
+  const { openLoginModal } = useAuthModal();
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -112,6 +116,17 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
     start_date: todayStr(),
     banner_image_url: '',
   });
+
+  // Automatically pre-fill contact info if user is authenticated
+  useEffect(() => {
+    if (session?.user) {
+      setForm((prev) => ({
+        ...prev,
+        contact_name: prev.contact_name || session.user.name || '',
+        contact_email: prev.contact_email || session.user.email || '',
+      }));
+    }
+  }, [session]);
 
   // ── Computed pricing ───────────────────────────────────────────────────
   const selectedSlot = pricingSlots.find((s) => s.placement === form.placement) || pricingSlots[0];
@@ -158,6 +173,16 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
   // ── Submit ─────────────────────────────────────────────────────────────
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!session?.user) {
+      openLoginModal({
+        initialMode: 'signin',
+        intentTitle: 'Partner Sign In Required',
+        intentSubtitle: 'Please sign in or create an account to save and activate your advertising campaign.',
+      });
+      return;
+    }
+
     if (!form.campaign_title.trim()) {
       setError('Please enter a Campaign Title.');
       return;
@@ -276,6 +301,49 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
           Follow our single-page studio below to select your slot, choose your hosting duration, and complete instant checkout.
         </p>
       </div>
+
+      {/* Guest Notice Banner */}
+      {!session?.user && (
+        <div className="p-5 bg-gradient-to-r from-amber-50 via-orange-50 to-emerald-50 border border-amber-200/80 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
+          <div className="flex items-start gap-3">
+            <div className="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center shrink-0 mt-0.5">
+              <ShieldCheck size={18} />
+            </div>
+            <div>
+              <h4 className="font-heading font-bold text-sm text-gray-900">
+                You are designing your ad campaign as a Guest
+              </h4>
+              <p className="text-xs text-gray-600 mt-0.5">
+                Sign in or register an account so we can link your campaign, generate GST invoices, and track performance.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
+            <button
+              type="button"
+              onClick={() => openLoginModal({
+                initialMode: 'signin',
+                intentTitle: 'Partner Sign In',
+                intentSubtitle: 'Sign in to link this ad campaign to your medical organization.',
+              })}
+              className="flex-1 sm:flex-none px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-heading font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <LogIn size={14} /> Sign In
+            </button>
+            <button
+              type="button"
+              onClick={() => openLoginModal({
+                initialMode: 'signup',
+                intentTitle: 'Register Organization',
+                intentSubtitle: 'Create a free partner account to launch campaigns.',
+              })}
+              className="flex-1 sm:flex-none px-4 py-2 bg-[#f06d2f] hover:bg-[#e05a1b] text-white rounded-xl text-xs font-heading font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <UserPlus size={14} /> Register
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Global Error Banner */}
       {error && (

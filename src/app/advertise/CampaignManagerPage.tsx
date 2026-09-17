@@ -1,9 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { Megaphone, PlusCircle, Clock, CheckCircle2, XCircle, AlertCircle, Eye, Hospital } from 'lucide-react';
+import { Megaphone, PlusCircle, Clock, CheckCircle2, XCircle, AlertCircle, Eye, Hospital, ShieldCheck, LogIn, UserPlus } from 'lucide-react';
 import { AdSlotPricing } from '@/lib/types/advertisement';
 import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { useAuthModal } from '@/context/AuthModalContext';
 
 interface CampaignRequest {
   id: string;
@@ -44,22 +46,30 @@ const PAYMENT_STATUS: Record<string, { label: string; color: string }> = {
 };
 
 export function CampaignManagerPage({ pricingSlots }: { pricingSlots: AdSlotPricing[] }) {
+  const { data: session, status: authStatus } = useSession();
+  const { openLoginModal, requireAuth } = useAuthModal();
   const [campaigns, setCampaigns] = useState<CampaignRequest[]>([]);
   const [walletBalance, setWalletBalance] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetch('/api/campaigns')
-      .then((r) => r.json())
-      .then((d) => { if (d.success) setCampaigns(d.campaigns); })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+  const isAuthenticated = !!session?.user;
 
-    fetch('/api/wallet')
-      .then((r) => r.json())
-      .then((d) => { if (d.success && d.balance !== undefined) setWalletBalance(d.balance); })
-      .catch(() => {});
-  }, []);
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetch('/api/campaigns')
+        .then((r) => r.json())
+        .then((d) => { if (d.success) setCampaigns(d.campaigns); })
+        .catch(() => {})
+        .finally(() => setLoading(false));
+
+      fetch('/api/wallet')
+        .then((r) => r.json())
+        .then((d) => { if (d.success && d.balance !== undefined) setWalletBalance(d.balance); })
+        .catch(() => {});
+    } else {
+      setLoading(false);
+    }
+  }, [isAuthenticated]);
 
   const formatINR = (n: number) =>
     new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(n);
@@ -84,22 +94,70 @@ export function CampaignManagerPage({ pricingSlots }: { pricingSlots: AdSlotPric
 
             <div className="flex items-center gap-3">
               {/* Dynamic Wallet balance badge */}
-              <div className="flex items-center gap-2 px-4 py-2 bg-surface border border-border rounded-xl text-xs font-heading font-semibold text-text-secondary">
-                <span className="text-[10px] font-mono text-text-muted uppercase tracking-wide">Wallet Balance</span>
-                <span className={`font-bold ${walletBalance > 0 ? 'text-primary' : 'text-dark'}`}>{formatINR(walletBalance)}</span>
-              </div>
-              <Link
-                href="/advertise/create"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary-dark text-white rounded-xl text-sm font-heading font-bold transition-all shadow-md shadow-primary/20"
+              {isAuthenticated && (
+                <div className="flex items-center gap-2 px-4 py-2 bg-surface border border-border rounded-xl text-xs font-heading font-semibold text-text-secondary">
+                  <span className="text-[10px] font-mono text-text-muted uppercase tracking-wide">Wallet Balance</span>
+                  <span className={`font-bold ${walletBalance > 0 ? 'text-primary' : 'text-dark'}`}>{formatINR(walletBalance)}</span>
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={() => {
+                  requireAuth('/advertise/create', {
+                    intentTitle: 'Hospital & Advertiser Partner Portal',
+                    intentSubtitle: 'Sign in or register to create and launch a new health advertising campaign.',
+                  });
+                }}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary-dark text-white rounded-xl text-sm font-heading font-bold transition-all shadow-md shadow-primary/20 cursor-pointer"
               >
                 <PlusCircle size={16} /> Start New Campaign
-              </Link>
+              </button>
             </div>
           </div>
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+        {/* Unauthenticated Partner Alert Card */}
+        {!isAuthenticated && authStatus !== 'loading' && (
+          <div className="bg-gradient-to-r from-emerald-900 via-slate-900 to-orange-950 rounded-2xl p-6 sm:p-8 text-white shadow-xl border border-emerald-500/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="space-y-2 max-w-xl">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-[11px] font-mono font-bold">
+                <ShieldCheck size={13} /> Healthcare Partner Portal
+              </div>
+              <h2 className="font-heading font-bold text-xl sm:text-2xl text-white">
+                Sign In to Manage Your Campaigns &amp; Billing
+              </h2>
+              <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
+                Connect your medical practice or health brand with 1.4M+ verified monthly readers. Sign in to view live campaign analytics, budget, and invoices.
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-3 shrink-0">
+              <button
+                type="button"
+                onClick={() => openLoginModal({
+                  initialMode: 'signin',
+                  intentTitle: 'Partner Sign In',
+                  intentSubtitle: 'Sign in with your partner credentials to manage advertisement campaigns.',
+                })}
+                className="px-5 py-2.5 bg-white hover:bg-gray-100 text-slate-900 rounded-xl text-xs sm:text-sm font-heading font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+              >
+                <LogIn size={15} /> Sign In
+              </button>
+              <button
+                type="button"
+                onClick={() => openLoginModal({
+                  initialMode: 'signup',
+                  intentTitle: 'Register Medical Organization',
+                  intentSubtitle: 'Create a free advertiser partner account to launch campaigns on HealthGhuru.',
+                })}
+                className="px-5 py-2.5 bg-gradient-to-r from-[#f06d2f] to-[#e05a1b] hover:from-[#e05a1b] hover:to-[#d0490b] text-white rounded-xl text-xs sm:text-sm font-heading font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+              >
+                <UserPlus size={15} /> Register Account
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* ── Campaigns List ── */}
         {loading ? (

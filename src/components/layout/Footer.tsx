@@ -11,9 +11,11 @@ import {
   ShieldCheck,
   Megaphone,
 } from "lucide-react";
+import { useAuthModal } from "@/context/AuthModalContext";
 
 export default function Footer() {
   const pathname = usePathname();
+  const { requireAuth } = useAuthModal();
 
   if (pathname === '/login' || pathname === '/subscribe') {
     return null;
@@ -138,7 +140,20 @@ export default function Footer() {
               Business
             </h4>
             <ul className="space-y-1.5 text-gray-300">
-              <li><Link href="/advertise" className="text-[#f06d2f] font-semibold hover:underline">Advertise With Us</Link></li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => {
+                    requireAuth('/advertise', {
+                      intentTitle: 'Hospital & Advertiser Partner Portal',
+                      intentSubtitle: 'Sign in or register your organization to launch ad campaigns on HealthGhuru.',
+                    });
+                  }}
+                  className="text-[#f06d2f] font-semibold hover:underline text-left cursor-pointer"
+                >
+                  Advertise With Us
+                </button>
+              </li>
               <li><Link href="/sponsored" className="hover:text-[#f06d2f] transition-colors">Sponsored Content</Link></li>
               <li><Link href="/partner" className="hover:text-[#f06d2f] transition-colors">Hospital Partnerships</Link></li>
               <li><Link href="/press" className="hover:text-[#f06d2f] transition-colors">Press & Media</Link></li>
