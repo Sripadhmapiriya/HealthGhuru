@@ -65,6 +65,7 @@ const MEDICAL_ECOSYSTEM = [
   { name: "Medical Research & Clinical Trials", href: "/research", icon: Microscope, highlight: true },
   { name: "Doctor Directory & Profiles", href: "/doctors", icon: Stethoscope, highlight: true },
   { name: "Hospitals & Care Centers", href: "/hospitals", icon: Building2, highlight: true },
+  { name: "Sponsored Health Articles", href: "/sponsored-articles", icon: FileText, highlight: true },
   { name: "Doctor Video Interviews", href: "/interviews", icon: Video, highlight: false },
   { name: "Health Videos & Documentaries", href: "/videos", icon: Video, highlight: false },
   { name: "Health Magazines & Journals", href: "/magazines", icon: BookOpen, highlight: false },

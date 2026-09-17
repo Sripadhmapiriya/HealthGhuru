@@ -35,7 +35,7 @@ export default async function AdminUserProfilePage({ params }: { params: { userI
 
       <div className="bg-white rounded-2xl shadow-[0_4px_24px_rgba(46,125,50,0.08)] border border-border p-8 relative overflow-hidden">
         {/* Banner */}
-        <div className="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-primary to-accent" />
+        <div className="absolute top-0 left-0 w-full h-3 bg-[#CBF2DB]" />
         
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
           <div className="flex items-start gap-5">

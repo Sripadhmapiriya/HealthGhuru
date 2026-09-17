@@ -60,18 +60,26 @@ export function SponsoredEditorialSection() {
               Partner Content • Commercial Healthcare Editorial
             </span>
           </div>
-          <button
-            type="button"
-            onClick={() => {
-              requireAuth('/advertise', {
-                intentTitle: 'Healthcare Partner Sponsorship & Advertising',
-                intentSubtitle: 'Sign in or register your organization to sponsor editorial initiatives and reach verified health readers.',
-              });
-            }}
-            className="text-xs font-heading font-semibold text-[#f06d2f] hover:underline cursor-pointer"
-          >
-            Advertise With Us →
-          </button>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/sponsored-articles"
+              className="text-xs font-heading font-bold text-[#16A34A] hover:underline hidden sm:inline"
+            >
+              View All Sponsored Articles →
+            </Link>
+            <button
+              type="button"
+              onClick={() => {
+                requireAuth('/advertise', {
+                  intentTitle: 'Healthcare Partner Sponsorship & Advertising',
+                  intentSubtitle: 'Sign in or register your organization to sponsor editorial initiatives and reach verified health readers.',
+                });
+              }}
+              className="text-xs font-heading font-semibold text-[#f06d2f] hover:underline cursor-pointer"
+            >
+              Advertise With Us →
+            </button>
+          </div>
         </div>
 
         {/* 3-Column Sponsored Cards */}

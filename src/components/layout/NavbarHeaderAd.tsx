@@ -98,7 +98,7 @@ export function NavbarHeaderAd() {
           target={currentAd.target_url?.startsWith('http') ? '_blank' : '_self'}
           rel={currentAd.target_url?.startsWith('http') ? 'noopener noreferrer' : undefined}
           onClick={handleClick}
-          className={`w-full bg-gradient-to-r from-emerald-950 via-slate-900 to-orange-950 text-white rounded-xl p-2.5 px-4 flex items-center justify-between gap-4 group transition-all duration-300 shadow-sm hover:shadow-md border border-slate-700/50 ${
+          className={`w-full bg-slate-900 text-white rounded-xl p-2.5 px-4 flex items-center justify-between gap-4 group transition-all duration-300 shadow-sm hover:shadow-md border border-slate-800 hover:border-slate-700 ${
             fade ? 'opacity-100 scale-100' : 'opacity-0 scale-[0.99]'
           }`}
         >

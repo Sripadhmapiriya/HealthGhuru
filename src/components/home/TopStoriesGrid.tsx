@@ -40,7 +40,7 @@ export function TopStoriesGrid({
         {/* News Portal Section Header with Brand Gradient Underline */}
         <div className="flex items-center justify-between pb-3.5 mb-6 relative">
           <div className="flex items-center gap-2.5">
-            <span className="w-3.5 h-3.5 rounded-xs bg-gradient-to-r from-[#16A34A] to-[#f06d2f]" />
+            <span className="w-3.5 h-3.5 rounded-xs bg-[#CBF2DB]" />
             <h2 className="font-heading font-extrabold text-xl sm:text-2xl text-slate-900 uppercase tracking-wide">
               TOP STORIES & ANALYSIS
             </h2>
@@ -48,8 +48,8 @@ export function TopStoriesGrid({
           <span className="text-xs font-mono font-semibold text-slate-500 hidden sm:inline">
             UPDATED CONTINUOUSLY • CLINICALLY REVIEWED
           </span>
-          {/* Gradient underline */}
-          <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-gradient-to-r from-[#16A34A] via-[#22C55E] to-[#f06d2f] rounded-full" />
+          {/* Mint Green underline */}
+          <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#CBF2DB] rounded-full" />
         </div>
 
         {/* 3-Column Desktop News Grid */}

@@ -105,7 +105,7 @@ export default function DashboardPage() {
       <div className="site-container space-y-8">
         {/* Top Hero Banner */}
         <div className="relative overflow-hidden rounded-3xl bg-white border border-primary/15 p-6 sm:p-8 shadow-sm">
-          <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-primary via-secondary to-accent" />
+          <div className="absolute top-0 left-0 right-0 h-2 bg-[#CBF2DB]" />
           <div className="absolute -right-12 -bottom-12 w-48 h-48 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">

@@ -79,7 +79,7 @@ function todayStr() {
 function SectionHeader({ num, title }: { num: number; title: string }) {
   return (
     <div className="flex items-center gap-3.5 mb-6">
-      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-600 to-[#F06D2F] text-white flex items-center justify-center font-heading font-extrabold text-sm shadow-md shadow-emerald-700/20 shrink-0">
+      <div className="w-8 h-8 rounded-full bg-[#CBF2DB] text-emerald-950 border border-emerald-300/80 flex items-center justify-center font-heading font-extrabold text-sm shadow-xs shrink-0">
         {num}
       </div>
       <h2 className="font-heading font-extrabold text-lg sm:text-xl text-[#1E293B]">
@@ -266,7 +266,7 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <a
             href="/advertise"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-emerald-600 to-[#F06D2F] hover:from-emerald-700 hover:to-[#d85c20] text-white rounded-xl font-heading font-bold text-sm transition-all shadow-lg shadow-emerald-700/20"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#16A34A] hover:bg-[#15803D] text-white rounded-xl font-heading font-bold text-sm transition-all shadow-md shadow-emerald-700/20"
           >
             View My Campaigns <ArrowRight size={15} />
           </a>
@@ -281,15 +281,15 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
     );
   }
 
-  // ── Single-Page Studio Layout (HealthGhuru Green & Orange Gradient) ───────
+  // ── Single-Page Studio Layout (HealthGhuru Brand Green Theme) ───────────
   return (
     <form onSubmit={handleSubmit} className="space-y-8 max-w-5xl mx-auto pb-16">
       
       {/* ── Studio Header ── */}
       <div className="bg-white rounded-2xl border border-gray-200/80 shadow-xs p-6 sm:p-8">
-        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-gradient-to-r from-emerald-50 via-teal-50 to-orange-50 border border-emerald-200/60 text-emerald-800 rounded-full text-xs font-heading font-bold mb-3">
-          <Sparkles size={13} className="text-[#F06D2F]" />
-          <span className="bg-gradient-to-r from-emerald-700 to-[#F06D2F] bg-clip-text text-transparent">
+        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-emerald-50 border border-emerald-200/80 text-emerald-800 rounded-full text-xs font-heading font-bold mb-3">
+          <Sparkles size={13} className="text-[#16A34A]" />
+          <span className="text-[#16A34A] font-bold">
             Self-Service Campaign Studio
           </span>
         </div>
@@ -377,7 +377,7 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
                   onClick={() => setForm((f) => ({ ...f, duration_plan: plan }))}
                   className={`flex items-start gap-3.5 p-4 rounded-xl border-2 text-left transition-all duration-200 cursor-pointer ${
                     isSelected
-                      ? 'border-emerald-600 bg-gradient-to-r from-emerald-50/70 via-teal-50/30 to-orange-50/40 shadow-sm ring-1 ring-emerald-600/20'
+                      ? 'border-[#16A34A] bg-emerald-50/70 shadow-sm ring-1 ring-emerald-600/20'
                       : 'border-gray-200 hover:border-gray-300 bg-white'
                   }`}
                 >
@@ -417,20 +417,20 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
                   onClick={() => setForm((f) => ({ ...f, placement: slot.placement }))}
                   className={`relative p-5 rounded-xl border-2 text-left transition-all duration-200 cursor-pointer group ${
                     isSelected
-                      ? 'border-emerald-600 bg-gradient-to-br from-emerald-50/60 via-teal-50/20 to-orange-50/30 shadow-md ring-1 ring-emerald-600/30'
+                      ? 'border-[#16A34A] bg-emerald-50/70 shadow-md ring-1 ring-emerald-600/30'
                       : 'border-gray-200 hover:border-gray-300 hover:shadow-sm bg-white'
                   }`}
                 >
                   {/* Popular Tag Badge */}
                   {isPopular && (
-                    <span className="absolute -top-2.5 left-4 px-2.5 py-0.5 bg-gradient-to-r from-emerald-600 to-[#F06D2F] text-white text-[10px] font-heading font-extrabold uppercase tracking-wider rounded-full shadow-xs">
+                    <span className="absolute -top-2.5 left-4 px-2.5 py-0.5 bg-[#CBF2DB] text-emerald-950 border border-emerald-300/80 text-[10px] font-heading font-extrabold uppercase tracking-wider rounded-full shadow-xs">
                       MOST POPULAR
                     </span>
                   )}
 
                   {/* Checked Icon */}
                   {isSelected && (
-                    <div className="absolute top-4 right-4 w-5 h-5 rounded-full bg-gradient-to-br from-emerald-600 to-[#F06D2F] text-white flex items-center justify-center shadow-xs">
+                    <div className="absolute top-4 right-4 w-5 h-5 rounded-full bg-[#CBF2DB] text-emerald-950 flex items-center justify-center shadow-xs">
                       <Check size={12} strokeWidth={3} />
                     </div>
                   )}
@@ -648,7 +648,7 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
               </div>
             ) : (
               <div className="space-y-3">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-100 via-teal-50 to-orange-100 text-emerald-700 flex items-center justify-center mx-auto shadow-inner">
+                <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-[#16A34A] flex items-center justify-center mx-auto shadow-inner border border-emerald-100">
                   <Upload size={26} className={uploading ? 'animate-bounce' : ''} />
                 </div>
                 <h3 className="font-heading font-extrabold text-base text-gray-900">
@@ -664,7 +664,7 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
                 <div>
                   <button
                     type="button"
-                    className="mt-2 px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-[#F06D2F] hover:from-emerald-700 hover:to-[#d85c20] text-white rounded-xl font-heading font-bold text-xs transition-all shadow-md shadow-emerald-700/20"
+                    className="mt-2 px-6 py-2.5 bg-[#16A34A] hover:bg-[#15803D] text-white rounded-xl font-heading font-bold text-xs transition-all shadow-md shadow-emerald-700/20"
                   >
                     Choose File from Computer
                   </button>
@@ -689,27 +689,27 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
         <div className="bg-white rounded-2xl border border-gray-200/80 shadow-xs p-6 sm:p-8 space-y-6">
           <SectionHeader num={3} title="Review Hosting Summary & Payment Checkout" />
 
-          {/* Green and Orange Gradient Summary Card */}
-          <div className="bg-gradient-to-br from-emerald-800 via-emerald-600 to-[#F06D2F] rounded-2xl p-6 sm:p-7 text-white shadow-lg shadow-emerald-800/25 space-y-3">
-            <div className="flex justify-between items-center text-xs sm:text-sm border-b border-white/15 pb-2.5">
-              <span className="text-white/80 font-medium">Selected Placement Slot:</span>
-              <span className="font-bold text-white font-heading">{selectedSlot?.label ?? form.placement}</span>
+          {/* Mint Green Summary Card */}
+          <div className="bg-[#CBF2DB] rounded-2xl p-6 sm:p-7 text-emerald-950 border border-emerald-300/80 shadow-md space-y-3">
+            <div className="flex justify-between items-center text-xs sm:text-sm border-b border-emerald-900/15 pb-2.5">
+              <span className="text-emerald-900/80 font-medium">Selected Placement Slot:</span>
+              <span className="font-bold text-emerald-950 font-heading">{selectedSlot?.label ?? form.placement}</span>
             </div>
-            <div className="flex justify-between items-center text-xs sm:text-sm border-b border-white/15 pb-2.5">
-              <span className="text-white/80 font-medium">Campaign Duration:</span>
-              <span className="font-bold text-white font-heading">{form.duration_plan === 'weekly' ? '7 Days (Weekly Package)' : '30 Days (Monthly Package)'}</span>
+            <div className="flex justify-between items-center text-xs sm:text-sm border-b border-emerald-900/15 pb-2.5">
+              <span className="text-emerald-900/80 font-medium">Campaign Duration:</span>
+              <span className="font-bold text-emerald-950 font-heading">{form.duration_plan === 'weekly' ? '7 Days (Weekly Package)' : '30 Days (Monthly Package)'}</span>
             </div>
-            <div className="flex justify-between items-center text-xs sm:text-sm border-b border-white/15 pb-2.5">
-              <span className="text-white/80 font-medium">Base Price:</span>
-              <span className="font-bold text-white font-mono">{formatINR(basePrice)}</span>
+            <div className="flex justify-between items-center text-xs sm:text-sm border-b border-emerald-900/15 pb-2.5">
+              <span className="text-emerald-900/80 font-medium">Base Price:</span>
+              <span className="font-bold text-emerald-950 font-mono">{formatINR(basePrice)}</span>
             </div>
-            <div className="flex justify-between items-center text-xs sm:text-sm border-b border-white/15 pb-2.5">
-              <span className="text-white/80 font-medium">GST (18%):</span>
-              <span className="font-bold text-white font-mono">{formatINR(gstAmount)}</span>
+            <div className="flex justify-between items-center text-xs sm:text-sm border-b border-emerald-900/15 pb-2.5">
+              <span className="text-emerald-900/80 font-medium">GST (18%):</span>
+              <span className="font-bold text-emerald-950 font-mono">{formatINR(gstAmount)}</span>
             </div>
             <div className="pt-2 flex justify-between items-center">
-              <span className="font-heading font-extrabold text-base sm:text-lg text-white">Total Payable Fee:</span>
-              <span className="font-heading font-black text-2xl sm:text-3xl text-white tracking-tight">{formatINR(totalAmount)}</span>
+              <span className="font-heading font-extrabold text-base sm:text-lg text-emerald-950">Total Payable Fee:</span>
+              <span className="font-heading font-black text-2xl sm:text-3xl text-emerald-950 tracking-tight">{formatINR(totalAmount)}</span>
             </div>
           </div>
 
@@ -720,7 +720,7 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
               onClick={() => setPaymentMethod('upi')}
               className={`flex items-start gap-3.5 p-4 rounded-xl border-2 text-left transition-all duration-200 cursor-pointer ${
                 paymentMethod === 'upi'
-                  ? 'border-emerald-600 bg-gradient-to-r from-emerald-50/70 to-orange-50/40 shadow-xs'
+                  ? 'border-[#16A34A] bg-emerald-50/70 shadow-xs'
                   : 'border-gray-200 hover:border-gray-300 bg-white'
               }`}
             >
@@ -740,7 +740,7 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
               onClick={() => setPaymentMethod('wallet')}
               className={`flex items-start gap-3.5 p-4 rounded-xl border-2 text-left transition-all duration-200 cursor-pointer ${
                 paymentMethod === 'wallet'
-                  ? 'border-emerald-600 bg-gradient-to-r from-emerald-50/70 to-orange-50/40 shadow-xs'
+                  ? 'border-[#16A34A] bg-emerald-50/70 shadow-xs'
                   : 'border-gray-200 hover:border-gray-300 bg-white opacity-70'
               }`}
             >
@@ -775,7 +775,7 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
                       onClick={() => setSelectedUpiApp(app)}
                       className={`px-3.5 py-1.5 rounded-lg text-xs font-heading font-bold transition-all ${
                         selectedUpiApp === app
-                          ? 'bg-gradient-to-r from-emerald-600 to-[#F06D2F] text-white shadow-xs'
+                          ? 'bg-[#16A34A] text-white shadow-xs'
                           : 'bg-white border border-gray-200 text-gray-600 hover:border-gray-300'
                       }`}
                     >
@@ -824,13 +824,13 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
         <div className="bg-white rounded-2xl border border-gray-200/80 shadow-xs p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-center sm:text-left">
             <span className="text-xs text-gray-500 block">Total Due:</span>
-            <span className="font-heading font-black text-2xl bg-gradient-to-r from-emerald-700 to-[#F06D2F] bg-clip-text text-transparent">{formatINR(totalAmount)}</span>
+            <span className="font-heading font-black text-2xl text-[#16A34A]">{formatINR(totalAmount)}</span>
           </div>
 
           <button
             type="submit"
             disabled={submitting || paymentMethod === 'wallet'}
-            className="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-emerald-600 via-emerald-700 to-[#F06D2F] hover:from-emerald-700 hover:to-[#d85c20] text-white rounded-xl font-heading font-extrabold text-base transition-all shadow-lg shadow-emerald-700/25 hover:shadow-xl hover:shadow-emerald-700/35 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-10 py-4 bg-[#16A34A] hover:bg-[#15803D] text-white rounded-xl font-heading font-extrabold text-base transition-all shadow-lg shadow-emerald-700/25 hover:shadow-xl hover:shadow-emerald-700/35 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
           >
             {submitting ? (
               <>

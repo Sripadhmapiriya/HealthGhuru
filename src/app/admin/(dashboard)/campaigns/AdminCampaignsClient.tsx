@@ -154,6 +154,8 @@ export function AdminCampaignsClient({ initialCampaigns }: { initialCampaigns: a
                     { label: 'Period', value: `${selected.start_date} → ${selected.end_date}` },
                     { label: 'Total', value: formatINR(selected.total_amount) },
                     { label: 'Payment', value: selected.payment_method?.toUpperCase() + ' — ' + selected.payment_status },
+                    { label: 'UTR / Ref', value: (selected as any).payment_reference || '—' },
+                    { label: 'Notes', value: selected.admin_notes || '—' },
                     { label: 'Target URL', value: selected.target_url },
                   ].map(({ label, value }) => (
                     <div key={label} className="flex gap-2">

@@ -16,24 +16,20 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ variant = "primary", size = "md", className, cursorLabel, children, ...props }, ref) => {
-    const baseStyles = "inline-flex items-center justify-center font-heading font-medium transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2";
-    const accentGradient = "linear-gradient(135deg, #f06d2f 0%, #ff8a57 100%)";
+    const baseStyles = "inline-flex items-center justify-center font-heading font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#16A34A] focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
     
-    const inlineStyle: React.CSSProperties | undefined = (variant === 'primary' || variant === 'accent') ? {
-      backgroundImage: accentGradient,
-    } : undefined;
     const variants = {
-      primary: "bg-gradient-accent text-white shadow-md hover:-translate-y-[1px] hover:shadow-lg active:translate-y-[0px] active:shadow-md rounded-full",
-      secondary: "bg-white border-2 border-primary text-primary hover:-translate-y-[1px] hover:shadow-md active:translate-y-[0px] rounded-full",
-      ghost: "bg-transparent border border-primary text-primary hover:-translate-y-[1px] hover:shadow-sm active:translate-y-[0px] rounded-full",
-      accent: "bg-gradient-accent text-dark shadow-md hover:-translate-y-[1px] hover:shadow-lg active:translate-y-[0px] active:shadow-md rounded-full",
-      outline: "bg-transparent border border-border text-text-primary hover:border-primary/50 hover:bg-surface-alt active:translate-y-[0px] rounded-full",
+      primary: "bg-[#16A34A] hover:bg-[#15803D] text-white shadow-xs hover:-translate-y-[1px] active:translate-y-[0px] rounded-xl",
+      accent: "bg-[#f06d2f] hover:bg-[#e05b1d] text-white shadow-xs hover:-translate-y-[1px] active:translate-y-[0px] rounded-xl",
+      secondary: "bg-white border-2 border-[#16A34A] text-[#16A34A] hover:bg-emerald-50 hover:-translate-y-[1px] active:translate-y-[0px] rounded-xl",
+      ghost: "bg-transparent text-[#16A34A] hover:bg-emerald-50 hover:-translate-y-[1px] active:translate-y-[0px] rounded-xl",
+      outline: "bg-transparent border border-emerald-200 text-slate-800 hover:border-[#16A34A] hover:bg-emerald-50/50 active:translate-y-[0px] rounded-xl",
     };
     
     const sizes = {
-      sm: "text-sm px-4 py-2",
-      md: "text-base px-6 py-2.5",
-      lg: "text-lg px-8 py-3.5",
+      sm: "text-xs px-3.5 py-1.5",
+      md: "text-sm px-5 py-2.5",
+      lg: "text-base px-7 py-3",
     };
 
     return (
@@ -41,7 +37,6 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         data-cursor="button"
         data-cursor-text={cursorLabel}
-        style={inlineStyle}
         className={cn(baseStyles, variants[variant], sizes[size], className)}
         {...props}
       >

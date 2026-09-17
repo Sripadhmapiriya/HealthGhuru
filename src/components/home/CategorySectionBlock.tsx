@@ -29,7 +29,7 @@ export function CategorySectionBlock({
       {/* Category Header with Gradient Underline and View All */}
       <div className="flex items-center justify-between pb-3.5 mb-6 relative">
         <div className="flex items-center gap-3">
-          <span className="w-2.5 h-6 rounded-full bg-gradient-to-b from-[#16A34A] to-[#f06d2f]" />
+          <span className="w-2.5 h-6 rounded-full bg-[#CBF2DB]" />
           <div>
             <h2 className="font-heading font-extrabold text-xl sm:text-2xl text-slate-900 tracking-tight uppercase">
               {title}
@@ -50,8 +50,8 @@ export function CategorySectionBlock({
           <ArrowRight size={13} />
         </Link>
 
-        {/* Brand Gradient Underline */}
-        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#16A34A] via-[#22C55E] to-[#f06d2f] rounded-full opacity-70" />
+        {/* Mint Green Underline */}
+        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#CBF2DB] rounded-full opacity-70" />
       </div>
 
       {/* Grid: 1 Large Story (left) + 2 or 3 Supporting Stories (right) */}

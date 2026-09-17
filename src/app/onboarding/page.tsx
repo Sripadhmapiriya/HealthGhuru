@@ -218,8 +218,8 @@ function OnboardingWizard() {
       <main className="site-container max-w-4xl mx-auto relative z-10 my-auto">
         <div className="bg-white rounded-3xl border border-primary/15 p-6 sm:p-10 shadow-xl relative overflow-hidden">
           
-          {/* Top Gradient Stripe */}
-          <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-primary via-secondary to-accent" />
+          {/* Top Stripe */}
+          <div className="absolute top-0 left-0 right-0 h-2 bg-[#CBF2DB]" />
 
           {/* Error Message */}
           {error && (

@@ -55,7 +55,7 @@
   /* Gradients */
   --gradient-primary:   linear-gradient(135deg, #16A34A 0%, #22C55E 100%);
   --gradient-hero:      linear-gradient(135deg, #15803D 0%, #16A34A 60%, #22C55E 100%);
-  --gradient-brand:     linear-gradient(90deg, #15803D 0%, #16A34A 35%, #059669 65%, #ea580c 100%);
+  --gradient-brand:     linear-gradient(90deg, #15803D 0%, #16A34A 50%, #22C55E 100%);
   --gradient-dark:      linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
   --gradient-surface:   linear-gradient(180deg, #F0FDF4 0%, #FFFFFF 12%, #F8FAFC 85%, #FFF7ED 100%);
   --gradient-accent:    linear-gradient(135deg, #f06d2f 0%, #ff8a57 100%);
