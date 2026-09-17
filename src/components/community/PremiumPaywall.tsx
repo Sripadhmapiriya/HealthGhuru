@@ -38,8 +38,8 @@ export function PremiumPaywall() {
     <div className="min-h-[70vh] flex items-center justify-center py-20 px-4">
       <div className="max-w-md w-full bg-white rounded-3xl p-8 shadow-xl border border-primary/10 text-center relative overflow-hidden">
         {/* Background elements */}
-        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-gradient-to-br from-accent/20 to-primary/5 rounded-full blur-2xl" />
-        <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-gradient-to-tr from-primary/10 to-transparent rounded-full blur-2xl" />
+        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-[#CBF2DB]/25 rounded-full blur-2xl" />
+        <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-[#CBF2DB]/25 rounded-full blur-2xl" />
         
         <div className="relative z-10">
           <div className="w-16 h-16 mx-auto bg-gradient-hero rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg transform rotate-3">

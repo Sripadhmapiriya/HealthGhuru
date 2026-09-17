@@ -68,11 +68,11 @@ export function WellnessTipCard({ tip, className = '', onSave }: WellnessTipCard
 
   return (
     <div
-      className={`relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-surface to-accent/5 border border-primary/20 p-5 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 ${className}`}
+      className={`relative overflow-hidden rounded-2xl bg-white border border-primary/20 p-5 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 ${className}`}
     >
       {/* Decorative background glow */}
       <div className="absolute -top-16 -right-16 w-36 h-36 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
-      <div className="absolute -bottom-16 -left-16 w-36 h-36 bg-accent/10 rounded-full blur-2xl pointer-events-none" />
+      <div className="absolute -bottom-16 -left-16 w-36 h-36 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
 
       {/* Header bar */}
       <div className="flex flex-wrap items-center justify-between gap-2.5 mb-3 relative z-10">

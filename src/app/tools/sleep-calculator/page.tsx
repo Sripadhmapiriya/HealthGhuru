@@ -109,13 +109,13 @@ export default function SleepCalculatorPage() {
                         type="time" 
                         value={time} 
                         onChange={e => setTime(e.target.value)} 
-                        className="w-full bg-surface border border-border rounded-xl pl-12 pr-4 py-3.5 outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 text-dark font-display text-lg" 
+                        className="w-full bg-surface border border-border rounded-xl pl-12 pr-4 py-3.5 outline-none focus:border-[#16A34A] focus:ring-1 focus:ring-[#16A34A] text-dark font-display text-lg" 
                       />
                     </div>
                   </div>
                 </div>
 
-                <button type="submit" className="w-full py-4 rounded-xl bg-indigo-600 text-white font-heading font-bold hover:bg-indigo-700 transition-colors shadow-sm text-base sm:text-lg">
+                <button type="submit" className="w-full py-4 rounded-xl bg-[#16A34A] text-white font-heading font-bold hover:bg-[#15803D] transition-colors shadow-xs text-base sm:text-lg">
                   Calculate Cycles
                 </button>
               </form>

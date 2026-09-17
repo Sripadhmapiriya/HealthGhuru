@@ -334,8 +334,8 @@ function LoginForm() {
           >
             <div className="bg-white rounded-3xl shadow-xl border border-primary/15 p-6 sm:p-10 relative overflow-hidden">
               
-              {/* Top Gradient Ribbon Accent */}
-              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-primary via-secondary to-accent" />
+              {/* Top Ribbon Accent */}
+              <div className="absolute top-0 left-0 right-0 h-2 bg-[#CBF2DB]" />
 
               {/* Mobile-only Header Logo */}
               <div className="lg:hidden text-center mb-6">

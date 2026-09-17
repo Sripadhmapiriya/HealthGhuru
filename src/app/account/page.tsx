@@ -356,7 +356,7 @@ function AccountDashboard() {
         
         {/* User Greeting Hero Banner */}
         <div className="bg-white rounded-3xl border border-primary/15 p-6 sm:p-8 shadow-sm mb-8 relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-primary via-secondary to-accent" />
+          <div className="absolute top-0 left-0 right-0 h-2 bg-[#CBF2DB]" />
 
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex items-center gap-4 sm:gap-5">

@@ -20,6 +20,7 @@ import {
   ChevronDown,
   ChevronRight,
   ClipboardList,
+  Sparkles,
 } from 'lucide-react';
 import { useState } from 'react';
 import { IconAction } from '@/components/ui/IconAction';
@@ -29,17 +30,18 @@ const AD_SUB_LINKS = [
   { href: '/admin/advertisements/all', label: 'All Advertisements', icon: ListFilter },
   { href: '/admin/advertisements/add', label: 'Add Advertisement', icon: PlusCircle },
   { href: '/admin/advertisements/pricing', label: 'Ad Slot Pricing', icon: DollarSign },
-  { href: '/admin/advertisements/sponsored', label: 'Sponsored Articles', icon: FileText },
+  { href: '/admin/sponsored-articles', label: 'Sponsored Articles', icon: FileText },
 ];
 
 export function AdminSidebarNav() {
   const pathname = usePathname();
-  const isAdsSection = pathname.startsWith('/admin/advertisements');
+  const isAdsSection = pathname.startsWith('/admin/advertisements') || pathname.startsWith('/admin/sponsored-articles');
   const [adsOpen, setAdsOpen] = useState(isAdsSection);
 
   const links = [
     { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/admin/content', label: 'Content Library', icon: FileText },
+    { href: '/admin/sponsored-articles', label: 'Sponsored Articles', icon: Sparkles },
     { href: '/admin/review-queue', label: 'Review Queue', icon: CheckSquare },
     { href: '/admin/sources', label: 'Content Sources', icon: Rss },
     { href: '/admin/ingestion', label: 'Ingestion Runs', icon: Activity },

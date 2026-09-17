@@ -4,66 +4,37 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
-  ShieldAlert,
-  Send,
+  ChevronRight,
   Heart,
-  ArrowRight,
-  ShieldCheck,
-  Megaphone,
+  Activity,
+  Baby,
+  Brain,
+  Stethoscope,
 } from "lucide-react";
 
 export default function Footer() {
   const pathname = usePathname();
 
-  if (pathname === '/login' || pathname === '/subscribe') {
+  // Hide on standalone screens
+  if (pathname === "/login" || pathname === "/subscribe") {
     return null;
   }
 
   return (
-    <footer className="bg-slate-950 text-slate-300 pt-12 sm:pt-16 pb-8 relative">
-      {/* 4px Signature Brand Gradient Top Line */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#16A34A] via-[#22C55E] to-[#f06d2f]" />
+    <footer className="bg-[#CBF2DB] text-slate-800 pt-12 pb-6 border-t border-emerald-300/70 relative">
+      {/* 2px Signature Brand Green Top Accent Line */}
+      <div className="absolute top-0 left-0 right-0 h-0.5 bg-[#16A34A]" />
 
-      <div className="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Top Newsletter & Subscription Strip with Ambient Gradient */}
-        <div className="bg-gradient-to-r from-emerald-950/90 via-slate-900 to-orange-950/70 rounded-2xl p-6 sm:p-8 mb-12 border border-emerald-500/30 shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-6">
-          <div>
-            <span className="text-[10px] font-mono font-bold tracking-widest text-orange-200 uppercase bg-white/10 px-2.5 py-0.5 rounded border border-white/10">
-              DAILY CLINICAL DISPATCH
-            </span>
-            <h3 className="font-heading font-extrabold text-xl sm:text-2xl text-white mt-2">
-              Live Better. Feel Stronger. Every Day.
-            </h3>
-            <p className="text-xs sm:text-sm text-emerald-200/80 mt-1 max-w-xl">
-              Get the latest peer-reviewed medical breakthroughs, physician interviews, and wellness news delivered to your inbox every morning.
-            </p>
-          </div>
-
-          <form onSubmit={(e) => { e.preventDefault(); alert("Thank you for subscribing to HealthGhuru!"); }} className="w-full lg:w-auto flex flex-col sm:flex-row items-center gap-2">
-            <input
-              type="email"
-              placeholder="Enter your email address..."
-              className="w-full sm:w-72 px-4 py-2.5 rounded-full bg-slate-900/80 border border-emerald-500/40 text-white text-xs placeholder-slate-400 outline-none focus:border-[#f06d2f]"
-              required
-            />
-            <button
-              type="submit"
-              className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-gradient-to-r from-[#f06d2f] to-[#ff8a57] hover:brightness-110 text-white font-heading font-bold text-xs shadow-md transition-all whitespace-nowrap"
-            >
-              Subscribe Free
-            </button>
-          </form>
-        </div>
-
-        {/* 6-Column News Portal Structure */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-12 text-xs">
+        {/* ── 4-Column Simple Clean Footer Grid ── */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 pb-10">
           
-          {/* Col 1: HealthGhuru Brand */}
-          <div className="col-span-2 md:col-span-3 lg:col-span-1">
-            <Link href="/" className="inline-block mb-3">
+          {/* ── Col 1: Logo & Socials ── */}
+          <div className="space-y-4">
+            <Link href="/" className="inline-block">
               <div className="flex items-center gap-2">
-                <div className="relative w-8 h-8">
+                <div className="relative w-9 h-9">
                   <Image
                     src="/images/logo_transparent.png"
                     alt="HealthGhuru"
@@ -71,113 +42,192 @@ export default function Footer() {
                     className="object-contain"
                   />
                 </div>
-                <span className="font-display font-bold text-xl text-white">
+                <span className="font-display font-bold text-2xl tracking-tight text-slate-900">
                   HEALTH<span className="text-[#f06d2f]">GHURU</span>
                 </span>
               </div>
             </Link>
-            <p className="text-[11px] text-gray-300 leading-relaxed">
-              India's premier digital health news platform, providing continuous, fact-checked medical journalism, clinical trial analysis, and expert guidance.
+
+            <p className="text-xs text-slate-700 leading-relaxed max-w-xs font-normal">
+              Honest health news, reliable medical information. We bring you every story for your wellbeing.
             </p>
-            <div className="mt-4 flex items-center gap-2 text-emerald-400 text-[11px] font-semibold">
-              <ShieldCheck size={14} />
-              <span>Verified Medical Portal</span>
+
+            {/* Circular Social Media Buttons (Matching Screenshot) */}
+            <div className="flex items-center gap-2.5 pt-1">
+              {/* Facebook */}
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                className="w-8 h-8 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:opacity-90 hover:scale-105 transition-all shadow-xs"
+              >
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                </svg>
+              </a>
+
+              {/* Twitter / X */}
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Twitter / X"
+                className="w-8 h-8 rounded-full bg-[#1DA1F2] text-white flex items-center justify-center hover:opacity-90 hover:scale-105 transition-all shadow-xs"
+              >
+                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.936 9.936 0 0024 4.59z" />
+                </svg>
+              </a>
+
+              {/* Instagram */}
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white flex items-center justify-center hover:opacity-90 hover:scale-105 transition-all shadow-xs"
+              >
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                </svg>
+              </a>
+
+              {/* YouTube */}
+              <a
+                href="https://youtube.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="YouTube"
+                className="w-8 h-8 rounded-full bg-[#FF0000] text-white flex items-center justify-center hover:opacity-90 hover:scale-105 transition-all shadow-xs"
+              >
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                </svg>
+              </a>
             </div>
           </div>
 
-          {/* Col 2: Categories */}
+          {/* ── Col 2: QUICK LINKS ── */}
           <div>
-            <h4 className="font-heading font-extrabold text-xs uppercase tracking-wider text-white mb-3 pb-1 border-b border-emerald-800">
-              Categories
+            <h4 className="font-heading font-extrabold text-xs uppercase tracking-wider text-[#f06d2f] mb-3.5">
+              QUICK LINKS
             </h4>
-            <ul className="space-y-1.5 text-gray-300">
-              <li><Link href="/category/cancer" className="hover:text-[#f06d2f] transition-colors">Cancer</Link></li>
-              <li><Link href="/category/heart" className="hover:text-[#f06d2f] transition-colors">Heart Health</Link></li>
-              <li><Link href="/category/diabetes" className="hover:text-[#f06d2f] transition-colors">Diabetes</Link></li>
-              <li><Link href="/category/womens-health" className="hover:text-[#f06d2f] transition-colors">Women's Health</Link></li>
-              <li><Link href="/category/pediatrics" className="hover:text-[#f06d2f] transition-colors">Pediatrics</Link></li>
-              <li><Link href="/category/mental-health" className="hover:text-[#f06d2f] transition-colors">Mental Health</Link></li>
-              <li><Link href="/category/fitness" className="hover:text-[#f06d2f] transition-colors">Fitness</Link></li>
-              <li><Link href="/category/nutrition" className="hover:text-[#f06d2f] transition-colors">Nutrition</Link></li>
+            <ul className="space-y-2 text-xs font-medium text-slate-700">
+              <li>
+                <Link href="/" className="inline-flex items-center gap-1.5 hover:text-[#16A34A] transition-colors">
+                  <span className="text-[#f06d2f] font-bold">›</span>
+                  <span>Home</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/latest" className="inline-flex items-center gap-1.5 hover:text-[#16A34A] transition-colors">
+                  <span className="text-[#f06d2f] font-bold">›</span>
+                  <span>Latest News</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="inline-flex items-center gap-1.5 hover:text-[#16A34A] transition-colors">
+                  <span className="text-[#f06d2f] font-bold">›</span>
+                  <span>About Us</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/advertise" className="inline-flex items-center gap-1.5 hover:text-[#16A34A] transition-colors">
+                  <span className="text-[#f06d2f] font-bold">›</span>
+                  <span>Advertise With Us</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/sponsored-articles" className="inline-flex items-center gap-1.5 hover:text-[#16A34A] transition-colors">
+                  <span className="text-[#f06d2f] font-bold">›</span>
+                  <span>Sponsored Articles</span>
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* Col 3: Explore */}
+          {/* ── Col 3: POPULAR CATEGORIES ── */}
           <div>
-            <h4 className="font-heading font-extrabold text-xs uppercase tracking-wider text-white mb-3 pb-1 border-b border-emerald-800">
-              Explore
+            <h4 className="font-heading font-extrabold text-xs uppercase tracking-wider text-[#f06d2f] mb-3.5">
+              POPULAR CATEGORIES
             </h4>
-            <ul className="space-y-1.5 text-gray-300">
-              <li><Link href="/latest" className="hover:text-[#f06d2f] transition-colors">Latest News</Link></li>
-              <li><Link href="/trending" className="hover:text-[#f06d2f] transition-colors">Trending Stories</Link></li>
-              <li><Link href="/research" className="hover:text-[#f06d2f] transition-colors">Medical Research</Link></li>
-              <li><Link href="/videos" className="hover:text-[#f06d2f] transition-colors">Health Videos</Link></li>
-              <li><Link href="/videos?format=short" className="hover:text-[#f06d2f] transition-colors">Health Shorts</Link></li>
-              <li><Link href="/magazines" className="hover:text-[#f06d2f] transition-colors">Magazines</Link></li>
-              <li><Link href="/tools" className="hover:text-[#f06d2f] transition-colors">Health Tools & BMI</Link></li>
+            <ul className="space-y-2 text-xs font-medium text-slate-700">
+              <li>
+                <Link href="/category/heart" className="inline-flex items-center gap-2 hover:text-[#16A34A] transition-colors">
+                  <Heart size={14} className="text-[#f06d2f] shrink-0" />
+                  <span>Heart &amp; Cardiology</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/category/cancer" className="inline-flex items-center gap-2 hover:text-[#16A34A] transition-colors">
+                  <Activity size={14} className="text-[#f06d2f] shrink-0" />
+                  <span>Cancer &amp; Oncology</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/category/diabetes" className="inline-flex items-center gap-2 hover:text-[#16A34A] transition-colors">
+                  <Stethoscope size={14} className="text-[#f06d2f] shrink-0" />
+                  <span>Diabetes Care</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/category/pediatrics" className="inline-flex items-center gap-2 hover:text-[#16A34A] transition-colors">
+                  <Baby size={14} className="text-[#f06d2f] shrink-0" />
+                  <span>Pediatrics &amp; Kids</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/category/mental-health" className="inline-flex items-center gap-2 hover:text-[#16A34A] transition-colors">
+                  <Brain size={14} className="text-[#f06d2f] shrink-0" />
+                  <span>Mental Health</span>
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* Col 4: Medical Ecosystem */}
-          <div>
-            <h4 className="font-heading font-extrabold text-xs uppercase tracking-wider text-white mb-3 pb-1 border-b border-emerald-800">
-              Medical Directory
+          {/* ── Col 4: CONTACT US ── */}
+          <div className="space-y-2.5 text-xs text-slate-700">
+            <h4 className="font-heading font-extrabold text-xs uppercase tracking-wider text-[#f06d2f] mb-3.5">
+              CONTACT US
             </h4>
-            <ul className="space-y-1.5 text-gray-300">
-              <li><Link href="/doctors" className="hover:text-[#f06d2f] transition-colors">Doctor Directory</Link></li>
-              <li><Link href="/hospitals" className="hover:text-[#f06d2f] transition-colors">Hospitals & Centers</Link></li>
-              <li><Link href="/interviews" className="hover:text-[#f06d2f] transition-colors">Doctor Interviews</Link></li>
-              <li><Link href="/about/medical-review" className="hover:text-[#f06d2f] transition-colors">Medical Board</Link></li>
-              <li><Link href="/editorial-standards" className="hover:text-[#f06d2f] transition-colors">Editorial Standards</Link></li>
-            </ul>
-          </div>
-
-          {/* Col 5: Business */}
-          <div>
-            <h4 className="font-heading font-extrabold text-xs uppercase tracking-wider text-white mb-3 pb-1 border-b border-emerald-800">
-              Business
-            </h4>
-            <ul className="space-y-1.5 text-gray-300">
-              <li><Link href="/advertise" className="text-[#f06d2f] font-semibold hover:underline">Advertise With Us</Link></li>
-              <li><Link href="/sponsored" className="hover:text-[#f06d2f] transition-colors">Sponsored Content</Link></li>
-              <li><Link href="/partner" className="hover:text-[#f06d2f] transition-colors">Hospital Partnerships</Link></li>
-              <li><Link href="/press" className="hover:text-[#f06d2f] transition-colors">Press & Media</Link></li>
-              <li><Link href="/careers" className="hover:text-[#f06d2f] transition-colors">Careers</Link></li>
-            </ul>
-          </div>
-
-          {/* Col 6: Legal & Disclaimers */}
-          <div>
-            <h4 className="font-heading font-extrabold text-xs uppercase tracking-wider text-white mb-3 pb-1 border-b border-emerald-800">
-              Legal & Privacy
-            </h4>
-            <ul className="space-y-1.5 text-gray-300">
-              <li><Link href="/privacy-policy" className="hover:text-[#f06d2f] transition-colors">Privacy Policy</Link></li>
-              <li><Link href="/terms-of-service" className="hover:text-[#f06d2f] transition-colors">Terms of Service</Link></li>
-              <li><Link href="/disclaimer" className="hover:text-[#f06d2f] transition-colors">Medical Disclaimer</Link></li>
-              <li><Link href="/cookie-policy" className="hover:text-[#f06d2f] transition-colors">Cookie Policy</Link></li>
-              <li><Link href="/contact" className="hover:text-[#f06d2f] transition-colors">Contact Editorial</Link></li>
-            </ul>
+            <p>
+              Email:{' '}
+              <a
+                href="mailto:info@healthghuru.com"
+                className="text-[#f06d2f] font-semibold hover:underline"
+              >
+                info@healthghuru.com
+              </a>
+            </p>
+            <p className="text-slate-600">
+              Chennai, Tamil Nadu, India
+            </p>
+            <p className="text-[11px] italic text-slate-600 leading-relaxed pt-1">
+              HealthGhuru is a digital health media brand dedicated to medical truth and patient wellness.
+            </p>
           </div>
 
         </div>
 
-        {/* Mandatory Medical Disclaimer Alert Box */}
-        <div className="bg-black/40 rounded-xl p-4 border border-emerald-800/40 text-[11px] text-gray-400 leading-relaxed mb-6">
-          <div className="flex items-start gap-2.5">
-            <ShieldAlert size={16} className="text-amber-400 shrink-0 mt-0.5" />
-            <div>
-              <strong className="text-gray-200">EDITORIAL & MEDICAL DISCLAIMER:</strong> HealthGhuru is a digital health news and educational publication. Content published on this platform — including clinical research reports, doctor interviews, articles, and wellness tools — is intended solely for general informational and journalistic purposes. It is not a substitute for professional medical consultation, diagnosis, or treatment. Always consult a qualified healthcare provider regarding medical conditions or symptoms. In medical emergencies, contact your local emergency services immediately.
-            </div>
+        {/* ── Bottom Bar (Matching Screenshot) ── */}
+        <div className="pt-5 border-t border-emerald-300/80 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-600 gap-3">
+          <p>© {new Date().getFullYear()} HealthGhuru. All Rights Reserved.</p>
+          
+          <div className="flex items-center gap-4 sm:gap-6 flex-wrap justify-center font-medium">
+            <Link href="/privacy-policy" className="hover:text-slate-900 transition-colors">
+              Privacy Policy
+            </Link>
+            <Link href="/terms-of-service" className="hover:text-slate-900 transition-colors">
+              Terms &amp; Conditions
+            </Link>
+            <Link href="/disclaimer" className="hover:text-slate-900 transition-colors">
+              Disclaimer
+            </Link>
+            <Link href="/contact" className="hover:text-slate-900 transition-colors">
+              Contact
+            </Link>
           </div>
-        </div>
-
-        {/* Bottom copyright */}
-        <div className="pt-6 border-t border-emerald-900/60 flex flex-col sm:flex-row items-center justify-between text-[11px] text-gray-400 gap-2">
-          <p>© {new Date().getFullYear()} HealthGhuru Media Network. All rights reserved.</p>
-          <p className="font-heading font-semibold text-emerald-300">
-            Live Better. Feel Stronger. Every Day.
-          </p>
         </div>
 
       </div>

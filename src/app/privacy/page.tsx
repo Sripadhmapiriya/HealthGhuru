@@ -194,7 +194,7 @@ export default function PrivacyPolicyPage() {
       
       {/* Top Reading Progress Bar */}
       <div 
-        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-emerald-400 to-accent z-50 origin-left transition-all duration-150"
+        className="fixed top-0 left-0 right-0 h-1 bg-[#CBF2DB] z-50 origin-left transition-all duration-150"
         style={{ width: `${scrollProgress}%` }}
       />
 
@@ -374,7 +374,7 @@ export default function PrivacyPolicyPage() {
           <main className="flex-1 w-full bg-white rounded-3xl border border-primary/15 shadow-[0_4px_24px_rgba(46,125,50,0.06)] overflow-hidden">
             
             {/* Top Green Accent Bar */}
-            <div className="h-1.5 bg-gradient-to-r from-primary via-emerald-400 to-accent w-full" />
+            <div className="h-1.5 bg-[#CBF2DB] w-full" />
 
             <div className="p-6 sm:p-10 lg:p-14 space-y-12 sm:space-y-16">
               

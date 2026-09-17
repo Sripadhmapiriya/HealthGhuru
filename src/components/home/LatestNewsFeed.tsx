@@ -63,7 +63,7 @@ export function LatestNewsFeed({ initialItems }: LatestNewsFeedProps) {
         <div className="flex flex-col md:flex-row md:items-end justify-between pb-4 relative gap-4 mb-6">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="w-3 h-3 rounded-full bg-gradient-to-r from-[#16A34A] to-[#f06d2f]" />
+              <span className="w-3 h-3 rounded-full bg-[#CBF2DB]" />
               <span className="text-xs font-mono uppercase tracking-widest text-[#16A34A] font-bold">
                 REAL-TIME CLINICAL WIRE
               </span>
@@ -90,8 +90,8 @@ export function LatestNewsFeed({ initialItems }: LatestNewsFeedProps) {
             ))}
           </div>
 
-          {/* Gradient Underline */}
-          <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-gradient-to-r from-[#16A34A] via-[#22C55E] to-[#f06d2f] rounded-full" />
+          {/* Mint Green Underline */}
+          <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#CBF2DB] rounded-full" />
         </div>
 
         {/* Data-Driven Category Filters Bar */}
@@ -106,7 +106,7 @@ export function LatestNewsFeed({ initialItems }: LatestNewsFeedProps) {
               onClick={() => setSelectedCategory(cat)}
               className={`text-xs font-heading font-semibold whitespace-nowrap px-3.5 py-1.5 rounded-full transition-all ${
                 selectedCategory === cat
-                  ? "bg-gradient-to-r from-[#f06d2f] to-[#ff8a57] text-white shadow-xs font-bold"
+                  ? "bg-[#16A34A] text-white shadow-xs font-bold"
                   : "bg-white text-slate-700 hover:bg-emerald-50 border border-emerald-500/20"
               }`}
             >
@@ -187,7 +187,7 @@ export function LatestNewsFeed({ initialItems }: LatestNewsFeedProps) {
           <div className="mt-8 text-center">
             <button
               onClick={() => setVisibleCount((prev) => prev + 6)}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#16A34A] via-[#22C55E] to-[#f06d2f] hover:brightness-110 text-white font-heading font-bold text-xs sm:text-sm px-7 py-3 rounded-full shadow-md hover:shadow-lg transition-all active:scale-95"
+              className="inline-flex items-center gap-2 bg-[#16A34A] hover:bg-[#15803D] text-white font-heading font-bold text-xs sm:text-sm px-7 py-3 rounded-full shadow-md hover:shadow-lg transition-all active:scale-95"
             >
               <span>Load More Health News</span>
               <Layers size={14} />

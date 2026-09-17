@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { sql } from '@/lib/db';
 import { getSession } from '@/lib/auth/session';
 
@@ -104,8 +105,53 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
           )
         `;
       }
-    } catch (syncErr) {
-      console.error('Warning: could not sync campaign to advertisements:', syncErr);
+    } catch (adErr) {
+      console.error('Advertisement sync error:', adErr);
+    }
+
+    // Sync to sponsored_articles table
+    try {
+      if (isNowActive) {
+        await sql`
+          UPDATE sponsored_articles
+          SET status = 'published',
+              is_active = TRUE,
+              review_status = 'approved',
+              published_at = COALESCE(published_at, NOW()),
+              updated_at = NOW()
+          WHERE campaign_id = ${params.id}::uuid
+             OR title ILIKE ${'%' + campaign.advertiser_name + '%'}
+        `;
+      } else if (campaign.status === 'rejected') {
+        await sql`
+          UPDATE sponsored_articles
+          SET status = 'rejected',
+              is_active = FALSE,
+              updated_at = NOW()
+          WHERE campaign_id = ${params.id}::uuid
+             OR title ILIKE ${'%' + campaign.advertiser_name + '%'}
+        `;
+      } else if (campaign.status === 'completed') {
+        await sql`
+          UPDATE sponsored_articles
+          SET status = 'expired',
+              is_active = FALSE,
+              updated_at = NOW()
+          WHERE campaign_id = ${params.id}::uuid
+             OR title ILIKE ${'%' + campaign.advertiser_name + '%'}
+        `;
+      }
+    } catch (articleSyncErr) {
+      console.error('Warning: could not sync campaign to sponsored_articles:', articleSyncErr);
+    }
+
+    // Revalidate public user portal and admin queues
+    try {
+      revalidatePath('/sponsored-articles');
+      revalidatePath('/admin/sponsored-articles');
+      revalidatePath('/admin/campaigns');
+    } catch {
+      // ignore
     }
 
     return NextResponse.json({ success: true, campaign: rows[0] });

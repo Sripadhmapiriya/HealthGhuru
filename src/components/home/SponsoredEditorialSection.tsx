@@ -53,12 +53,20 @@ export function SponsoredEditorialSection() {
               Partner Content • Commercial Healthcare Editorial
             </span>
           </div>
-          <Link
-            href="/advertise"
-            className="text-xs font-heading font-semibold text-[#f06d2f] hover:underline"
-          >
-            Advertise With Us →
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/sponsored-articles"
+              className="text-xs font-heading font-bold text-[#16A34A] hover:underline hidden sm:inline"
+            >
+              View All Sponsored Articles →
+            </Link>
+            <Link
+              href="/advertise"
+              className="text-xs font-heading font-semibold text-[#f06d2f] hover:underline"
+            >
+              Advertise With Us →
+            </Link>
+          </div>
         </div>
 
         {/* 3-Column Sponsored Cards */}

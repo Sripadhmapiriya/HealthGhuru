@@ -43,9 +43,9 @@ export function TopAdBar() {
   }, []);
 
   return (
-    <div className="w-full bg-gradient-to-r from-emerald-50/70 via-white to-orange-50/60 border-b border-emerald-500/20 text-slate-800 pt-1 pb-2 px-4 sm:px-6 relative">
-      {/* Top 2px Brand Gradient Line */}
-      <div className="absolute top-0 left-0 right-0 h-[2.5px] bg-gradient-to-r from-[#16A34A] via-[#22C55E] to-[#f06d2f]" />
+    <div className="w-full bg-emerald-50/50 border-b border-emerald-500/20 text-slate-800 pt-1 pb-2 px-4 sm:px-6 relative">
+      {/* Top 2px Mint Green Line */}
+      <div className="absolute top-0 left-0 right-0 h-[2.5px] bg-[#CBF2DB]" />
 
       <div className="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto mt-1">
         {/* Top Centered Label: ADVERTISEMENT / SPONSORED */}
@@ -58,7 +58,7 @@ export function TopAdBar() {
         {/* Banner Card */}
         <a
           href={ad.target_url}
-          className="group block bg-gradient-to-r from-white via-emerald-50/30 to-orange-50/30 hover:to-orange-50/60 border border-emerald-600/25 hover:border-orange-400/60 rounded-xl sm:rounded-2xl p-2 sm:p-3 transition-all duration-300 shadow-xs hover:shadow-md"
+          className="group block bg-white hover:bg-emerald-50/30 border border-emerald-600/25 hover:border-emerald-600/50 rounded-xl sm:rounded-2xl p-2 sm:p-3 transition-all duration-300 shadow-xs hover:shadow-md"
         >
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
             {/* Left: Thumbnail and Content */}
@@ -95,7 +95,7 @@ export function TopAdBar() {
 
             {/* Right: Action CTA */}
             <div className="shrink-0 w-full sm:w-auto flex justify-end">
-              <span className="inline-flex items-center justify-center gap-1.5 bg-gradient-to-r from-[#f06d2f] to-[#ff8a57] hover:brightness-110 text-white font-heading font-bold text-xs px-4 py-2 rounded-full shadow-xs group-hover:scale-105 active:scale-95 transition-all duration-200 w-full sm:w-auto text-center">
+              <span className="inline-flex items-center justify-center gap-1.5 bg-[#16A34A] hover:bg-[#15803D] text-white font-heading font-bold text-xs px-4 py-2 rounded-full shadow-xs group-hover:scale-105 active:scale-95 transition-all duration-200 w-full sm:w-auto text-center">
                 <span>{ad.cta_text}</span>
                 <ArrowRight size={13} className="shrink-0" />
               </span>

@@ -22,10 +22,10 @@ export function FlashUpdatesStrip({ updates }: { updates?: FlashItem[] }) {
   const items = updates && updates.length > 0 ? updates : DEFAULT_FLASH_UPDATES;
 
   return (
-    <div className="bg-gradient-to-r from-emerald-50/90 via-white to-orange-50/80 text-slate-800 border-b border-emerald-200/70 py-1.5 px-4 overflow-hidden text-xs">
+    <div className="bg-emerald-50/70 text-slate-800 border-b border-emerald-200/70 py-1.5 px-4 overflow-hidden text-xs">
       <div className="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto flex items-center gap-3">
         {/* Flash Label */}
-        <div className="flex items-center gap-1.5 shrink-0 font-mono font-bold text-[10px] tracking-wider text-white uppercase bg-gradient-to-r from-[#f06d2f] to-[#ff8a57] px-2.5 py-0.5 rounded shadow-xs">
+        <div className="flex items-center gap-1.5 shrink-0 font-mono font-bold text-[10px] tracking-wider text-white uppercase bg-[#f06d2f] px-2.5 py-0.5 rounded shadow-xs">
           <Zap size={10} className="text-white fill-white" />
           <span>FLASH UPDATES</span>
         </div>
@@ -34,7 +34,7 @@ export function FlashUpdatesStrip({ updates }: { updates?: FlashItem[] }) {
         <div className="flex-1 overflow-x-auto scrollbar-none whitespace-nowrap flex items-center gap-6 text-[11px] font-heading font-medium">
           {items.map((item, idx) => (
             <div key={item.id + idx} className="inline-flex items-center gap-2 shrink-0">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#CBF2DB]" />
               <Link
                 href={`/article/${item.slug}`}
                 className="text-slate-700 hover:text-[#16A34A] hover:underline transition-colors"

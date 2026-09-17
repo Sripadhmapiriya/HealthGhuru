@@ -311,7 +311,7 @@ export default function SubscribePage() {
             </button>
 
             <div className="bg-white rounded-3xl shadow-xl border border-primary/10 p-8 sm:p-10 relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-primary to-accent" />
+              <div className="absolute top-0 left-0 right-0 h-2 bg-[#CBF2DB]" />
 
               <div className="flex items-center justify-between pb-6 border-b border-border mb-6">
                 <div>
@@ -386,8 +386,8 @@ export default function SubscribePage() {
             transition={{ duration: 0.35, ease: "easeOut" }}
             className="w-full max-w-md mx-auto bg-white rounded-3xl shadow-xl border border-primary/15 p-6 sm:p-8 text-center relative overflow-hidden"
           >
-            {/* Top decorative gradient accent line */}
-            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary via-secondary to-accent" />
+            {/* Top decorative accent line */}
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#CBF2DB]" />
 
             {/* Emerald Checkmark Badge */}
             <div className="relative w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-4 flex items-center justify-center">
