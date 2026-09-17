@@ -18,6 +18,7 @@ import {
   Loader2,
   Check,
   AlertCircle,
+  Sparkles,
 } from 'lucide-react';
 
 interface NewsItem {
@@ -118,7 +119,7 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
     });
   }, [news, selectedLanguage, selectedCategory, searchQuery]);
 
-  // Tamil Formatted Date string matching reference image
+  // Tamil Formatted Date string
   const todayHeaderStr = useMemo(() => getFormattedTamilDate(new Date()), []);
 
   // Open Edit Modal
@@ -210,7 +211,7 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
               : n
           )
         );
-        setModalMessage({ type: 'success', text: 'News updated and live revalidated successfully!' });
+        setModalMessage({ type: 'success', text: 'News updated successfully!' });
         setTimeout(() => setEditingItem(null), 900);
       } else {
         throw new Error(data.error || 'Failed to update news');
@@ -224,7 +225,7 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
 
   // Delete Single News Item
   const handleDelete = async (id: string, title: string) => {
-    if (!confirm(`Are you sure you want to delete:\n"${title}"?\nThis will remove it from the user website immediately.`)) {
+    if (!confirm(`Are you sure you want to delete:\n"${title}"?\nThis will remove it from the website immediately.`)) {
       return;
     }
 
@@ -316,7 +317,6 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
       });
       const data = await res.json();
       if (data.success) {
-        // Filter out today's news from local state
         const todayDate = new Date().toISOString().slice(0, 10);
         setNews((prev) => prev.filter((item) => !item.published_at?.startsWith(todayDate)));
         alert(`Successfully deleted ${data.count} articles published today.`);
@@ -333,14 +333,19 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
   const totalDisplay = Math.max(serverTotalCount, news.length);
 
   return (
-    <div className="space-y-5 max-w-[1400px] mx-auto pb-16 text-white">
+    <div className="space-y-6 max-w-[1400px] mx-auto pb-16">
       
-      {/* ── 1. Top Bar Controls (Matches Reference Image Exactly) ── */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-1">
-        {/* Left: Heading */}
-        <h1 className="text-2xl sm:text-3xl font-heading font-black tracking-tight text-white">
-          All News
-        </h1>
+      {/* ── 1. Top Bar Controls (Clean White & Light Green) ── */}
+      <div className="bg-white border border-border rounded-2xl p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        {/* Left: Heading with Eyebrow */}
+        <div>
+          <span className="text-[11px] font-mono text-primary font-bold uppercase tracking-wider block mb-0.5">
+            News Management Archive
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-heading font-bold tracking-tight text-dark">
+            All News
+          </h1>
+        </div>
 
         {/* Right: Controls Row */}
         <div className="flex items-center gap-2.5 flex-wrap w-full sm:w-auto">
@@ -349,7 +354,7 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
           <select
             value={selectedLanguage}
             onChange={(e) => setSelectedLanguage(e.target.value)}
-            className="bg-[#1e1e1e] border border-gray-700 text-gray-200 hover:text-white rounded-lg px-3 py-1.5 text-xs font-semibold focus:border-[#f06d2f] outline-hidden cursor-pointer"
+            className="bg-white border border-gray-200 text-dark rounded-xl px-3 py-2 text-xs font-semibold focus:border-primary outline-hidden shadow-2xs cursor-pointer hover:border-gray-300 transition-colors"
           >
             <option value="all">All Languages</option>
             <option value="en">English</option>
@@ -358,19 +363,19 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
             <option value="te">Telugu</option>
           </select>
 
-          {/* Category Selector (Optional Quick Filter) */}
+          {/* Category Selector */}
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="bg-[#1e1e1e] border border-gray-700 text-gray-200 hover:text-white rounded-lg px-3 py-1.5 text-xs font-semibold focus:border-[#f06d2f] outline-hidden cursor-pointer hidden md:block"
+            className="bg-white border border-gray-200 text-dark rounded-xl px-3 py-2 text-xs font-semibold focus:border-primary outline-hidden shadow-2xs cursor-pointer hidden md:block hover:border-gray-300 transition-colors"
           >
             {HEALTH_CATEGORIES.map((cat) => (
               <option key={cat} value={cat}>{cat}</option>
             ))}
           </select>
 
-          {/* Total Badge */}
-          <span className="bg-[#1a1a1a] border border-gray-800 text-gray-200 px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold">
+          {/* Total Badge - Matches the Sidebar Active Pill */}
+          <span className="bg-primary/10 border border-primary/20 text-primary px-3.5 py-2 rounded-xl text-xs font-mono font-bold">
             Total: {totalDisplay}
           </span>
 
@@ -381,13 +386,13 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
               setSelectionMode(!selectionMode);
               setSelectedIds([]);
             }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-heading font-bold transition-all border inline-flex items-center gap-1.5 cursor-pointer ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-heading font-bold transition-all border inline-flex items-center gap-1.5 cursor-pointer shadow-2xs ${
               selectionMode
-                ? 'bg-[#3b2a1a] text-[#f59e0b] border-[#f59e0b]/50'
-                : 'bg-[#1e1e1e] text-gray-200 border-gray-700 hover:bg-gray-800'
+                ? 'bg-primary/15 text-primary border-primary'
+                : 'bg-white text-text-secondary border-gray-200 hover:bg-surface hover:text-dark'
             }`}
           >
-            <CheckSquare size={13} className={selectionMode ? 'text-[#f59e0b]' : 'text-gray-400'} />
+            <CheckSquare size={14} className={selectionMode ? 'text-primary' : 'text-text-muted'} />
             <span>{selectionMode ? 'Cancel' : 'Select'}</span>
           </button>
 
@@ -396,18 +401,18 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
             <button
               type="button"
               onClick={toggleSelectAll}
-              className="px-2.5 py-1.5 bg-[#252525] border border-gray-700 text-gray-300 hover:text-white rounded-lg text-xs font-heading font-semibold"
+              className="px-3 py-2 bg-surface border border-gray-200 text-text-secondary hover:text-dark rounded-xl text-xs font-heading font-semibold cursor-pointer"
             >
               {selectedIds.length === filteredNews.length ? 'Deselect All' : 'Select All'}
             </button>
           )}
 
-          {/* Delete All Button (Matches Reference Red Button) */}
+          {/* Delete All / Delete Selected */}
           <button
             type="button"
             disabled={isBatchDeleting}
             onClick={handleDeleteAllOrSelected}
-            className="px-3.5 py-1.5 bg-[#ef4444] hover:bg-[#dc2626] text-white rounded-lg text-xs font-heading font-bold shadow-xs transition-colors inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+            className="px-3.5 py-2 bg-[#ef4444] hover:bg-[#dc2626] text-white rounded-xl text-xs font-heading font-bold shadow-xs transition-colors inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
           >
             {isBatchDeleting ? (
               <Loader2 size={13} className="animate-spin" />
@@ -421,12 +426,12 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
             </span>
           </button>
 
-          {/* Add News Direct Button */}
+          {/* Add News Button */}
           <Link
             href="/admin/add-news"
-            className="px-3 py-1.5 bg-[#f06d2f] hover:bg-[#e05b1d] text-white rounded-lg text-xs font-heading font-bold shadow-xs transition-colors inline-flex items-center gap-1 cursor-pointer"
+            className="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-xl text-xs font-heading font-bold shadow-xs transition-colors inline-flex items-center gap-1.5 cursor-pointer"
           >
-            <Plus size={13} />
+            <Plus size={14} />
             <span>Add News</span>
           </Link>
         </div>
@@ -434,29 +439,29 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
 
       {/* ── Search Bar ── */}
       <div className="relative">
-        <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
+        <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search news by headline, tags, keywords..."
-          className="w-full pl-10 pr-9 py-2.5 bg-[#141414] border border-gray-800 rounded-xl text-xs text-white placeholder-gray-500 focus:border-[#f06d2f] outline-hidden"
+          placeholder="Search news by headline, tags, or topics..."
+          className="w-full pl-10 pr-9 py-2.5 bg-white border border-gray-200 rounded-xl text-xs text-dark placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-hidden shadow-2xs transition-all"
         />
         {searchQuery && (
           <button
             type="button"
             onClick={() => setSearchQuery('')}
-            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-dark cursor-pointer"
           >
-            <X size={13} />
+            <X size={14} />
           </button>
         )}
       </div>
 
-      {/* ── 2. Date Header Bar (Matches Reference Image Exactly) ── */}
-      <div className="bg-[#161616] border border-gray-800/80 rounded-xl px-4 py-2.5 flex items-center justify-between shadow-xs">
+      {/* ── 2. Date Header Bar (Light Green Theme like Sidebar) ── */}
+      <div className="bg-primary/10 border border-primary/20 rounded-xl px-4 py-2.5 flex items-center justify-between shadow-2xs">
         {/* Left: Tamil Formatted Date */}
-        <div className="flex items-center gap-2 text-xs font-heading font-bold text-gray-200">
+        <div className="flex items-center gap-2 text-xs font-heading font-bold text-primary">
           <span className="text-base leading-none">📅</span>
           <span>{todayHeaderStr}</span>
         </div>
@@ -477,17 +482,17 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
         </button>
       </div>
 
-      {/* ── 3. 4-Column News Cards Grid (Matches Reference Image) ── */}
+      {/* ── 3. 4-Column News Cards Grid (Clean White Card with Light Green Accents) ── */}
       {filteredNews.length === 0 ? (
-        <div className="bg-[#141414] border border-gray-800 rounded-2xl p-16 text-center text-gray-400 space-y-3">
-          <p className="text-sm font-semibold">No news articles found</p>
-          <p className="text-xs text-gray-500">
+        <div className="bg-white border border-border rounded-2xl p-16 text-center text-text-secondary space-y-3 shadow-sm">
+          <p className="text-sm font-semibold text-dark">No news articles found</p>
+          <p className="text-xs text-text-muted">
             {searchQuery ? `No results for "${searchQuery}"` : 'No stories match the active filters.'}
           </p>
           <div>
             <Link
               href="/admin/add-news"
-              className="px-4 py-2 bg-[#f06d2f] hover:bg-[#e05b1d] text-white rounded-xl text-xs font-bold inline-flex items-center gap-1.5 shadow-sm"
+              className="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-xl text-xs font-bold inline-flex items-center gap-1.5 shadow-xs"
             >
               <Plus size={14} />
               <span>Publish First Article</span>
@@ -495,28 +500,35 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
           {filteredNews.map((item) => {
             const isSelected = selectedIds.includes(item.id);
             const coverImg =
               item.image_url ||
               'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80';
             const langCode = (item.language || 'en').toLowerCase();
-            const langLabel = langCode === 'ta' ? 'TAMIL' : langCode === 'hi' ? 'HINDI' : langCode === 'te' ? 'TELUGU' : 'ENGLISH';
+            const langLabel =
+              langCode === 'ta'
+                ? 'TAMIL'
+                : langCode === 'hi'
+                ? 'HINDI'
+                : langCode === 'te'
+                ? 'TELUGU'
+                : 'ENGLISH';
 
             return (
               <div
                 key={item.id}
-                className={`bg-[#181818] rounded-2xl overflow-hidden border transition-all flex flex-col justify-between group ${
+                className={`bg-white rounded-2xl overflow-hidden border transition-all duration-200 flex flex-col justify-between group hover:shadow-md ${
                   isSelected
-                    ? 'border-[#f59e0b] ring-2 ring-[#f59e0b]/30'
-                    : 'border-gray-800/90 hover:border-gray-700 shadow-md'
+                    ? 'border-primary ring-2 ring-primary/30 shadow-md'
+                    : 'border-border hover:border-primary/50 shadow-xs'
                 }`}
               >
                 {/* Card Upper: Media + Meta + Text */}
                 <div>
                   {/* Image Container */}
-                  <div className="relative aspect-[16/10] w-full bg-gray-900 overflow-hidden">
+                  <div className="relative aspect-[16/10] w-full bg-surface-alt overflow-hidden border-b border-border/50">
                     <img
                       src={coverImg}
                       alt={item.title}
@@ -529,19 +541,19 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
                       <button
                         type="button"
                         onClick={() => toggleSelect(item.id)}
-                        className="absolute top-2 left-2 z-10 bg-black/80 hover:bg-black p-1.5 rounded-lg text-white transition-colors"
+                        className="absolute top-2.5 left-2.5 z-10 bg-white/95 hover:bg-white p-1.5 rounded-lg text-dark shadow-sm transition-colors cursor-pointer"
                       >
                         {isSelected ? (
-                          <CheckSquare size={16} className="text-[#f59e0b]" />
+                          <CheckSquare size={16} className="text-primary" />
                         ) : (
-                          <Square size={16} className="text-gray-300" />
+                          <Square size={16} className="text-gray-400" />
                         )}
                       </button>
                     )}
 
                     {/* Breaking News Pulse Badge */}
                     {item.is_breaking && (
-                      <div className="absolute top-2 right-2">
+                      <div className="absolute top-2.5 right-2.5">
                         <span className="bg-red-600 text-white text-[9px] font-mono font-bold px-2 py-0.5 rounded-full uppercase shadow-xs flex items-center gap-1 animate-pulse">
                           <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
                           BREAKING
@@ -552,25 +564,19 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
 
                   {/* Card Content Area */}
                   <div className="p-4 space-y-2.5">
-                    {/* Category & Language Pills (Matches Reference Placement) */}
+                    {/* Category & Language Pills (Matches the Light Green Sidebar Aesthetic) */}
                     <div className="flex items-center justify-between gap-2">
-                      <span className="bg-[#331c07] text-[#fbbf24] border border-[#f59e0b]/30 text-[11px] font-semibold px-2 py-0.5 rounded shadow-xs">
+                      <span className="bg-primary/10 text-primary border border-primary/20 text-[11px] font-bold px-2.5 py-0.5 rounded-full shadow-2xs">
                         {item.category || 'Health'}
                       </span>
-                      <span
-                        className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded shadow-xs tracking-wider border ${
-                          langCode === 'ta'
-                            ? 'bg-[#241a0d] text-[#fde047] border-[#f59e0b]/20'
-                            : 'bg-[#0d2238] text-[#38bdf8] border-[#0284c7]/30'
-                        }`}
-                      >
+                      <span className="bg-sky-50 text-sky-700 border border-sky-200/70 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shadow-2xs">
                         {langLabel}
                       </span>
                     </div>
 
                     {/* Article Headline */}
                     <h3
-                      className="font-heading font-bold text-sm text-white line-clamp-2 leading-snug group-hover:text-[#f06d2f] transition-colors cursor-pointer"
+                      className="font-heading font-bold text-sm text-dark line-clamp-2 leading-snug group-hover:text-primary transition-colors cursor-pointer"
                       onClick={() => handleOpenEdit(item)}
                       title={item.title}
                     >
@@ -578,7 +584,7 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
                     </h3>
 
                     {/* Article Excerpt / Summary */}
-                    <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed font-normal">
+                    <p className="text-xs text-text-secondary line-clamp-2 leading-relaxed font-normal">
                       {item.excerpt || item.description || ''}
                     </p>
                   </div>
@@ -587,16 +593,16 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
                 {/* Card Lower: Clock + Live View + Action Buttons */}
                 <div className="p-4 pt-0 space-y-3">
                   {/* Elapsed Time & Live Page Link */}
-                  <div className="flex items-center justify-between text-[11px] text-gray-400 font-mono">
-                    <span className="inline-flex items-center gap-1">
-                      <Clock size={11} className="text-gray-500" />
+                  <div className="flex items-center justify-between text-[11px] text-text-muted font-mono pt-2 border-t border-gray-100">
+                    <span className="inline-flex items-center gap-1 text-text-secondary">
+                      <Clock size={12} className="text-text-muted" />
                       <span>{timeAgo(item.published_at)}</span>
                     </span>
 
                     <Link
                       href={`/article/${item.slug}`}
                       target="_blank"
-                      className="text-gray-400 hover:text-[#f06d2f] inline-flex items-center gap-1 transition-colors"
+                      className="text-text-muted hover:text-primary inline-flex items-center gap-1 transition-colors font-sans font-medium"
                       title="View live article"
                     >
                       <span>View</span>
@@ -604,12 +610,12 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
                     </Link>
                   </div>
 
-                  {/* Edit News & Delete News Buttons (Matches Reference Screenshot) */}
-                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-800">
+                  {/* Edit News & Delete News Buttons */}
+                  <div className="grid grid-cols-2 gap-2">
                     <button
                       type="button"
                       onClick={() => handleOpenEdit(item)}
-                      className="py-1.5 px-3 bg-[#f06d2f] hover:bg-[#e05b1d] text-white text-xs font-heading font-bold rounded-lg transition-colors text-center cursor-pointer shadow-xs"
+                      className="py-2 px-3 bg-[#f06d2f] hover:bg-[#d95d22] text-white text-xs font-heading font-bold rounded-xl transition-colors text-center cursor-pointer shadow-xs hover:shadow-sm"
                     >
                       Edit News
                     </button>
@@ -618,7 +624,7 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
                       type="button"
                       disabled={deletingId === item.id}
                       onClick={() => handleDelete(item.id, item.title)}
-                      className="py-1.5 px-3 bg-[#ef4444] hover:bg-[#dc2626] text-white text-xs font-heading font-bold rounded-lg transition-colors text-center cursor-pointer shadow-xs disabled:opacity-50 inline-flex items-center justify-center gap-1"
+                      className="py-2 px-3 bg-[#ef4444] hover:bg-[#dc2626] text-white text-xs font-heading font-bold rounded-xl transition-colors text-center cursor-pointer shadow-xs hover:shadow-sm disabled:opacity-50 inline-flex items-center justify-center gap-1"
                     >
                       {deletingId === item.id ? (
                         <Loader2 size={12} className="animate-spin" />
@@ -633,21 +639,21 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
         </div>
       )}
 
-      {/* ── 4. Interactive Edit News Modal ── */}
+      {/* ── 4. Interactive Edit News Modal (Clean Light Theme) ── */}
       {editingItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs">
-          <div className="bg-[#181818] border border-gray-800 text-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 space-y-5 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-dark/60 backdrop-blur-xs">
+          <div className="bg-white border border-gray-200 text-dark rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             
             {/* Modal Top Header */}
-            <div className="flex items-center justify-between pb-3 border-b border-gray-800">
+            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
               <div>
-                <h2 className="font-heading font-bold text-lg text-white">Edit News Story</h2>
-                <span className="text-xs font-mono text-gray-400">Slug: /{editingItem.slug}</span>
+                <h2 className="font-heading font-bold text-lg text-dark">Edit News Story</h2>
+                <span className="text-xs font-mono text-text-muted">Slug: /{editingItem.slug}</span>
               </div>
               <button
                 type="button"
                 onClick={() => setEditingItem(null)}
-                className="text-gray-400 hover:text-white p-1 rounded-lg hover:bg-gray-800"
+                className="text-text-muted hover:text-dark p-1.5 rounded-lg hover:bg-surface cursor-pointer transition-colors"
               >
                 <X size={18} />
               </button>
@@ -656,13 +662,13 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
             {/* Notification alert banner */}
             {modalMessage && (
               <div
-                className={`p-3 rounded-xl text-xs font-semibold flex items-center gap-2 ${
+                className={`p-3.5 rounded-xl text-xs font-semibold flex items-center gap-2 ${
                   modalMessage.type === 'error'
-                    ? 'bg-red-950 text-red-200 border border-red-800'
-                    : 'bg-emerald-950 text-emerald-200 border border-emerald-800'
+                    ? 'bg-red-50 text-red-800 border border-red-200'
+                    : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
                 }`}
               >
-                {modalMessage.type === 'error' ? <AlertCircle size={14} /> : <Check size={14} />}
+                {modalMessage.type === 'error' ? <AlertCircle size={14} className="text-red-600" /> : <Check size={14} className="text-emerald-600" />}
                 <span>{modalMessage.text}</span>
               </div>
             )}
@@ -670,7 +676,7 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
             <form onSubmit={handleSaveEdit} className="space-y-4 text-xs">
               {/* Title */}
               <div>
-                <label className="font-heading font-bold block mb-1 text-gray-300">
+                <label className="font-heading font-bold block mb-1 text-text-secondary">
                   Headline Title *
                 </label>
                 <input
@@ -678,31 +684,31 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
                   required
                   value={editFormData.title}
                   onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
-                  className="w-full bg-[#242424] border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:border-[#f06d2f] outline-hidden font-medium"
+                  className="w-full bg-surface border border-gray-200 rounded-xl px-3 py-2 text-sm text-dark focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/10 outline-hidden font-medium transition-all"
                 />
               </div>
 
               {/* Subtitle */}
               <div>
-                <label className="font-heading font-bold block mb-1 text-gray-300">
+                <label className="font-heading font-bold block mb-1 text-text-secondary">
                   Subtitle
                 </label>
                 <input
                   type="text"
                   value={editFormData.subtitle}
                   onChange={(e) => setEditFormData({ ...editFormData, subtitle: e.target.value })}
-                  className="w-full bg-[#242424] border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:border-[#f06d2f] outline-hidden"
+                  className="w-full bg-surface border border-gray-200 rounded-xl px-3 py-2 text-sm text-dark focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/10 outline-hidden transition-all"
                 />
               </div>
 
               {/* Category & Language */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="font-heading font-bold block mb-1 text-gray-300">Category *</label>
+                  <label className="font-heading font-bold block mb-1 text-text-secondary">Category *</label>
                   <select
                     value={editFormData.category}
                     onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
-                    className="w-full bg-[#242424] border border-gray-700 rounded-xl px-3 py-2 text-white focus:border-[#f06d2f] outline-hidden font-medium cursor-pointer"
+                    className="w-full bg-surface border border-gray-200 rounded-xl px-3 py-2 text-dark focus:bg-white focus:border-primary outline-hidden font-medium cursor-pointer"
                   >
                     {HEALTH_CATEGORIES.filter((c) => c !== 'All Categories').map((c) => (
                       <option key={c} value={c}>{c}</option>
@@ -711,11 +717,11 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
                 </div>
 
                 <div>
-                  <label className="font-heading font-bold block mb-1 text-gray-300">Language *</label>
+                  <label className="font-heading font-bold block mb-1 text-text-secondary">Language *</label>
                   <select
                     value={editFormData.language}
                     onChange={(e) => setEditFormData({ ...editFormData, language: e.target.value })}
-                    className="w-full bg-[#242424] border border-gray-700 rounded-xl px-3 py-2 text-white focus:border-[#f06d2f] outline-hidden font-medium cursor-pointer"
+                    className="w-full bg-surface border border-gray-200 rounded-xl px-3 py-2 text-dark focus:bg-white focus:border-primary outline-hidden font-medium cursor-pointer"
                   >
                     <option value="en">English</option>
                     <option value="ta">Tamil (தமிழ்)</option>
@@ -727,19 +733,19 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
 
               {/* Location */}
               <div>
-                <label className="font-heading font-bold block mb-1 text-gray-300">Location</label>
+                <label className="font-heading font-bold block mb-1 text-text-secondary">Location</label>
                 <input
                   type="text"
                   value={editFormData.location}
                   onChange={(e) => setEditFormData({ ...editFormData, location: e.target.value })}
                   placeholder="e.g. Chennai, Tamil Nadu"
-                  className="w-full bg-[#242424] border border-gray-700 rounded-xl px-3 py-2 text-white focus:border-[#f06d2f] outline-hidden"
+                  className="w-full bg-surface border border-gray-200 rounded-xl px-3 py-2 text-dark focus:bg-white focus:border-primary outline-hidden"
                 />
               </div>
 
               {/* Short Summary */}
               <div>
-                <label className="font-heading font-bold block mb-1 text-gray-300">
+                <label className="font-heading font-bold block mb-1 text-text-secondary">
                   Short Summary / Excerpt *
                 </label>
                 <textarea
@@ -747,13 +753,13 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
                   rows={2}
                   value={editFormData.excerpt}
                   onChange={(e) => setEditFormData({ ...editFormData, excerpt: e.target.value })}
-                  className="w-full bg-[#242424] border border-gray-700 rounded-xl px-3 py-2 text-white focus:border-[#f06d2f] outline-hidden leading-relaxed"
+                  className="w-full bg-surface border border-gray-200 rounded-xl px-3 py-2 text-dark focus:bg-white focus:border-primary outline-hidden leading-relaxed"
                 />
               </div>
 
               {/* Full Content */}
               <div>
-                <label className="font-heading font-bold block mb-1 text-gray-300">
+                <label className="font-heading font-bold block mb-1 text-text-secondary">
                   Full Article Content *
                 </label>
                 <textarea
@@ -761,13 +767,13 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
                   rows={6}
                   value={editFormData.content}
                   onChange={(e) => setEditFormData({ ...editFormData, content: e.target.value })}
-                  className="w-full bg-[#242424] border border-gray-700 rounded-xl px-3 py-2 text-white focus:border-[#f06d2f] outline-hidden leading-relaxed font-sans"
+                  className="w-full bg-surface border border-gray-200 rounded-xl px-3 py-2 text-dark focus:bg-white focus:border-primary outline-hidden leading-relaxed font-sans"
                 />
               </div>
 
               {/* Cover Image URL + Direct Upload */}
               <div>
-                <label className="font-heading font-bold block mb-1 text-gray-300">
+                <label className="font-heading font-bold block mb-1 text-text-secondary">
                   Cover Image URL
                 </label>
                 <div className="flex items-center gap-2">
@@ -776,10 +782,10 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
                     value={editFormData.heroImageUrl}
                     onChange={(e) => setEditFormData({ ...editFormData, heroImageUrl: e.target.value })}
                     placeholder="https://... or /uploads/..."
-                    className="flex-1 bg-[#242424] border border-gray-700 rounded-xl px-3 py-2 text-white focus:border-[#f06d2f] outline-hidden"
+                    className="flex-1 bg-surface border border-gray-200 rounded-xl px-3 py-2 text-dark focus:bg-white focus:border-primary outline-hidden"
                   />
-                  <label className="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 rounded-xl font-semibold cursor-pointer inline-flex items-center gap-1.5">
-                    {isUploadingImage ? <Loader2 size={13} className="animate-spin" /> : <Upload size={13} />}
+                  <label className="px-3.5 py-2 bg-surface hover:bg-surface-alt text-dark border border-gray-200 rounded-xl font-semibold cursor-pointer inline-flex items-center gap-1.5 shadow-2xs">
+                    {isUploadingImage ? <Loader2 size={13} className="animate-spin text-primary" /> : <Upload size={13} className="text-primary" />}
                     <span>{isUploadingImage ? 'Uploading...' : 'Upload'}</span>
                     <input
                       type="file"
@@ -791,7 +797,7 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
                   </label>
                 </div>
                 {editFormData.heroImageUrl && (
-                  <div className="mt-2 w-32 h-20 rounded-lg overflow-hidden border border-gray-700 bg-black">
+                  <div className="mt-2.5 w-32 h-20 rounded-xl overflow-hidden border border-gray-200 bg-surface">
                     <img
                       src={editFormData.heroImageUrl}
                       alt="Cover preview"
@@ -808,26 +814,26 @@ export function AllNewsClient({ initialNews, totalCount: serverTotalCount }: All
                   id="edit_breaking"
                   checked={editFormData.isBreaking}
                   onChange={(e) => setEditFormData({ ...editFormData, isBreaking: e.target.checked })}
-                  className="w-4 h-4 rounded border-gray-700 bg-gray-800 text-[#f06d2f] focus:ring-[#f06d2f] cursor-pointer"
+                  className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
                 />
-                <label htmlFor="edit_breaking" className="text-gray-300 cursor-pointer font-semibold">
+                <label htmlFor="edit_breaking" className="text-text-secondary cursor-pointer font-semibold">
                   Mark as Breaking News (முக்கிய செய்தி - shows on live ticker)
                 </label>
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-4 border-t border-gray-800 flex items-center justify-end gap-2.5">
+              <div className="pt-4 border-t border-gray-100 flex items-center justify-end gap-2.5">
                 <button
                   type="button"
                   onClick={() => setEditingItem(null)}
-                  className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-xl font-semibold cursor-pointer"
+                  className="px-4 py-2 bg-surface hover:bg-surface-alt text-text-secondary rounded-xl font-semibold cursor-pointer border border-gray-200 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="px-5 py-2 bg-[#f06d2f] hover:bg-[#e05b1d] text-white rounded-xl font-heading font-bold shadow-xs disabled:opacity-50 inline-flex items-center gap-1.5 cursor-pointer"
+                  className="px-5 py-2 bg-primary hover:bg-primary-dark text-white rounded-xl font-heading font-bold shadow-xs disabled:opacity-50 inline-flex items-center gap-1.5 cursor-pointer transition-colors"
                 >
                   {isSaving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
                   <span>{isSaving ? 'Saving Changes...' : 'Update News'}</span>
