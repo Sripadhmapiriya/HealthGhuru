@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { TopAdBar } from "@/components/layout/TopAdBar";
 import { FloatingFooterAd } from "@/components/ads/FloatingFooterAd";
 import { PopupAdModal } from "@/components/ads/PopupAdModal";
+import { AuthModal } from "@/components/auth/AuthModal";
 
 export default function ConditionalLayout({
   children,
@@ -27,6 +28,7 @@ export default function ConditionalLayout({
       </main>
       {!isAdmin && <FloatingFooterAd />}
       {!isAdmin && <PopupAdModal />}
+      <AuthModal />
       {!isAdmin && footer}
     </>
   );
