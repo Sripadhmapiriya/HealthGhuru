@@ -1,6 +1,13 @@
+'use client';
+
 import React from 'react';
+import { useSubscription } from '@/lib/hooks/useSubscription';
 
 export function AdSlot({ className }: { className?: string }) {
+  const { isAdFree } = useSubscription();
+
+  if (isAdFree) return null;
+
   return (
     <div className={`bg-surface-alt border border-border rounded-[14px] p-4 flex flex-col items-center justify-center text-center min-h-[250px] ${className || ''}`}>
       <span className="text-xs text-text-muted font-heading uppercase tracking-wider mb-2">Advertisement</span>

@@ -6,6 +6,7 @@ import { HeroBannerAd } from './HeroBannerAd';
 import { SidebarAd } from './SidebarAd';
 import { FloatingFooterAd } from './FloatingFooterAd';
 import { PopupAdModal } from './PopupAdModal';
+import { useSubscription } from '@/lib/hooks/useSubscription';
 
 interface AdSlotProps {
   placement: AdPlacement;
@@ -16,6 +17,9 @@ interface AdSlotProps {
 }
 
 export function AdSlot({ placement, initialAd, category, className, sticky }: AdSlotProps) {
+  const { isAdFree } = useSubscription();
+
+  if (isAdFree) return null;
   switch (placement) {
     case 'top_banner':
       return <TopBannerAd initialAd={initialAd} category={category} />;

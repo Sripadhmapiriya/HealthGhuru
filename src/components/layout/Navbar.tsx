@@ -37,6 +37,7 @@ import { DateUtilityBar } from "./DateUtilityBar";
 import { MegaMenu } from "./MegaMenu";
 import { NavbarHeaderAd } from "./NavbarHeaderAd";
 import { useAuthModal } from "@/context/AuthModalContext";
+import { useSubscription } from "@/lib/hooks/useSubscription";
 
 const PRIMARY_CATEGORIES = [
   { label: "Home", href: "/", icon: Home },
@@ -54,6 +55,7 @@ const PRIMARY_CATEGORIES = [
 
 export default function Navbar() {
   const { data: session, status } = useSession();
+  const { isSubscribed } = useSubscription();
   const { openLoginModal, requireAuth } = useAuthModal();
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -195,7 +197,18 @@ export default function Navbar() {
                 {userDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-2xl shadow-xl py-2 z-50">
                     <div className="px-4 py-2 border-b border-gray-100">
-                      <p className="text-xs font-bold text-slate-900 truncate">{user.name}</p>
+                      <div className="flex items-center justify-between gap-1">
+                        <p className="text-xs font-bold text-slate-900 truncate">{user.name}</p>
+                        {isSubscribed ? (
+                          <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 shrink-0 flex items-center gap-1">
+                            <Sparkles size={9} className="text-amber-500" /> VIP Ad-Free
+                          </span>
+                        ) : (
+                          <span className="text-[9px] font-semibold text-gray-500 shrink-0">
+                            Free Tier
+                          </span>
+                        )}
+                      </div>
                       <p className="text-[11px] text-gray-500 truncate">{user.email}</p>
                     </div>
                     {user.role === "admin" && (
@@ -256,13 +269,23 @@ export default function Navbar() {
               <span>Advertise With Us</span>
             </button>
 
-            {/* Subscribe Button */}
-            <Link
-              href="/subscribe"
-              className="bg-[#16A34A] hover:bg-[#15803D] text-white text-xs sm:text-sm font-heading font-bold px-3.5 sm:px-4 py-2 rounded-lg shadow-xs hover:shadow transition-all hidden sm:inline-flex items-center"
-            >
-              Subscribe
-            </Link>
+            {/* Subscribe / VIP Member Button */}
+            {isSubscribed ? (
+              <Link
+                href="/account"
+                className="bg-emerald-800 hover:bg-emerald-900 text-emerald-100 text-xs sm:text-sm font-heading font-bold px-3.5 sm:px-4 py-2 rounded-lg shadow-xs hover:shadow transition-all hidden sm:inline-flex items-center gap-1.5"
+              >
+                <Sparkles size={13} className="text-amber-300" />
+                <span>VIP Member</span>
+              </Link>
+            ) : (
+              <Link
+                href="/subscribe"
+                className="bg-[#16A34A] hover:bg-[#15803D] text-white text-xs sm:text-sm font-heading font-bold px-3.5 sm:px-4 py-2 rounded-lg shadow-xs hover:shadow transition-all hidden sm:inline-flex items-center"
+              >
+                Subscribe
+              </Link>
+            )}
 
             {/* Login Button (When not logged in) */}
             {!user && status !== "loading" && (

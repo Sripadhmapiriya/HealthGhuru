@@ -5,9 +5,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Sparkles, Building2, Stethoscope, ArrowRight, ExternalLink, Megaphone } from 'lucide-react';
 import { useAuthModal } from '@/context/AuthModalContext';
+import { useSubscription } from '@/lib/hooks/useSubscription';
 
 export function SponsoredEditorialSection() {
+  const { isAdFree } = useSubscription();
   const { requireAuth } = useAuthModal();
+
+  if (isAdFree) return null;
+
   const sponsoredItems = [
     {
       id: "sp-1",

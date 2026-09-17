@@ -12,10 +12,16 @@ declare module "next-auth" {
     user: {
       id: string;
       role: string;
+      tier?: string;
+      adsEnabled?: boolean;
+      isSubscribed?: boolean;
     } & DefaultSession["user"];
   }
   interface User {
     role?: string;
+    tier?: string;
+    adsEnabled?: boolean;
+    isSubscribed?: boolean;
   }
 }
 
@@ -59,11 +65,33 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             // Non-blocking
           }
 
+          let tier = 'free';
+          let adsEnabled = true;
+          let isSubscribed = false;
+
+          try {
+            const plans = await sql`
+              SELECT tier, ads_enabled 
+              FROM user_plans 
+              WHERE user_id = ${user.id}::uuid
+            `;
+            if (plans.length > 0) {
+              tier = plans[0].tier || 'free';
+              adsEnabled = plans[0].ads_enabled ?? true;
+              isSubscribed = tier !== 'free' && adsEnabled === false;
+            }
+          } catch {
+            // Non-blocking fallback
+          }
+
           return {
             id: user.id,
             name: user.name,
             email: user.email,
-            role: user.role
+            role: user.role,
+            tier,
+            adsEnabled,
+            isSubscribed,
           };
         }
         
@@ -76,17 +104,50 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
         token.role = user.role;
+        token.tier = (user as any).tier || 'free';
+        token.adsEnabled = (user as any).adsEnabled ?? true;
+        token.isSubscribed = (user as any).isSubscribed ?? false;
       }
+
+      if (trigger === 'update' && session) {
+        if (session.tier !== undefined) token.tier = session.tier;
+        if (session.adsEnabled !== undefined) token.adsEnabled = session.adsEnabled;
+        if (session.isSubscribed !== undefined) token.isSubscribed = session.isSubscribed;
+      }
+
+      // Refresh plan from database if needed or on session update
+      if (token?.id && (trigger === 'update' || token.tier === undefined)) {
+        try {
+          const plans = await sql`
+            SELECT tier, ads_enabled 
+            FROM user_plans 
+            WHERE user_id = ${token.id as string}::uuid
+          `;
+          if (plans.length > 0) {
+            const planTier = plans[0].tier || 'free';
+            const planAdsEnabled = plans[0].ads_enabled ?? true;
+            token.tier = planTier;
+            token.adsEnabled = planAdsEnabled;
+            token.isSubscribed = planTier !== 'free' && planAdsEnabled === false;
+          }
+        } catch {
+          // Non-blocking
+        }
+      }
+
       return token;
     },
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
+        session.user.tier = (token.tier as string) || 'free';
+        session.user.adsEnabled = (token.adsEnabled as boolean) ?? true;
+        session.user.isSubscribed = (token.isSubscribed as boolean) ?? false;
       }
       return session;
     }
