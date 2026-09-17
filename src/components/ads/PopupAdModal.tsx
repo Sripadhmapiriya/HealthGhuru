@@ -6,6 +6,7 @@ import { X, Sparkles, ArrowRight, ShieldCheck, HeartHandshake } from 'lucide-rea
 import { Advertisement } from '@/lib/types/advertisement';
 import { trackAdEvent } from './adTracking';
 import Image from 'next/image';
+import { useSubscription } from '@/lib/hooks/useSubscription';
 
 interface PopupAdModalProps {
   initialAd?: Advertisement | null;
@@ -14,11 +15,14 @@ interface PopupAdModalProps {
 }
 
 export function PopupAdModal({ initialAd, category, delayMs = 6000 }: PopupAdModalProps) {
+  const { isAdFree } = useSubscription();
   const [ad, setAd] = useState<Advertisement | null>(initialAd || null);
   const [isOpen, setIsOpen] = useState(false);
   const trackedRef = useRef(false);
 
   useEffect(() => {
+    if (isAdFree) return;
+
     // Check frequency cap in session
     const hasSeen = sessionStorage.getItem('hg_health_popup_seen') === 'true';
     if (hasSeen) return;
@@ -57,7 +61,7 @@ export function PopupAdModal({ initialAd, category, delayMs = 6000 }: PopupAdMod
     }, delayMs);
 
     return () => clearTimeout(timer);
-  }, [initialAd, category, delayMs]);
+  }, [initialAd, category, delayMs, isAdFree]);
 
   useEffect(() => {
     if (ad && isOpen && !trackedRef.current) {
@@ -66,7 +70,7 @@ export function PopupAdModal({ initialAd, category, delayMs = 6000 }: PopupAdMod
     }
   }, [ad, isOpen]);
 
-  if (!isOpen || !ad) return null;
+  if (isAdFree || !isOpen || !ad) return null;
 
   const handleClose = () => {
     setIsOpen(false);

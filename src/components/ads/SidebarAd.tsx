@@ -6,6 +6,7 @@ import { ArrowRight, Sparkles } from 'lucide-react';
 import { Advertisement } from '@/lib/types/advertisement';
 import { trackAdEvent } from './adTracking';
 import Image from 'next/image';
+import { useSubscription } from '@/lib/hooks/useSubscription';
 
 interface SidebarAdProps {
   initialAd?: Advertisement | null;
@@ -15,6 +16,7 @@ interface SidebarAdProps {
 }
 
 export function SidebarAd({ initialAd, category, className = '', sticky = false }: SidebarAdProps) {
+  const { isAdFree } = useSubscription();
   const [ads, setAds] = useState<Advertisement[]>(initialAd ? [initialAd] : []);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fade, setFade] = useState(true);
@@ -23,6 +25,8 @@ export function SidebarAd({ initialAd, category, className = '', sticky = false 
   const trackedMap = useRef<Record<string, boolean>>({});
 
   useEffect(() => {
+    if (isAdFree) return;
+
     if (!initialAd) {
       const fetchAds = async () => {
         try {
@@ -48,7 +52,7 @@ export function SidebarAd({ initialAd, category, className = '', sticky = false 
       };
       fetchAds();
     }
-  }, [initialAd, category]);
+  }, [initialAd, category, isAdFree]);
 
   // Auto-rotation timer
   useEffect(() => {
@@ -74,7 +78,7 @@ export function SidebarAd({ initialAd, category, className = '', sticky = false 
     }
   }, [ad]);
 
-  if (!ad) return null;
+  if (isAdFree || !ad) return null;
 
   const handleClick = () => {
     if (ad) {

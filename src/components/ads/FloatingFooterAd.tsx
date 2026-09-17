@@ -6,6 +6,7 @@ import { X, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
 import { Advertisement } from '@/lib/types/advertisement';
 import { trackAdEvent } from './adTracking';
 import Image from 'next/image';
+import { useSubscription } from '@/lib/hooks/useSubscription';
 
 interface FloatingFooterAdProps {
   initialAd?: Advertisement | null;
@@ -13,6 +14,7 @@ interface FloatingFooterAdProps {
 }
 
 export function FloatingFooterAd({ initialAd, category }: FloatingFooterAdProps) {
+  const { isAdFree } = useSubscription();
   const [ads, setAds] = useState<Advertisement[]>(initialAd ? [initialAd] : []);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fade, setFade] = useState(true);
@@ -23,6 +25,8 @@ export function FloatingFooterAd({ initialAd, category }: FloatingFooterAdProps)
   const trackedMap = useRef<Record<string, boolean>>({});
 
   useEffect(() => {
+    if (isAdFree) return;
+
     const timer = setTimeout(() => {
       setVisible(true);
     }, 300);
@@ -79,7 +83,7 @@ export function FloatingFooterAd({ initialAd, category }: FloatingFooterAdProps)
     }
   }, [ad, dismissed, visible]);
 
-  if (dismissed || !ad) return null;
+  if (isAdFree || dismissed || !ad) return null;
 
   const handleDismiss = (e: React.MouseEvent) => {
     e.stopPropagation();
