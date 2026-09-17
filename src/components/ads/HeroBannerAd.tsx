@@ -6,6 +6,7 @@ import { ArrowRight, Sparkles, ExternalLink, ChevronLeft, ChevronRight } from 'l
 import { Advertisement } from '@/lib/types/advertisement';
 import { trackAdEvent } from './adTracking';
 import Image from 'next/image';
+import { useSubscription } from '@/lib/hooks/useSubscription';
 
 interface HeroBannerAdProps {
   initialAd?: Advertisement | null;
@@ -14,6 +15,7 @@ interface HeroBannerAdProps {
 }
 
 export function HeroBannerAd({ initialAd, category, className = '' }: HeroBannerAdProps) {
+  const { isAdFree } = useSubscription();
   const [ads, setAds] = useState<Advertisement[]>(initialAd ? [initialAd] : []);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fade, setFade] = useState(true);
@@ -22,6 +24,8 @@ export function HeroBannerAd({ initialAd, category, className = '' }: HeroBanner
   const trackedMap = useRef<Record<string, boolean>>({});
 
   useEffect(() => {
+    if (isAdFree) return;
+
     if (!initialAd) {
       const fetchAds = async () => {
         try {
@@ -47,7 +51,7 @@ export function HeroBannerAd({ initialAd, category, className = '' }: HeroBanner
       };
       fetchAds();
     }
-  }, [initialAd, category]);
+  }, [initialAd, category, isAdFree]);
 
   // Auto-rotation timer
   useEffect(() => {
@@ -73,7 +77,7 @@ export function HeroBannerAd({ initialAd, category, className = '' }: HeroBanner
     }
   }, [ad]);
 
-  if (!ad) return null;
+  if (isAdFree || !ad) return null;
 
   const handleClick = () => {
     if (ad) {

@@ -6,8 +6,10 @@ import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { Advertisement } from '@/lib/types/advertisement';
 import { trackAdEvent } from '@/components/ads/adTracking';
+import { useSubscription } from '@/lib/hooks/useSubscription';
 
 export function NavbarHeaderAd() {
+  const { isAdFree } = useSubscription();
   const [ads, setAds] = useState<Advertisement[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fade, setFade] = useState(true);
@@ -16,6 +18,8 @@ export function NavbarHeaderAd() {
   const trackedMap = useRef<Record<string, boolean>>({});
 
   useEffect(() => {
+    if (isAdFree) return;
+
     const loadActiveAds = async () => {
       try {
         const res = await fetch(`/api/ads/active?t=${Date.now()}`, {
@@ -74,7 +78,7 @@ export function NavbarHeaderAd() {
     }
   }, [currentAd]);
 
-  if (!currentAd) return null;
+  if (isAdFree || !currentAd) return null;
 
   const handleClick = () => {
     if (currentAd && currentAd.id) {

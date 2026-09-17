@@ -11,9 +11,11 @@ import {
   Brain,
   Stethoscope,
 } from "lucide-react";
+import { useAuthModal } from "@/context/AuthModalContext";
 
 export default function Footer() {
   const pathname = usePathname();
+  const { requireAuth } = useAuthModal();
 
   // Hide on standalone screens
   if (pathname === "/login" || pathname === "/subscribe") {
@@ -26,10 +28,10 @@ export default function Footer() {
       <div className="absolute top-0 left-0 right-0 h-0.5 bg-[#16A34A]" />
 
       <div className="max-w-7xl xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* ── 4-Column Simple Clean Footer Grid ── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 pb-10">
-          
+
           {/* ── Col 1: Logo & Socials ── */}
           <div className="space-y-4">
             <Link href="/" className="inline-block">
@@ -213,7 +215,7 @@ export default function Footer() {
         {/* ── Bottom Bar (Matching Screenshot) ── */}
         <div className="pt-5 border-t border-emerald-300/80 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-600 gap-3">
           <p>© {new Date().getFullYear()} HealthGhuru. All Rights Reserved.</p>
-          
+
           <div className="flex items-center gap-4 sm:gap-6 flex-wrap justify-center font-medium">
             <Link href="/privacy-policy" className="hover:text-slate-900 transition-colors">
               Privacy Policy

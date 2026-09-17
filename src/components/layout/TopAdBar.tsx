@@ -4,8 +4,10 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, ShieldCheck, ExternalLink } from "lucide-react";
+import { useSubscription } from "@/lib/hooks/useSubscription";
 
 export function TopAdBar() {
+  const { isAdFree } = useSubscription();
   const [ad, setAd] = useState<{
     headline: string;
     description: string;
@@ -13,7 +15,7 @@ export function TopAdBar() {
     target_url: string;
     image_url: string;
     sponsor_name: string;
-  }>({
+  } | null>({
     headline: "Apex Heart & Vascular Institute — Comprehensive 64-Slice Cardiac Screening",
     description: "Advanced early detection for coronary plaque, arterial calcium scoring, and cardiovascular risk assessment.",
     cta_text: "Book Cardiac Consultation",
@@ -23,6 +25,8 @@ export function TopAdBar() {
   });
 
   useEffect(() => {
+    if (isAdFree) return;
+
     // Attempt dynamic fetch from advertisements table
     fetch("/api/ads/active?placement=top_banner")
       .then((res) => res.json())
@@ -40,7 +44,9 @@ export function TopAdBar() {
         }
       })
       .catch(() => {});
-  }, []);
+  }, [isAdFree]);
+
+  if (isAdFree || !ad) return null;
 
   return (
     <div className="w-full bg-emerald-50/50 border-b border-emerald-500/20 text-slate-800 pt-1 pb-2 px-4 sm:px-6 relative">

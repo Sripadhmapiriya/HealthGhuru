@@ -6,6 +6,7 @@ import { X, Sparkles, ExternalLink, ArrowRight } from 'lucide-react';
 import { Advertisement } from '@/lib/types/advertisement';
 import { trackAdEvent } from './adTracking';
 import Image from 'next/image';
+import { useSubscription } from '@/lib/hooks/useSubscription';
 
 interface SideFloatingBannersProps {
   initialLeftAd?: Advertisement | null;
@@ -14,6 +15,7 @@ interface SideFloatingBannersProps {
 }
 
 export function SideFloatingBanners({ initialLeftAd, initialRightAd, category }: SideFloatingBannersProps) {
+  const { isAdFree } = useSubscription();
   const [leftAd, setLeftAd] = useState<Advertisement | null>(initialLeftAd || null);
   const [rightAd, setRightAd] = useState<Advertisement | null>(initialRightAd || null);
   const [leftDismissed, setLeftDismissed] = useState(false);
@@ -22,6 +24,8 @@ export function SideFloatingBanners({ initialLeftAd, initialRightAd, category }:
   const rightTrackedRef = useRef(false);
 
   useEffect(() => {
+    if (isAdFree) return;
+
     // Check session dismissal
     if (sessionStorage.getItem('hg_left_side_ad_dismissed') === 'true') {
       setLeftDismissed(true);
@@ -51,7 +55,7 @@ export function SideFloatingBanners({ initialLeftAd, initialRightAd, category }:
     if (!initialLeftAd || !initialRightAd) {
       fetchAds();
     }
-  }, [initialLeftAd, initialRightAd, category]);
+  }, [initialLeftAd, initialRightAd, category, isAdFree]);
 
   useEffect(() => {
     if (leftAd && !leftDismissed && !leftTrackedRef.current) {
@@ -66,6 +70,8 @@ export function SideFloatingBanners({ initialLeftAd, initialRightAd, category }:
       trackAdEvent(rightAd.id, 'impression');
     }
   }, [rightAd, rightDismissed]);
+
+  if (isAdFree) return null;
 
   const handleDismissLeft = () => {
     setLeftDismissed(true);

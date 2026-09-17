@@ -4,6 +4,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Clock, Flame, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { useSubscription } from '@/lib/hooks/useSubscription';
 
 interface TopStoriesGridProps {
   featuredStory: any;
@@ -16,6 +17,7 @@ export function TopStoriesGrid({
   topStories,
   trendingStories,
 }: TopStoriesGridProps) {
+  const { isSubscribed } = useSubscription();
   // Fallbacks if data is still loading or empty
   const fallbackFeatured = {
     title: "New Research Offers Fresh Insights Into Early Cancer Detection via MicroRNA Blood Panels",
@@ -228,20 +230,31 @@ export function TopStoriesGrid({
             </div>
 
             {/* Sidebar Promo Ad card inside trending box */}
-            <div className="mt-5 pt-4 border-t border-gray-100 bg-emerald-50/70 rounded-xl p-3 text-center border border-emerald-200/60">
-              <span className="text-[9px] uppercase font-mono tracking-widest text-[#16A34A] font-bold block mb-1">
-                NEWSLETTER BRIEFING
-              </span>
-              <p className="text-xs font-bold text-slate-900 leading-tight">
-                Daily Doctor-Curated Health Digest
-              </p>
-              <Link
-                href="/subscribe"
-                className="inline-block mt-2 text-[11px] font-bold text-[#f06d2f] hover:underline"
-              >
-                Subscribe Free →
-              </Link>
-            </div>
+            {isSubscribed ? (
+              <div className="mt-5 pt-4 border-t border-gray-100 bg-emerald-50/70 rounded-xl p-3 text-center border border-emerald-200/60">
+                <span className="text-[9px] uppercase font-mono tracking-widest text-emerald-800 font-bold block mb-1">
+                  VIP CLINICAL DIGEST
+                </span>
+                <p className="text-xs font-bold text-slate-900 leading-tight">
+                  Ad-Free Priority Medical Access Active
+                </p>
+              </div>
+            ) : (
+              <div className="mt-5 pt-4 border-t border-gray-100 bg-emerald-50/70 rounded-xl p-3 text-center border border-emerald-200/60">
+                <span className="text-[9px] uppercase font-mono tracking-widest text-[#16A34A] font-bold block mb-1">
+                  NEWSLETTER BRIEFING
+                </span>
+                <p className="text-xs font-bold text-slate-900 leading-tight">
+                  Daily Doctor-Curated Health Digest
+                </p>
+                <Link
+                  href="/subscribe"
+                  className="inline-block mt-2 text-[11px] font-bold text-[#f06d2f] hover:underline"
+                >
+                  Subscribe Free →
+                </Link>
+              </div>
+            )}
           </div>
 
         </div>

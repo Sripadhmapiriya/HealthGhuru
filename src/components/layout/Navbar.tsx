@@ -30,10 +30,14 @@ import {
   Utensils,
   Leaf,
   Moon,
+  Megaphone,
+  LogIn,
 } from "lucide-react";
 import { DateUtilityBar } from "./DateUtilityBar";
 import { MegaMenu } from "./MegaMenu";
 import { NavbarHeaderAd } from "./NavbarHeaderAd";
+import { useAuthModal } from "@/context/AuthModalContext";
+import { useSubscription } from "@/lib/hooks/useSubscription";
 
 const PRIMARY_CATEGORIES = [
   { label: "Home", href: "/", icon: Home },
@@ -51,6 +55,8 @@ const PRIMARY_CATEGORIES = [
 
 export default function Navbar() {
   const { data: session, status } = useSession();
+  const { isSubscribed } = useSubscription();
+  const { openLoginModal, requireAuth } = useAuthModal();
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
@@ -191,7 +197,18 @@ export default function Navbar() {
                 {userDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-2xl shadow-xl py-2 z-50">
                     <div className="px-4 py-2 border-b border-gray-100">
-                      <p className="text-xs font-bold text-slate-900 truncate">{user.name}</p>
+                      <div className="flex items-center justify-between gap-1">
+                        <p className="text-xs font-bold text-slate-900 truncate">{user.name}</p>
+                        {isSubscribed ? (
+                          <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 shrink-0 flex items-center gap-1">
+                            <Sparkles size={9} className="text-amber-500" /> VIP Ad-Free
+                          </span>
+                        ) : (
+                          <span className="text-[9px] font-semibold text-gray-500 shrink-0">
+                            Free Tier
+                          </span>
+                        )}
+                      </div>
                       <p className="text-[11px] text-gray-500 truncate">{user.email}</p>
                     </div>
                     {user.role === "admin" && (
@@ -203,6 +220,13 @@ export default function Navbar() {
                         <span>Admin News CMS</span>
                       </Link>
                     )}
+                    <Link
+                      href="/advertise"
+                      className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-[#f06d2f] hover:bg-orange-50"
+                    >
+                      <Megaphone size={14} />
+                      <span>Ad Campaign Manager</span>
+                    </Link>
                     <Link
                       href="/profile"
                       className="flex items-center gap-2 px-4 py-2 text-xs text-gray-700 hover:bg-emerald-50"
@@ -227,36 +251,52 @@ export default function Navbar() {
                   </div>
                 )}
               </div>
+            ) : null}
+
+            {/* Start Advertising Button (Auth Protected) */}
+            <button
+              type="button"
+              onClick={() => {
+                requireAuth('/advertise', {
+                  intentTitle: 'Hospital & Advertiser Partner Portal',
+                  intentSubtitle:
+                    'Sign in or register your medical organization to launch, book, and manage ad campaigns on HealthGhuru.',
+                });
+              }}
+              className="bg-[#f06d2f] hover:bg-[#e05a1b] text-white text-xs sm:text-sm font-heading font-bold px-3.5 sm:px-4 py-2 rounded-lg shadow-xs hover:shadow transition-all inline-flex items-center gap-1.5 cursor-pointer"
+            >
+              <Megaphone size={14} className="hidden sm:inline" />
+              <span>Advertise With Us</span>
+            </button>
+
+            {/* Subscribe / VIP Member Button */}
+            {isSubscribed ? (
+              <Link
+                href="/account"
+                className="bg-emerald-800 hover:bg-emerald-900 text-emerald-100 text-xs sm:text-sm font-heading font-bold px-3.5 sm:px-4 py-2 rounded-lg shadow-xs hover:shadow transition-all hidden sm:inline-flex items-center gap-1.5"
+              >
+                <Sparkles size={13} className="text-amber-300" />
+                <span>VIP Member</span>
+              </Link>
             ) : (
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#f06d2f] to-[#ea580c] text-white flex items-center justify-center text-xs font-bold font-heading shadow-xs hidden sm:flex">
-                SA
-              </div>
+              <Link
+                href="/subscribe"
+                className="bg-[#16A34A] hover:bg-[#15803D] text-white text-xs sm:text-sm font-heading font-bold px-3.5 sm:px-4 py-2 rounded-lg shadow-xs hover:shadow transition-all hidden sm:inline-flex items-center"
+              >
+                Subscribe
+              </Link>
             )}
 
-            {/* Start Advertising Button */}
-            <Link
-              href="/advertise"
-              className="bg-[#f06d2f] hover:bg-[#e05a1b] text-white text-xs sm:text-sm font-heading font-bold px-3.5 sm:px-4 py-2 rounded-lg shadow-xs hover:shadow transition-all inline-flex items-center gap-1"
-            >
-              <span>Advertise With Us</span>
-            </Link>
-
-            {/* Subscribe Button */}
-            <Link
-              href="/subscribe"
-              className="bg-[#16A34A] hover:bg-[#15803D] text-white text-xs sm:text-sm font-heading font-bold px-3.5 sm:px-4 py-2 rounded-lg shadow-xs hover:shadow transition-all hidden sm:inline-flex items-center"
-            >
-              Subscribe
-            </Link>
-
-            {/* Login Button */}
-            {!user && (
-              <Link
-                href="/login"
-                className="bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-heading font-bold px-3.5 sm:px-4 py-2 rounded-lg shadow-xs hover:shadow transition-all hidden sm:inline-flex items-center"
+            {/* Login Button (When not logged in) */}
+            {!user && status !== "loading" && (
+              <button
+                type="button"
+                onClick={() => openLoginModal({ initialMode: "signin" })}
+                className="bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-heading font-bold px-3.5 sm:px-4 py-2 rounded-lg shadow-xs hover:shadow transition-all inline-flex items-center gap-1.5 cursor-pointer"
               >
-                Login
-              </Link>
+                <LogIn size={14} />
+                <span>Login</span>
+              </button>
             )}
           </div>
         </div>
@@ -445,13 +485,20 @@ export default function Navbar() {
                     <ShieldCheck size={15} className="text-[#16A34A]" />
                     <span>Health Magazines</span>
                   </Link>
-                  <Link
-                    href="/advertise"
-                    onClick={() => setMobileDrawerOpen(false)}
-                    className="flex items-center gap-2 p-2 rounded-lg text-[#f06d2f] font-bold hover:bg-orange-50"
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileDrawerOpen(false);
+                      requireAuth('/advertise', {
+                        intentTitle: 'Hospital & Advertiser Partner Portal',
+                        intentSubtitle: 'Sign in or register your organization to launch ad campaigns on HealthGhuru.',
+                      });
+                    }}
+                    className="flex items-center gap-2 p-2 rounded-lg text-[#f06d2f] font-bold hover:bg-orange-50 w-full text-left"
                   >
+                    <Megaphone size={15} />
                     <span>Advertise With Us →</span>
-                  </Link>
+                  </button>
                 </div>
               </div>
             </div>
@@ -469,13 +516,28 @@ export default function Navbar() {
                   Sign Out ({user.name})
                 </button>
               ) : (
-                <Link
-                  href="/login"
-                  onClick={() => setMobileDrawerOpen(false)}
-                  className="block w-full py-2.5 text-center text-xs font-bold text-white bg-[#16A34A] hover:bg-[#15803D] rounded-xl"
-                >
-                  Sign In to HealthGhuru
-                </Link>
+                <div className="space-y-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileDrawerOpen(false);
+                      openLoginModal({ initialMode: "signin" });
+                    }}
+                    className="block w-full py-2.5 text-center text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-xl cursor-pointer"
+                  >
+                    Sign In to HealthGhuru
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileDrawerOpen(false);
+                      openLoginModal({ initialMode: "signup" });
+                    }}
+                    className="block w-full py-2.5 text-center text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl cursor-pointer"
+                  >
+                    Create Free Account
+                  </button>
+                </div>
               )}
             </div>
           </div>

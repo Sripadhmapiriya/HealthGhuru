@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useAuthModal } from "@/context/AuthModalContext";
 import { motion } from "framer-motion";
-import { Check, Sparkles, Shield, Zap, BookOpen, Star, HelpCircle, ArrowRight, ArrowLeft, CheckCircle2, Lock } from "lucide-react";
+import { Check, Sparkles, Shield, Zap, BookOpen, Star, HelpCircle, ArrowRight, ArrowLeft, CheckCircle2, Lock, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { PillBadge } from "@/components/ui/PillBadge";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
@@ -95,23 +97,108 @@ const FAQS = [
 ];
 
 export default function SubscribePage() {
+  const { data: session, update } = useSession();
+  const { openLoginModal } = useAuthModal();
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("annual");
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [checkoutStep, setCheckoutStep] = useState<"plans" | "checkout" | "success">("plans");
   const [checkoutEmail, setCheckoutEmail] = useState("");
   const [checkoutName, setCheckoutName] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [subError, setSubError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (session?.user) {
+      setCheckoutEmail(session.user.email || "");
+      setCheckoutName(session.user.name || "");
+    }
+  }, [session]);
 
   const handleSelectPlan = (planId: string) => {
+    if (!session?.user) {
+      openLoginModal({
+        initialMode: "signin",
+        intentTitle: "Member Account Required",
+        intentSubtitle: "Please sign in or create an account to activate your subscription tier.",
+        onSuccess: () => {
+          setSelectedPlan(planId);
+          setCheckoutStep("checkout");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        },
+      });
+      return;
+    }
+
     setSelectedPlan(planId);
     setCheckoutStep("checkout");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleCompleteSubscription = (e: React.FormEvent) => {
+  const handleCompleteSubscription = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!checkoutEmail || !checkoutEmail.includes("@")) return;
-    setCheckoutStep("success");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    if (!session?.user) {
+      openLoginModal({
+        initialMode: "signin",
+        intentTitle: "Member Account Required",
+        intentSubtitle: "Please sign in to complete subscription activation.",
+        onSuccess: () => {
+          handleCompleteSubscription(e);
+        },
+      });
+      return;
+    }
+
+    setSubmitting(true);
+    setSubError(null);
+
+    try {
+      const res = await fetch("/api/user/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          planId: selectedPlan || "premium",
+          billingCycle,
+          name: checkoutName,
+          email: checkoutEmail,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Failed to activate subscription.");
+      }
+
+      // Update session state
+      if (typeof update === "function") {
+        await update({
+          tier: selectedPlan || "premium",
+          adsEnabled: false,
+          isSubscribed: true,
+        });
+      }
+
+      // Dispatch global window event for instant reactivity
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("hg_subscription_changed", {
+            detail: {
+              tier: selectedPlan || "premium",
+              isSubscribed: true,
+              adsEnabled: false,
+            },
+          })
+        );
+      }
+
+      setCheckoutStep("success");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (err: any) {
+      setSubError(err?.message || "An error occurred while activating your plan.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const activePlanObj = PLANS.find((p) => p.id === selectedPlan) || PLANS[1];
@@ -137,9 +224,19 @@ export default function SubscribePage() {
               priority
             />
           </Link>
-          <Link href="/login" className="text-xs sm:text-sm font-heading font-semibold text-primary hover:underline">
-            Already a member? Sign In
-          </Link>
+          {session?.user ? (
+            <span className="text-xs sm:text-sm font-heading font-semibold text-emerald-800">
+              Signed in as {session.user.name || session.user.email}
+            </span>
+          ) : (
+            <button
+              type="button"
+              onClick={() => openLoginModal({ initialMode: "signin" })}
+              className="text-xs sm:text-sm font-heading font-semibold text-primary hover:underline cursor-pointer"
+            >
+              Already a member? Sign In
+            </button>
+          )}
         </div>
       </header>
 
@@ -363,13 +460,20 @@ export default function SubscribePage() {
                   </div>
                 </div>
 
+                {subError && (
+                  <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl">
+                    {subError}
+                  </div>
+                )}
+
                 <Button
                   variant="accent"
                   size="md"
                   type="submit"
-                  className="w-full mt-4 flex items-center justify-center gap-2 shadow-md h-10 text-sm rounded-full"
+                  disabled={submitting}
+                  className="w-full mt-4 flex items-center justify-center gap-2 shadow-md h-10 text-sm rounded-full disabled:opacity-60"
                 >
-                  Activate {activePlanObj.name} <ArrowRight size={16} />
+                  {submitting ? "Activating Membership..." : `Activate ${activePlanObj.name}`} <ArrowRight size={16} />
                 </Button>
               </form>
             </div>

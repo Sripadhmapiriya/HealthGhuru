@@ -3,9 +3,16 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Sparkles, Building2, Stethoscope, ArrowRight, ExternalLink } from 'lucide-react';
+import { Sparkles, Building2, Stethoscope, ArrowRight, ExternalLink, Megaphone } from 'lucide-react';
+import { useAuthModal } from '@/context/AuthModalContext';
+import { useSubscription } from '@/lib/hooks/useSubscription';
 
 export function SponsoredEditorialSection() {
+  const { isAdFree } = useSubscription();
+  const { requireAuth } = useAuthModal();
+
+  if (isAdFree) return null;
+
   const sponsoredItems = [
     {
       id: "sp-1",
@@ -60,12 +67,18 @@ export function SponsoredEditorialSection() {
             >
               View All Sponsored Articles →
             </Link>
-            <Link
-              href="/advertise"
-              className="text-xs font-heading font-semibold text-[#f06d2f] hover:underline"
+            <button
+              type="button"
+              onClick={() => {
+                requireAuth('/advertise', {
+                  intentTitle: 'Healthcare Partner Sponsorship & Advertising',
+                  intentSubtitle: 'Sign in or register your organization to sponsor editorial initiatives and reach verified health readers.',
+                });
+              }}
+              className="text-xs font-heading font-semibold text-[#f06d2f] hover:underline cursor-pointer"
             >
               Advertise With Us →
-            </Link>
+            </button>
           </div>
         </div>
 

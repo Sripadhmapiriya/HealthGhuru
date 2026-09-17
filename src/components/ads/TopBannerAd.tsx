@@ -6,6 +6,7 @@ import { Sparkles, ArrowRight } from 'lucide-react';
 import { Advertisement } from '@/lib/types/advertisement';
 import { trackAdEvent } from './adTracking';
 import Image from 'next/image';
+import { useSubscription } from '@/lib/hooks/useSubscription';
 
 interface TopBannerAdProps {
   initialAd?: Advertisement | null;
@@ -13,6 +14,7 @@ interface TopBannerAdProps {
 }
 
 export function TopBannerAd({ initialAd, category }: TopBannerAdProps) {
+  const { isAdFree } = useSubscription();
   const [ads, setAds] = useState<Advertisement[]>(initialAd ? [initialAd] : []);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fade, setFade] = useState(true);
@@ -21,6 +23,8 @@ export function TopBannerAd({ initialAd, category }: TopBannerAdProps) {
   const trackedMap = useRef<Record<string, boolean>>({});
 
   useEffect(() => {
+    if (isAdFree) return;
+
     const fetchAds = async () => {
       try {
         const url = category
@@ -45,7 +49,7 @@ export function TopBannerAd({ initialAd, category }: TopBannerAdProps) {
     };
 
     fetchAds();
-  }, [category]);
+  }, [category, isAdFree]);
 
   // Auto-rotation timer
   useEffect(() => {
@@ -71,7 +75,7 @@ export function TopBannerAd({ initialAd, category }: TopBannerAdProps) {
     }
   }, [ad]);
 
-  if (!ad) return null;
+  if (isAdFree || !ad) return null;
 
   const handleClick = () => {
     if (ad) {
