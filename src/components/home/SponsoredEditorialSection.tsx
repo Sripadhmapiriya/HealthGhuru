@@ -49,7 +49,7 @@ export function SponsoredEditorialSection() {
   return (
     <section className="w-full py-8 sm:py-10 bg-[#fffbf8] border-t border-b border-orange-200/60">
       <div className="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Header with clear SPONSORED badge */}
         <div className="flex items-center justify-between pb-3 mb-6 border-b-2 border-[#f06d2f]/30">
           <div className="flex items-center gap-2.5">
@@ -67,18 +67,12 @@ export function SponsoredEditorialSection() {
             >
               View All Sponsored Articles →
             </Link>
-            <button
-              type="button"
-              onClick={() => {
-                requireAuth('/advertise', {
-                  intentTitle: 'Healthcare Partner Sponsorship & Advertising',
-                  intentSubtitle: 'Sign in or register your organization to sponsor editorial initiatives and reach verified health readers.',
-                });
-              }}
-              className="text-xs font-heading font-semibold text-[#f06d2f] hover:underline cursor-pointer"
+            <Link
+              href="/advertise"
+              className="text-xs font-heading font-semibold text-[#f06d2f] hover:underline"
             >
               Advertise With Us →
-            </button>
+            </Link>
           </div>
         </div>
 
