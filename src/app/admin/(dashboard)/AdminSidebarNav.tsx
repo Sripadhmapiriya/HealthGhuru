@@ -30,12 +30,11 @@ const AD_SUB_LINKS = [
   { href: '/admin/advertisements/all', label: 'All Advertisements', icon: ListFilter },
   { href: '/admin/advertisements/add', label: 'Add Advertisement', icon: PlusCircle },
   { href: '/admin/advertisements/pricing', label: 'Ad Slot Pricing', icon: DollarSign },
-  { href: '/admin/sponsored-articles', label: 'Sponsored Articles', icon: FileText },
 ];
 
 export function AdminSidebarNav() {
   const pathname = usePathname();
-  const isAdsSection = pathname.startsWith('/admin/advertisements') || pathname.startsWith('/admin/sponsored-articles');
+  const isAdsSection = pathname.startsWith('/admin/advertisements');
   const [adsOpen, setAdsOpen] = useState(isAdsSection);
 
   const links = [
