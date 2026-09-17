@@ -228,10 +228,10 @@ export function AddNewsClient() {
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-16">
       
-      {/* ── 1. Top Bar Header (Clean White & Light Green) ── */}
-      <div className="bg-white text-dark rounded-2xl p-5 sm:p-6 shadow-xs border border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      {/* ── 1. Top Bar Header (Clean White & Light Green matching Sidebar) ── */}
+      <div className="bg-white text-dark rounded-2xl p-5 sm:p-6 shadow-xs border border-border border-l-4 border-l-primary flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <span className="text-[11px] font-mono text-primary font-bold uppercase tracking-wider block mb-0.5">
+          <span className="bg-primary/10 text-primary border border-primary/20 text-[11px] font-mono font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full inline-block mb-1.5 shadow-2xs">
             Admin News Publishing Engine
           </span>
           <h1 className="text-xl sm:text-2xl font-heading font-bold tracking-tight text-dark">
@@ -647,7 +647,7 @@ export function AddNewsClient() {
         </div>
 
         {/* ── Publishing Options (Checkboxes in Light Green box matching sidebar) ── */}
-        <div className="bg-primary/5 border border-primary/15 rounded-xl p-5 space-y-3.5">
+        <div className="bg-primary/10 border border-primary/20 rounded-xl p-5 space-y-3.5 shadow-2xs">
           <label className="flex items-center gap-3 cursor-pointer">
             <input
               type="checkbox"
