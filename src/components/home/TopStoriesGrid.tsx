@@ -10,12 +10,14 @@ interface TopStoriesGridProps {
   featuredStory: any;
   topStories: any[];
   trendingStories: any[];
+  title?: string;
 }
 
 export function TopStoriesGrid({
   featuredStory,
   topStories,
   trendingStories,
+  title,
 }: TopStoriesGridProps) {
   const { isSubscribed } = useSubscription();
   // Fallbacks if data is still loading or empty
@@ -42,7 +44,7 @@ export function TopStoriesGrid({
           <div className="flex items-center gap-2.5">
             <span className="w-3.5 h-3.5 rounded-xs bg-[#CBF2DB]" />
             <h2 className="font-heading font-extrabold text-xl sm:text-2xl text-slate-900 uppercase tracking-wide">
-              TOP STORIES & ANALYSIS
+              {title || "TOP STORIES & ANALYSIS"}
             </h2>
           </div>
           <span className="text-xs font-mono font-semibold text-slate-500 hidden sm:inline">

@@ -1,81 +1,16 @@
 "use client";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useAuthModal } from "@/context/AuthModalContext";
 import { motion } from "framer-motion";
-import { Check, Sparkles, Shield, Zap, BookOpen, Star, HelpCircle, ArrowRight, ArrowLeft, CheckCircle2, Lock, LogIn } from "lucide-react";
+import { Check, Sparkles, Shield, Star, HelpCircle, ArrowRight, ArrowLeft, CheckCircle2, Lock } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { PillBadge } from "@/components/ui/PillBadge";
-import { ScrollReveal } from "@/components/ui/ScrollReveal";
-
-interface Plan {
-  id: string;
-  name: string;
-  tagline: string;
-  priceMonthly: number;
-  priceAnnual: number;
-  popular?: boolean;
-  features: string[];
-  cta: string;
-  badge?: string;
-}
-
-const PLANS: Plan[] = [
-  {
-    id: "free",
-    name: "Free Access",
-    tagline: "Essential wellness intelligence for everyone.",
-    priceMonthly: 0,
-    priceAnnual: 0,
-    features: [
-      "Access to standard health articles",
-      "Full video library and YouTube guides",
-      "Daily Wellness Shorts and Reels",
-      "Basic health categories & taxonomy",
-      "Weekly HealthGuru newsletter",
-    ],
-    cta: "Get Started Free",
-  },
-  {
-    id: "premium",
-    name: "Premium Member",
-    tagline: "Unrestricted medical reports, research & digital magazines.",
-    priceMonthly: 9.99,
-    priceAnnual: 7.99,
-    popular: true,
-    badge: "Most Popular",
-    features: [
-      "All Free features included",
-      "Unlimited access to all Premium Articles",
-      "Full Digital Magazine Archive (PDF & Web)",
-      "Exclusive clinical guides & meal plans",
-      "Ad-free reading experience",
-      "Priority editorial newsletter & alerts",
-      "Personalized bookmarking & wellness dashboard",
-    ],
-    cta: "Upgrade to Premium",
-  },
-  {
-    id: "annual",
-    name: "Annual VIP Pass",
-    tagline: "Maximum value with comprehensive wellness resources.",
-    priceMonthly: 6.58, // $79 billed annually
-    priceAnnual: 6.58,
-    badge: "Best Value — Save 35%",
-    features: [
-      "Everything in Premium included",
-      "Annual Digital Magazine subscription",
-      "Early access to investigative health reports",
-      "VIP member wellness webinars",
-      "Full archive of downloadable wellness eBooks",
-      "Dedicated member support line",
-    ],
-    cta: "Claim Annual VIP Pass",
-  },
-];
+import { SubscriptionPlan, DEFAULT_SUBSCRIPTION_PLANS } from "@/lib/types/subscription-plan";
 
 const FAQS = [
   {
@@ -84,11 +19,11 @@ const FAQS = [
   },
   {
     q: "What is included in the digital magazine access?",
-    a: "Premium and Annual members get full digital and high-resolution PDF access to every issue of HealthGuru Magazine, including back-issues.",
+    a: "Members get full digital and high-resolution PDF access to every issue of HealthGhuru Magazine, including back-issues.",
   },
   {
     q: "Is payment integration active right now?",
-    a: "Currently, HealthGuru is previewing membership tiers during our launch phase. You can select and activate your plan immediately with zero upfront payment charge.",
+    a: "Currently, HealthGhuru is previewing membership tiers during our launch phase. You can select and activate your plan immediately with zero upfront payment charge.",
   },
   {
     q: "Are the health articles verified by experts?",
@@ -99,13 +34,26 @@ const FAQS = [
 export default function SubscribePage() {
   const { data: session, update } = useSession();
   const { openLoginModal } = useAuthModal();
-  const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("annual");
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+
+  const [plans, setPlans] = useState<SubscriptionPlan[]>(DEFAULT_SUBSCRIPTION_PLANS);
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [checkoutStep, setCheckoutStep] = useState<"plans" | "checkout" | "success">("plans");
   const [checkoutEmail, setCheckoutEmail] = useState("");
   const [checkoutName, setCheckoutName] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [subError, setSubError] = useState<string | null>(null);
+
+  // Fetch dynamic plans from DB
+  useEffect(() => {
+    fetch('/api/subscription-plans', { cache: 'no-store' })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.plans) && data.plans.length > 0) {
+          setPlans(data.plans);
+        }
+      })
+      .catch((err) => console.error('Error fetching subscription plans:', err));
+  }, []);
 
   useEffect(() => {
     if (session?.user) {
@@ -121,7 +69,7 @@ export default function SubscribePage() {
         intentTitle: "Member Account Required",
         intentSubtitle: "Please sign in or create an account to activate your subscription tier.",
         onSuccess: () => {
-          setSelectedPlan(planId);
+          setSelectedPlanId(planId);
           setCheckoutStep("checkout");
           window.scrollTo({ top: 0, behavior: "smooth" });
         },
@@ -129,10 +77,16 @@ export default function SubscribePage() {
       return;
     }
 
-    setSelectedPlan(planId);
+    setSelectedPlanId(planId);
     setCheckoutStep("checkout");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  const activePlanObj =
+    plans.find((p) => p.id === selectedPlanId) ||
+    plans.find((p) => p.is_recommended) ||
+    plans[0] ||
+    DEFAULT_SUBSCRIPTION_PLANS[0];
 
   const handleCompleteSubscription = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -158,8 +112,10 @@ export default function SubscribePage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          planId: selectedPlan || "premium",
-          billingCycle,
+          planId: activePlanObj.id,
+          planName: activePlanObj.name,
+          billingCycle: activePlanObj.duration_label,
+          price: activePlanObj.price,
           name: checkoutName,
           email: checkoutEmail,
         }),
@@ -173,7 +129,7 @@ export default function SubscribePage() {
       // Update session state
       if (typeof update === "function") {
         await update({
-          tier: selectedPlan || "premium",
+          tier: activePlanObj.id,
           adsEnabled: false,
           isSubscribed: true,
         });
@@ -184,7 +140,7 @@ export default function SubscribePage() {
         window.dispatchEvent(
           new CustomEvent("hg_subscription_changed", {
             detail: {
-              tier: selectedPlan || "premium",
+              tier: activePlanObj.id,
               isSubscribed: true,
               adsEnabled: false,
             },
@@ -201,10 +157,8 @@ export default function SubscribePage() {
     }
   };
 
-  const activePlanObj = PLANS.find((p) => p.id === selectedPlan) || PLANS[1];
-
   return (
-    <div className="min-h-screen bg-cream pb-24 relative overflow-hidden">
+    <div className="min-h-screen bg-cream pb-24 relative overflow-hidden font-body">
       {/* Background Decorative Rings */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute top-1/2 left-0 w-[400px] h-[400px] bg-accent/5 rounded-full blur-3xl pointer-events-none" />
@@ -218,7 +172,7 @@ export default function SubscribePage() {
           <Link href="/" className="relative w-44 sm:w-52 h-12 flex items-center">
             <Image
               src="/images/logo_transparent.png"
-              alt="HealthGuru Logo"
+              alt="HealthGhuru Logo"
               fill
               className="object-contain"
               priority
@@ -245,95 +199,62 @@ export default function SubscribePage() {
         <main className="site-container pt-12 sm:pt-16">
           {/* Header */}
           <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-            <PillBadge active className="mb-4 inline-flex gap-1.5"><Sparkles size={14} /> HealthGuru Membership</PillBadge>
-            <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl text-dark leading-tight mb-4">
+            <PillBadge active className="mb-4 inline-flex gap-1.5"><Sparkles size={14} /> HealthGhuru Membership</PillBadge>
+            <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl text-dark leading-tight mb-4 font-bold">
               Invest in Your Longevity & Daily Wellness
             </h1>
-            <p className="text-text-secondary text-base sm:text-xl font-body leading-relaxed max-w-2xl mx-auto">
-              Join our community of over 50,000+ proactive readers enjoying science-backed health insights and exclusive digital magazine editions.
+            <p className="text-text-secondary text-base sm:text-xl leading-relaxed max-w-2xl mx-auto">
+              Join our community of over 50,000+ proactive readers enjoying science-backed health insights, ad-free reading, and exclusive digital magazine editions.
             </p>
-
-            {/* Billing Cycle Toggle */}
-            <div className="mt-8 inline-flex items-center bg-white p-1 rounded-full border border-primary/20 shadow-xs">
-              <button
-                type="button"
-                onClick={() => setBillingCycle("monthly")}
-                className={`px-4 sm:px-5 py-1.5 rounded-full text-xs font-heading font-semibold transition-all ${
-                  billingCycle === "monthly"
-                    ? "bg-primary text-white shadow-sm"
-                    : "text-text-secondary hover:text-dark"
-                }`}
-              >
-                Monthly Billing
-              </button>
-              <button
-                type="button"
-                onClick={() => setBillingCycle("annual")}
-                className={`px-4 sm:px-5 py-1.5 rounded-full text-xs font-heading font-semibold transition-all flex items-center gap-1.5 ${
-                  billingCycle === "annual"
-                    ? "bg-primary text-white shadow-sm"
-                    : "text-text-secondary hover:text-dark"
-                }`}
-              >
-                Annual Billing <span className="bg-accent text-white text-[10px] px-2 py-0.5 rounded-full font-bold">Save 35%</span>
-              </button>
-            </div>
           </div>
 
-          {/* Pricing Cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto items-stretch">
-            {PLANS.map((plan) => {
-              const isAnnual = billingCycle === "annual";
-              const price = isAnnual ? plan.priceAnnual : plan.priceMonthly;
-              const isPopular = plan.popular;
+          {/* Dynamic Pricing Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto items-stretch">
+            {plans.map((plan) => {
+              const isPopular = plan.is_recommended;
 
               return (
                 <motion.div
                   key={plan.id}
                   whileHover={{ y: -6 }}
                   transition={{ duration: 0.3 }}
-                  className={`relative rounded-3xl p-8 sm:p-10 flex flex-col justify-between transition-all ${
+                  className={`relative rounded-3xl p-7 sm:p-8 flex flex-col justify-between transition-all ${
                     isPopular
                       ? "bg-white border-2 border-primary shadow-2xl ring-4 ring-primary/10"
                       : "bg-white/90 border border-primary/15 shadow-lg"
                   }`}
                 >
                   {/* Badge */}
-                  {plan.badge && (
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary to-primary-dark text-white text-xs font-heading font-bold px-4 py-1 rounded-full shadow-md uppercase tracking-wider">
-                      {plan.badge}
+                  {plan.is_recommended && (
+                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#f06d2f] to-[#ea580c] text-white text-xs font-heading font-extrabold px-4 py-1 rounded-full shadow-md uppercase tracking-wider flex items-center gap-1">
+                      <Sparkles size={12} /> Recommended
                     </div>
                   )}
 
                   <div>
-                    <h2 className="font-display text-2xl text-dark mb-2">{plan.name}</h2>
-                    <p className="text-text-secondary text-xs sm:text-sm mb-6 min-h-[40px] leading-relaxed">
-                      {plan.tagline}
+                    <h2 className="font-display text-2xl text-dark mb-1 font-bold">{plan.name}</h2>
+                    <p className="text-text-secondary text-xs mb-5 font-mono">
+                      Duration: {plan.duration_months} Month(s)
                     </p>
 
                     {/* Price */}
                     <div className="mb-6 pb-6 border-b border-border">
                       <div className="flex items-baseline gap-1">
-                        <span className="font-display text-4xl sm:text-5xl font-bold text-dark">
-                          ${price === 0 ? "0" : price.toFixed(2)}
+                        <span className="font-display text-3xl sm:text-4xl font-extrabold text-dark">
+                          ₹{plan.price}
                         </span>
-                        <span className="text-text-muted text-sm font-medium">
-                          {price === 0 ? " / forever" : " / month"}
+                        <span className="text-text-muted text-xs font-mono">
+                          / {plan.duration_label}
                         </span>
                       </div>
-                      {isAnnual && price > 0 && (
-                        <p className="text-xs text-primary font-semibold mt-1">
-                          Billed annually (${(price * 12).toFixed(2)}/year)
-                        </p>
-                      )}
                     </div>
 
                     {/* Features */}
-                    <ul className="space-y-3.5 mb-8">
-                      {plan.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-start gap-3 text-xs sm:text-sm text-text-primary">
+                    <ul className="space-y-3 mb-8">
+                      {plan.benefits && plan.benefits.map((feature, idx) => (
+                        <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-text-primary">
                           <Check size={16} className="text-primary shrink-0 mt-0.5" />
-                          <span>{feature}</span>
+                          <span className="leading-snug">{feature}</span>
                         </li>
                       ))}
                     </ul>
@@ -343,9 +264,9 @@ export default function SubscribePage() {
                     variant={isPopular ? "accent" : "primary"}
                     size="lg"
                     onClick={() => handleSelectPlan(plan.id)}
-                    className="w-full shadow-md flex items-center justify-center gap-2"
+                    className="w-full shadow-md flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    {plan.cta} <ArrowRight size={16} />
+                    Select {plan.name} <ArrowRight size={16} />
                   </Button>
                 </motion.div>
               );
@@ -375,7 +296,7 @@ export default function SubscribePage() {
 
           {/* FAQs */}
           <div className="mt-20 max-w-3xl mx-auto">
-            <h2 className="font-display text-2xl sm:text-3xl text-dark text-center mb-8">
+            <h2 className="font-display text-2xl sm:text-3xl text-dark text-center mb-8 font-bold">
               Frequently Asked Questions
             </h2>
             <div className="space-y-4">
@@ -402,7 +323,7 @@ export default function SubscribePage() {
             <button
               type="button"
               onClick={() => setCheckoutStep("plans")}
-              className="inline-flex items-center gap-2 text-text-secondary hover:text-primary transition-colors text-sm font-heading font-medium mb-6"
+              className="inline-flex items-center gap-2 text-text-secondary hover:text-primary transition-colors text-sm font-heading font-medium mb-6 cursor-pointer"
             >
               <ArrowLeft size={16} /> Back to Plan Selection
             </button>
@@ -413,13 +334,13 @@ export default function SubscribePage() {
               <div className="flex items-center justify-between pb-6 border-b border-border mb-6">
                 <div>
                   <span className="text-xs font-mono text-primary uppercase tracking-wider font-semibold">Selected Membership</span>
-                  <h2 className="font-display text-2xl sm:text-3xl text-dark">{activePlanObj.name}</h2>
+                  <h2 className="font-display text-2xl sm:text-3xl text-dark font-bold">{activePlanObj.name}</h2>
                 </div>
                 <div className="text-right">
                   <span className="font-display text-3xl font-bold text-dark">
-                    ${billingCycle === "annual" ? activePlanObj.priceAnnual.toFixed(2) : activePlanObj.priceMonthly.toFixed(2)}
+                    ₹{activePlanObj.price}
                   </span>
-                  <span className="text-text-muted text-xs block">/ month ({billingCycle})</span>
+                  <span className="text-text-muted text-xs block">/ {activePlanObj.duration_label}</span>
                 </div>
               </div>
 
@@ -471,7 +392,7 @@ export default function SubscribePage() {
                   size="md"
                   type="submit"
                   disabled={submitting}
-                  className="w-full mt-4 flex items-center justify-center gap-2 shadow-md h-10 text-sm rounded-full disabled:opacity-60"
+                  className="w-full mt-4 flex items-center justify-center gap-2 shadow-md h-11 text-sm rounded-full disabled:opacity-60 cursor-pointer"
                 >
                   {submitting ? "Activating Membership..." : `Activate ${activePlanObj.name}`} <ArrowRight size={16} />
                 </Button>
@@ -502,7 +423,7 @@ export default function SubscribePage() {
             </div>
 
             <h2 className="font-display text-2xl sm:text-3xl text-dark mb-2 tracking-tight font-bold">
-              Welcome to HealthGuru!
+              Welcome to HealthGhuru!
             </h2>
             <p className="text-text-secondary text-xs sm:text-sm leading-relaxed mb-6 font-body max-w-sm mx-auto">
               Your <strong className="text-primary font-semibold">{activePlanObj.name}</strong> has been successfully activated for <strong className="text-dark font-medium">{checkoutEmail || "your account"}</strong>.
@@ -514,15 +435,17 @@ export default function SubscribePage() {
                 <span className="text-text-muted">Plan:</span>
                 <span className="font-heading font-semibold text-dark flex items-center gap-1.5">
                   {activePlanObj.name}
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                    VIP
-                  </span>
+                  {activePlanObj.is_recommended && (
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                      VIP
+                    </span>
+                  )}
                 </span>
               </div>
               <div className="flex items-center justify-between pb-2 border-b border-border/50">
-                <span className="text-text-muted">Billing:</span>
+                <span className="text-text-muted">Billing Duration:</span>
                 <span className="font-heading font-semibold text-dark">
-                  {billingCycle === "annual" ? "Annual Pass" : "Monthly"}
+                  {activePlanObj.duration_label} ({activePlanObj.duration_months} Month(s))
                 </span>
               </div>
               <div className="flex items-center justify-between">
@@ -534,20 +457,20 @@ export default function SubscribePage() {
               </div>
             </div>
 
-            {/* Sleek, Shorter Sized Pill Buttons */}
+            {/* Pill Buttons */}
             <div className="flex flex-row items-center justify-center gap-3">
               <Link href="/">
                 <button
                   type="button"
-                  className="h-9 px-4 sm:px-5 rounded-full text-xs font-heading font-semibold text-white bg-gradient-accent hover:opacity-95 active:scale-[0.98] shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-1.5 whitespace-nowrap"
+                  className="h-9 px-4 sm:px-5 rounded-full text-xs font-heading font-semibold text-white bg-gradient-accent hover:opacity-95 active:scale-[0.98] shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-1.5 whitespace-nowrap cursor-pointer"
                 >
-                  Explore HealthGuru Feed <ArrowRight size={13} />
+                  Explore Feed <ArrowRight size={13} />
                 </button>
               </Link>
               <Link href="/magazines">
                 <button
                   type="button"
-                  className="h-9 px-4 sm:px-5 rounded-full text-xs font-heading font-semibold text-primary bg-white border border-primary/30 hover:border-primary hover:bg-primary/5 active:scale-[0.98] shadow-xs transition-all flex items-center justify-center gap-1.5 whitespace-nowrap"
+                  className="h-9 px-4 sm:px-5 rounded-full text-xs font-heading font-semibold text-primary bg-white border border-primary/30 hover:border-primary hover:bg-primary/5 active:scale-[0.98] shadow-xs transition-all flex items-center justify-center gap-1.5 whitespace-nowrap cursor-pointer"
                 >
                   Browse Magazines
                 </button>

@@ -8,9 +8,18 @@ import { Award, BookOpen, Clock, ShieldCheck, ArrowRight } from 'lucide-react';
 interface EditorsPicksMostReadProps {
   editorPicks: any[];
   mostRead: any[];
+  title?: string;
+  mostReadTitle?: string;
+  displayViewsBadge?: boolean;
 }
 
-export function EditorsPicksMostRead({ editorPicks, mostRead }: EditorsPicksMostReadProps) {
+export function EditorsPicksMostRead({
+  editorPicks,
+  mostRead,
+  title,
+  mostReadTitle,
+  displayViewsBadge = true,
+}: EditorsPicksMostReadProps) {
   return (
     <section className="w-full py-8 sm:py-10 bg-white">
       <div className="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -22,7 +31,7 @@ export function EditorsPicksMostRead({ editorPicks, mostRead }: EditorsPicksMost
               <div className="flex items-center gap-2">
                 <Award size={20} className="text-[#f06d2f]" />
                 <h2 className="font-heading font-extrabold text-lg sm:text-xl text-[#1B5E20] uppercase tracking-wide">
-                  EDITOR'S PICKS
+                  {title || "EDITOR'S PICKS"}
                 </h2>
               </div>
               <span className="text-[11px] font-mono text-gray-400">CURATED EDITORIAL</span>
@@ -83,7 +92,7 @@ export function EditorsPicksMostRead({ editorPicks, mostRead }: EditorsPicksMost
               <div className="flex items-center gap-2">
                 <BookOpen size={18} className="text-[#2E7D32]" />
                 <h2 className="font-heading font-extrabold text-lg text-[#1B5E20] uppercase tracking-wide">
-                  MOST READ THIS WEEK
+                  {mostReadTitle || "MOST READ THIS WEEK"}
                 </h2>
               </div>
               <span className="text-[10px] font-mono text-[#4A6741] font-semibold">BY ENGAGEMENT</span>
@@ -112,8 +121,12 @@ export function EditorsPicksMostRead({ editorPicks, mostRead }: EditorsPicksMost
                         {story.title}
                       </h4>
                       <div className="flex items-center gap-2 text-[10px] text-gray-400 font-mono mt-1">
-                        <span>{story.view_count ? `${story.view_count} views` : '3.8k views'}</span>
-                        <span>•</span>
+                        {displayViewsBadge && (
+                          <>
+                            <span>{story.view_count ? `${story.view_count} views` : '3.8k views'}</span>
+                            <span>•</span>
+                          </>
+                        )}
                         <span>5 min read</span>
                       </div>
                     </div>
