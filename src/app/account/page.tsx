@@ -30,6 +30,9 @@ import {
   Check,
   Stethoscope,
   FileText,
+  CreditCard,
+  Award,
+  Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ContentCard } from "@/components/media/ContentCard";
@@ -37,7 +40,7 @@ import { PrescriptionUploader } from "@/components/personalization/PrescriptionU
 import { PrescriptionInsightsCard } from "@/components/personalization/PrescriptionInsightsCard";
 import { formatDate } from "@/lib/utils";
 
-type AccountTab = "profile" | "interests" | "formats" | "prescriptions" | "saved" | "history" | "security";
+type AccountTab = "profile" | "subscription" | "interests" | "formats" | "prescriptions" | "saved" | "history" | "security";
 
 function AccountDashboard() {
   const { data: session, status } = useSession();
@@ -78,6 +81,10 @@ function AccountDashboard() {
   const [historyItems, setHistoryItems] = useState<any[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
 
+  // Subscription data
+  const [subscriptionData, setSubscriptionData] = useState<any>(null);
+  const [subscriptionLoading, setSubscriptionLoading] = useState(false);
+
   // State flags
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -103,6 +110,7 @@ function AccountDashboard() {
       fetchProfile();
       fetchPreferences();
       fetchPrescriptions();
+      fetchSubscription();
     }
   }, [status]);
 
@@ -114,6 +122,8 @@ function AccountDashboard() {
       fetchHistory();
     } else if (activeTab === "prescriptions") {
       fetchPrescriptions();
+    } else if (activeTab === "subscription") {
+      fetchSubscription();
     }
   }, [activeTab]);
 
@@ -228,6 +238,21 @@ function AccountDashboard() {
       console.error("Error loading prescriptions:", err);
     } finally {
       setPrescriptionsLoading(false);
+    }
+  };
+
+  const fetchSubscription = async () => {
+    try {
+      setSubscriptionLoading(true);
+      const res = await fetch("/api/user/subscribe", { cache: "no-store" });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setSubscriptionData(data);
+      }
+    } catch (err) {
+      console.error("Error loading subscription:", err);
+    } finally {
+      setSubscriptionLoading(false);
     }
   };
 
@@ -371,6 +396,27 @@ function AccountDashboard() {
                   <span className="text-[10px] font-heading font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
                     {profile?.role === "admin" ? "Administrator" : "Verified Member"}
                   </span>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("subscription")}
+                    className={`text-[10px] font-heading font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full flex items-center gap-1 transition-all ${
+                      subscriptionData?.is_subscribed
+                        ? "bg-emerald-100 text-emerald-800 border border-emerald-300 hover:bg-emerald-200"
+                        : "bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200"
+                    }`}
+                  >
+                    {subscriptionData?.is_subscribed ? (
+                      <>
+                        <Sparkles size={11} className="text-amber-500" />
+                        <span>VIP ({subscriptionData.planDetails?.name || subscriptionData.tier})</span>
+                      </>
+                    ) : (
+                      <>
+                        <CreditCard size={11} className="text-slate-500" />
+                        <span>Free Plan</span>
+                      </>
+                    )}
+                  </button>
                 </div>
                 <p className="text-xs sm:text-sm text-text-secondary mt-0.5">{profile?.email}</p>
                 <p className="text-[11px] text-text-muted mt-1 flex items-center gap-1.5">
@@ -382,6 +428,20 @@ function AccountDashboard() {
 
             {/* Account Quick Stats */}
             <div className="flex items-center gap-3 sm:gap-4 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
+              <button
+                type="button"
+                onClick={() => setActiveTab("subscription")}
+                className="px-4 py-2.5 rounded-2xl bg-surface border border-primary/10 text-center shrink-0 hover:border-primary/40 hover:bg-primary/5 transition-all text-left"
+              >
+                <span className="block font-heading font-bold text-sm text-primary uppercase">
+                  {subscriptionData?.is_subscribed
+                    ? (subscriptionData.planDetails?.name || subscriptionData.tier)
+                    : "Free"}
+                </span>
+                <span className="text-[10px] font-heading uppercase tracking-wider text-text-muted flex items-center gap-1">
+                  <CreditCard size={10} /> Subscription
+                </span>
+              </button>
               <div className="px-4 py-2.5 rounded-2xl bg-surface border border-primary/10 text-center shrink-0">
                 <span className="block font-heading font-bold text-lg text-primary">
                   {selectedTopics.length}
@@ -469,6 +529,32 @@ function AccountDashboard() {
                 <span>Profile & Details</span>
               </div>
               <ArrowRight size={14} className={activeTab === "profile" ? "text-white" : "text-text-muted"} />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("subscription")}
+              className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-xs sm:text-sm font-heading font-semibold transition-all ${
+                activeTab === "subscription"
+                  ? "bg-primary text-white shadow-xs"
+                  : "text-text-primary hover:bg-surface hover:text-primary"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <CreditCard size={16} />
+                <span>Subscription & Plan</span>
+              </div>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${
+                activeTab === "subscription"
+                  ? "bg-white/20 text-white"
+                  : subscriptionData?.is_subscribed
+                  ? "bg-emerald-100 text-emerald-800"
+                  : "bg-slate-100 text-slate-600"
+              }`}>
+                {subscriptionData?.is_subscribed
+                  ? (subscriptionData.planDetails?.name || subscriptionData.tier)
+                  : "Free"}
+              </span>
             </button>
 
             <button
@@ -694,7 +780,188 @@ function AccountDashboard() {
               </div>
             )}
 
-            {/* 2. My Health Interests Tab */}
+            {/* 2. Subscription & Membership Plan Tab */}
+            {activeTab === "subscription" && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="font-display text-2xl text-dark">Subscription & Membership</h2>
+                  <p className="text-xs sm:text-sm text-text-secondary mt-1">
+                    Manage your HealthGhuru reading plan, ad-free privileges, and medical library benefits.
+                  </p>
+                </div>
+
+                {subscriptionLoading && !subscriptionData ? (
+                  <div className="py-12 text-center">
+                    <div className="w-8 h-8 border-3 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-2" />
+                    <p className="text-xs text-text-muted">Loading your subscription status...</p>
+                  </div>
+                ) : (
+                  <>
+                    {/* Current Plan Highlight Card */}
+                    <div className="rounded-3xl border border-primary/20 p-6 sm:p-8 bg-gradient-to-br from-emerald-50/50 via-white to-surface shadow-xs space-y-6 relative overflow-hidden">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-primary/10 pb-6">
+                        <div className="space-y-1">
+                          <span className="text-[11px] font-heading font-bold uppercase tracking-wider text-text-muted">
+                            Active Subscription
+                          </span>
+                          <div className="flex items-center gap-3 flex-wrap">
+                            <h3 className="font-heading font-extrabold text-2xl text-dark">
+                              {subscriptionData?.planDetails?.name ||
+                                (subscriptionData?.is_subscribed
+                                  ? (subscriptionData?.tier ? subscriptionData.tier.toUpperCase() : "VIP PASS")
+                                  : "Free Access Plan")}
+                            </h3>
+                            {subscriptionData?.is_subscribed ? (
+                              <span className="text-[10px] font-heading font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1 shadow-xs">
+                                <Sparkles size={11} className="text-amber-500" />
+                                <span>Active & Ad-Free</span>
+                              </span>
+                            ) : (
+                              <span className="text-[10px] font-heading font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+                                Free Standard Tier
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="text-left sm:text-right">
+                          <div className="font-heading font-black text-2xl sm:text-3xl text-primary">
+                            {subscriptionData?.is_subscribed ? (
+                              <>
+                                ₹{subscriptionData?.planDetails?.price || (subscriptionData?.tier === "1-month" ? "129" : "999")}
+                                <span className="text-xs font-semibold text-text-muted">
+                                  {" "}/ {subscriptionData?.planDetails?.duration_label || "term"}
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                ₹0
+                                <span className="text-xs font-semibold text-text-muted"> / Free forever</span>
+                              </>
+                            )}
+                          </div>
+                          <p className="text-[11px] text-text-muted mt-0.5">
+                            {subscriptionData?.is_subscribed
+                              ? "Premium reader privileges active"
+                              : "Standard ad-supported reading"}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Status Highlights Grid */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div className="p-3.5 rounded-2xl bg-white border border-primary/10 space-y-1">
+                          <span className="text-[10px] font-heading uppercase tracking-wider text-text-muted block">
+                            Ad Experience
+                          </span>
+                          <p className="font-heading font-bold text-xs text-dark flex items-center gap-1.5">
+                            {subscriptionData?.is_subscribed ? (
+                              <>
+                                <CheckCircle2 size={14} className="text-primary shrink-0" />
+                                <span className="text-primary font-bold">100% Ad-Free Reading</span>
+                              </>
+                            ) : (
+                              <>
+                                <AlertCircle size={14} className="text-amber-600 shrink-0" />
+                                <span className="text-text-secondary">Standard Ad Supported</span>
+                              </>
+                            )}
+                          </p>
+                        </div>
+
+                        <div className="p-3.5 rounded-2xl bg-white border border-primary/10 space-y-1">
+                          <span className="text-[10px] font-heading uppercase tracking-wider text-text-muted block">
+                            Health Vault Limit
+                          </span>
+                          <p className="font-heading font-bold text-xs text-dark flex items-center gap-1.5">
+                            <CheckCircle2 size={14} className="text-primary shrink-0" />
+                            <span>
+                              {subscriptionData?.is_subscribed ? "Unlimited Vault Storage" : "10 Records Allowed"}
+                            </span>
+                          </p>
+                        </div>
+
+                        <div className="p-3.5 rounded-2xl bg-white border border-primary/10 space-y-1">
+                          <span className="text-[10px] font-heading uppercase tracking-wider text-text-muted block">
+                            Clinical Research
+                          </span>
+                          <p className="font-heading font-bold text-xs text-dark flex items-center gap-1.5">
+                            <CheckCircle2 size={14} className="text-primary shrink-0" />
+                            <span>
+                              {subscriptionData?.is_subscribed ? "Full VIP Library Access" : "Basic Public Summaries"}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Included Plan Benefits Checklist */}
+                      <div className="space-y-3 pt-2">
+                        <h4 className="font-heading font-bold text-xs uppercase tracking-wider text-text-primary">
+                          What is Included in Your Plan:
+                        </h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                          {(subscriptionData?.planDetails?.benefits && subscriptionData.planDetails.benefits.length > 0
+                            ? subscriptionData.planDetails.benefits
+                            : subscriptionData?.is_subscribed
+                            ? [
+                                "100% Ad-Free reading experience across all devices",
+                                "Unlimited access to premium medical investigative reports",
+                                "Early access to clinical health studies and doctor insights",
+                                "Full digital magazine and downloadable health archive",
+                                "Unlimited secure prescription and medical document vault",
+                              ]
+                            : [
+                                "Access to daily public wellness news and stories",
+                                "Personalized topic and category health feed",
+                                "Save up to 10 bookmarks and prescriptions",
+                                "Standard weekly email wellness digest",
+                              ]
+                          ).map((benefit: string, idx: number) => (
+                            <div key={idx} className="flex items-start gap-2 text-xs text-text-secondary">
+                              <Check size={14} className="text-primary shrink-0 mt-0.5" />
+                              <span>{benefit}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Action Bar */}
+                      <div className="pt-4 border-t border-primary/10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                        <div className="text-xs text-text-muted">
+                          {subscriptionData?.is_subscribed ? (
+                            <span>Need to change duration or upgrade your billing tier?</span>
+                          ) : (
+                            <span className="font-medium text-slate-700">
+                              Upgrade to eliminate all advertisements and unlock the full medical archive.
+                            </span>
+                          )}
+                        </div>
+
+                        <Link href="/subscribe">
+                          <Button variant="primary" size="md" className="w-full sm:w-auto shadow-xs">
+                            {subscriptionData?.is_subscribed ? "Switch / Renew Plan" : "Upgrade to VIP &rarr;"}
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+
+                    {/* Additional Details & FAQ Card */}
+                    <div className="p-5 rounded-2xl bg-surface border border-primary/15 space-y-3">
+                      <div className="flex items-center gap-2 text-primary font-heading font-bold text-xs uppercase tracking-wider">
+                        <ShieldCheck size={16} />
+                        <span>HealthGhuru Membership Guarantee</span>
+                      </div>
+                      <p className="text-xs text-text-secondary leading-relaxed">
+                        All subscriptions are securely handled with 256-bit encryption. Your membership gives you direct access to medical journalism free from third-party advertising tracking. If you need any assistance with billing or receipts, contact our support desk at{" "}
+                        <span className="font-semibold text-dark">support@healthghuru.com</span>.
+                      </p>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* 3. My Health Interests Tab */}
             {activeTab === "interests" && (
               <div className="space-y-6">
                 <div>

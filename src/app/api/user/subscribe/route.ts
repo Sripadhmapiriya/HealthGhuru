@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/auth.config';
 import { sql } from '@/lib/db';
 
+import { DEFAULT_SUBSCRIPTION_PLANS } from '@/lib/types/subscription-plan';
+
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
@@ -12,7 +14,7 @@ export async function GET() {
     }
 
     const plans = await sql`
-      SELECT tier, ads_enabled, records_limit, active_goals_limit, family_members_limit, ocr_enabled, data_export_enabled
+      SELECT *
       FROM user_plans
       WHERE user_id = ${session.user.id}::uuid
     `;
@@ -20,12 +22,39 @@ export async function GET() {
     const plan = plans[0] || { tier: 'free', ads_enabled: true };
     const isSubscribed = plan.tier !== 'free' && plan.ads_enabled === false;
 
+    let planDetails: any = DEFAULT_SUBSCRIPTION_PLANS.find(
+      (p) => p.id.toLowerCase() === plan.tier?.toLowerCase() || p.name.toLowerCase() === plan.tier?.toLowerCase()
+    ) || null;
+
+    try {
+      const tableExists = await sql`
+        SELECT 1 FROM information_schema.tables WHERE table_name = 'subscription_plans'
+      `;
+      if (tableExists.length > 0) {
+        const rows = await sql`
+          SELECT id, name, price::float, currency, duration_label, duration_months, is_recommended, benefits, display_order, is_active
+          FROM subscription_plans
+          WHERE id = ${plan.tier} OR LOWER(name) = LOWER(${plan.tier})
+          LIMIT 1
+        `;
+        if (rows.length > 0) {
+          planDetails = {
+            ...rows[0],
+            benefits: Array.isArray(rows[0].benefits) ? rows[0].benefits : [],
+          };
+        }
+      }
+    } catch (dbErr) {
+      console.warn('Could not query subscription_plans table:', dbErr);
+    }
+
     return NextResponse.json({
       success: true,
       tier: plan.tier || 'free',
       ads_enabled: plan.ads_enabled ?? true,
       is_subscribed: isSubscribed,
       plan,
+      planDetails,
     });
   } catch (error: any) {
     console.error('Error fetching subscription:', error);
@@ -46,16 +75,14 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { planId = 'premium', billingCycle = 'annual', name } = body;
 
-    const targetTier = (planId === 'annual' || planId === 'premium' || planId === 'pro')
-      ? planId
-      : (planId === 'free' ? 'free' : 'premium');
+    const targetTier = planId === 'free' ? 'free' : (planId || 'premium');
 
     const adsEnabled = targetTier === 'free';
     const isSubscribed = !adsEnabled;
 
-    const recordsLimit = targetTier === 'free' ? 10 : 100;
-    const activeGoalsLimit = targetTier === 'free' ? 3 : 10;
-    const familyMembersLimit = targetTier === 'free' ? 0 : 5;
+    const recordsLimit = targetTier === 'free' ? 10 : 999;
+    const activeGoalsLimit = targetTier === 'free' ? 3 : 50;
+    const familyMembersLimit = targetTier === 'free' ? 0 : 10;
 
     // Upsert subscription into PostgreSQL
     await sql`

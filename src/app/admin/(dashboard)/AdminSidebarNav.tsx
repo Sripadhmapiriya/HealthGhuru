@@ -21,6 +21,7 @@ import {
   Settings,
   ChevronDown,
   ChevronRight,
+  LayoutTemplate,
 } from 'lucide-react';
 import { useState } from 'react';
 import { IconAction } from '@/components/ui/IconAction';
@@ -34,13 +35,15 @@ const AD_SUB_LINKS = [
 
 export function AdminSidebarNav() {
   const pathname = usePathname();
-  const isAdsSection = pathname.startsWith('/admin/advertisements');
+  const currentPath = pathname || '';
+  const isAdsSection = currentPath.startsWith('/admin/advertisements');
   const [adsOpen, setAdsOpen] = useState(isAdsSection);
 
   // Top navigation links matching the original HealthGhuru sidebar,
-  // with the two new pages: Add News & All News seamlessly integrated
+  // with the new pages: Homepage Builder, Add News & All News seamlessly integrated
   const navLinks = [
     { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/admin/homepage-builder', label: 'Homepage Builder', icon: LayoutTemplate },
     { href: '/admin/categories', label: 'Categories', icon: Tag },
     // Advertisements accordion rendered separately right here
     { href: '/admin/content', label: 'Content Library', icon: FileText },
@@ -59,8 +62,8 @@ export function AdminSidebarNav() {
     const Icon = link.icon;
     const isActive =
       link.href === '/admin'
-        ? pathname === '/admin'
-        : pathname === link.href || pathname.startsWith(`${link.href}/`);
+        ? currentPath === '/admin'
+        : currentPath === link.href || currentPath.startsWith(`${link.href}/`);
 
     return (
       <Link
@@ -117,8 +120,8 @@ export function AdminSidebarNav() {
                 const Icon = sub.icon;
                 const isSubActive =
                   sub.href === '/admin/advertisements'
-                    ? pathname === '/admin/advertisements'
-                    : pathname.startsWith(sub.href);
+                    ? currentPath === '/admin/advertisements'
+                    : currentPath.startsWith(sub.href);
                 return (
                   <Link
                     key={sub.href}
@@ -150,7 +153,7 @@ export function AdminSidebarNav() {
           prefetch={true}
           data-cursor="tab"
           className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-heading font-medium text-sm transition-all duration-150 border-l-4 ${
-            pathname.startsWith('/admin/settings')
+            currentPath.startsWith('/admin/settings')
               ? 'bg-primary/10 text-primary border-primary font-semibold'
               : 'text-text-secondary hover:text-dark hover:bg-surface border-transparent'
           }`}
@@ -158,7 +161,7 @@ export function AdminSidebarNav() {
           <IconAction context="nav">
             <Settings
               size={18}
-              className={pathname.startsWith('/admin/settings') ? 'text-primary' : 'text-text-secondary'}
+              className={currentPath.startsWith('/admin/settings') ? 'text-primary' : 'text-text-secondary'}
             />
           </IconAction>
           <span>Settings</span>

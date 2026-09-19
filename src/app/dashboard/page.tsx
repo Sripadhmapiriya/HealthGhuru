@@ -18,15 +18,18 @@ import {
   CheckCircle2,
   TrendingUp,
   Stethoscope,
+  CreditCard,
 } from 'lucide-react';
 import { WellnessTipCard } from '@/components/personalization/WellnessTipCard';
 import { RecommendedFeed } from '@/components/personalization/RecommendedFeed';
 import { PillBadge } from '@/components/ui/PillBadge';
 import { Button } from '@/components/ui/Button';
 import { WellnessTip } from '@/lib/recommendations';
+import { useSubscription } from '@/lib/hooks/useSubscription';
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
+  const { isSubscribed, tier } = useSubscription();
   const user = session?.user;
 
   const [wellnessTip, setWellnessTip] = useState<WellnessTip | null>(null);
@@ -158,6 +161,12 @@ export default function DashboardPage() {
             <div className="flex items-center gap-2.5 shrink-0 self-start md:self-auto flex-wrap">
               {isAuthenticated ? (
                 <>
+                  <Link href="/account?tab=subscription">
+                    <button className="px-3.5 py-2 rounded-xl text-xs font-heading font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition-all inline-flex items-center gap-1.5 shadow-xs">
+                      <CreditCard size={14} className="text-emerald-600" />
+                      <span>{isSubscribed ? `Plan: ${tier?.toUpperCase() || 'VIP'}` : 'Plan: Free Tier'}</span>
+                    </button>
+                  </Link>
                   <Link href="/account?tab=prescriptions">
                     <button className="px-3.5 py-2 rounded-xl text-xs font-heading font-semibold text-primary bg-primary/10 border border-primary/20 hover:bg-primary hover:text-white transition-all inline-flex items-center gap-1.5">
                       <Stethoscope size={14} />
@@ -382,6 +391,37 @@ export default function DashboardPage() {
                 </div>
               )}
             </div>
+
+            {/* Subscription Plan Quick Card */}
+            {isAuthenticated && (
+              <div className="bg-white rounded-3xl border border-primary/15 p-5 sm:p-6 shadow-sm space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <CreditCard size={16} className="text-primary" />
+                    <h3 className="font-heading font-bold text-sm text-dark">Subscription Plan</h3>
+                  </div>
+                  {isSubscribed ? (
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+                      VIP Active
+                    </span>
+                  ) : (
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+                      Free Plan
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-text-secondary">
+                  {isSubscribed
+                    ? 'Your account has 100% ad-free reading and full access to medical digests.'
+                    : 'Upgrade to VIP for ad-free reading and unlimited clinical reports.'}
+                </p>
+                <Link href="/account?tab=subscription" className="block">
+                  <Button variant={isSubscribed ? "outline" : "primary"} size="sm" className="w-full text-xs">
+                    {isSubscribed ? "Check Subscription Plan" : "Check & Upgrade Plan &rarr;"}
+                  </Button>
+                </Link>
+              </div>
+            )}
 
             {/* Explore Health Topics Categories Box */}
             <div className="bg-white rounded-3xl border border-primary/15 p-5 sm:p-6 shadow-sm space-y-3.5">

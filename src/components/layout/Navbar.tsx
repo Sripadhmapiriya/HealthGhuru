@@ -32,6 +32,7 @@ import {
   Moon,
   Megaphone,
   LogIn,
+  CreditCard,
 } from "lucide-react";
 import { DateUtilityBar } from "./DateUtilityBar";
 import { MegaMenu } from "./MegaMenu";
@@ -235,6 +236,13 @@ export default function Navbar() {
                       <span>My Profile</span>
                     </Link>
                     <Link
+                      href="/account?tab=subscription"
+                      className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-50"
+                    >
+                      <CreditCard size={14} />
+                      <span>Subscription & Plan</span>
+                    </Link>
+                    <Link
                       href="/profile#saved"
                       className="flex items-center gap-2 px-4 py-2 text-xs text-gray-700 hover:bg-emerald-50"
                     >
@@ -339,10 +347,11 @@ export default function Navbar() {
             <div className="flex items-center justify-between w-full overflow-x-auto scrollbar-none text-xs sm:text-sm lg:text-[14.5px] font-heading font-bold tracking-wide">
               {PRIMARY_CATEGORIES.map((cat) => {
                 const IconComponent = cat.icon;
+                const currentPath = pathname || "";
                 const isActive =
                   cat.href === "/"
-                    ? pathname === "/"
-                    : pathname.startsWith(cat.href);
+                    ? currentPath === "/"
+                    : currentPath.startsWith(cat.href);
 
                 return (
                   <Link
