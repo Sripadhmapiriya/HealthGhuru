@@ -626,6 +626,7 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
                     src={form.banner_image_url}
                     alt="Uploaded Banner Preview"
                     fill
+                    sizes="(max-width: 640px) 100vw, 500px"
                     className="object-contain"
                     unoptimized
                   />

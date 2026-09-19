@@ -193,8 +193,8 @@ export async function getEditorialHealthArticles(category?: string, limit = 5) {
   try {
     const rows = await sql`
       SELECT
-        id, title, slug, excerpt, featured_image, category,
-        reading_time, published_at, views_count
+        id, title, slug, excerpt, image_url as featured_image, category,
+        reading_time, published_at, view_count as views_count
       FROM content_items
       WHERE status = 'published'
         AND deleted_at IS NULL
@@ -216,11 +216,11 @@ export async function getTrendingHealthEditorial(limit = 5) {
   try {
     const rows = await sql`
       SELECT
-        id, title, slug, category, published_at, views_count
+        id, title, slug, category, published_at, view_count as views_count
       FROM content_items
       WHERE status = 'published'
         AND deleted_at IS NULL
-      ORDER BY is_trending DESC, views_count DESC, published_at DESC
+      ORDER BY is_trending DESC, view_count DESC, published_at DESC
       LIMIT ${limit}
     `;
     return rows;

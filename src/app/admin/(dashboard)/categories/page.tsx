@@ -1,8 +1,8 @@
 import { requireAdmin } from '@/lib/auth/session';
 import { sql } from '@/lib/db';
-import { SectionHeader } from '@/components/ui/SectionHeader';
-import { ScrollReveal } from '@/components/ui/ScrollReveal';
-import { CategoriesClient } from './CategoriesClient';
+import { CategoriesClient, CategoryItem } from './CategoriesClient';
+
+export const dynamic = 'force-dynamic';
 
 export default async function AdminCategoriesPage() {
   await requireAdmin();
@@ -30,18 +30,8 @@ export default async function AdminCategoriesPage() {
   `;
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
-      <ScrollReveal>
-        <SectionHeader
-          title="Health Taxonomy & Categories"
-          eyebrow="Taxonomy Engine"
-          subtitle="Manage the 20+ core health pillars, topics, and classification hierarchies used for content organization."
-        />
-      </ScrollReveal>
-
-      <ScrollReveal delay={0.1}>
-        <CategoriesClient initialCategories={categories} />
-      </ScrollReveal>
+    <div className="w-full space-y-6 animate-in fade-in duration-300">
+      <CategoriesClient initialCategories={categories as unknown as CategoryItem[]} />
     </div>
   );
 }

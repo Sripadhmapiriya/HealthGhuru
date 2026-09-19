@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { ExternalLink, Play, Clock, BookOpen, ArrowRight, ShieldCheck, Sparkles, Newspaper, Video as VideoIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { formatDate } from '@/lib/utils';
+import { formatDate, getSafeImageUrl } from '@/lib/utils';
 
 export interface ContentCardProps {
   item: {
@@ -112,7 +112,7 @@ export function ContentCard({ item, layout = 'standard', priority = false }: Con
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
-  const displayImage = imageError || !item.image_url ? '/images/exercise_plank.png' : item.image_url;
+  const displayImage = imageError || !item.image_url ? '/images/exercise_plank.png' : getSafeImageUrl(item.image_url, item.category);
 
   // 1. Horizontal List Layout
   if (layout === 'horizontal') {
@@ -129,6 +129,7 @@ export function ContentCard({ item, layout = 'standard', priority = false }: Con
             src={displayImage}
             alt={item.title}
             fill
+            sizes="(max-width: 640px) 100vw, 192px"
             onError={() => setImageError(true)}
             className="object-cover group-hover:scale-105 transition-transform duration-500"
             unoptimized
@@ -196,6 +197,7 @@ export function ContentCard({ item, layout = 'standard', priority = false }: Con
             src={displayImage}
             alt={item.title}
             fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             onError={() => setImageError(true)}
             className="object-cover group-hover:scale-105 transition-transform duration-500"
             unoptimized
@@ -258,6 +260,7 @@ export function ContentCard({ item, layout = 'standard', priority = false }: Con
               src={displayImage}
               alt={item.title}
               fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               priority={priority}
               onError={() => setImageError(true)}
               className="object-cover group-hover:scale-105 transition-transform duration-500"

@@ -7,6 +7,7 @@ import { Advertisement } from '@/lib/types/advertisement';
 import { trackAdEvent } from './adTracking';
 import Image from 'next/image';
 import { useSubscription } from '@/lib/hooks/useSubscription';
+import { getSafeImageUrl } from '@/lib/utils';
 
 interface SidebarAdProps {
   initialAd?: Advertisement | null;
@@ -147,9 +148,10 @@ export function SidebarAd({ initialAd, category, className = '', sticky = false 
         {ad.image_url && (
           <div className="relative w-full h-44 rounded-xl overflow-hidden border border-border bg-surface group-hover:scale-[1.02] transition-transform duration-300">
             <Image
-              src={ad.image_url}
+              src={getSafeImageUrl(ad.image_url, 'advertisement')}
               alt={ad.title}
               fill
+              sizes="(max-width: 1024px) 100vw, 320px"
               className="object-cover"
               unoptimized
             />

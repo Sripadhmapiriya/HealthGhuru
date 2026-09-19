@@ -6,7 +6,7 @@ import { ScrollReveal } from '@/components/ui/ScrollReveal';
 import { HealthDisclaimer } from '@/components/media/HealthDisclaimer';
 import Image from 'next/image';
 import { BookOpen, ExternalLink, Calendar } from 'lucide-react';
-import { formatMonthYear } from '@/lib/utils';
+import { formatMonthYear, getSafeImageUrl } from '@/lib/utils';
 
 export const revalidate = 60;
 
@@ -57,9 +57,10 @@ export default async function MagazinesPage() {
               >
                 <div className="w-full aspect-[4/3] relative bg-surface">
                   <Image
-                    src={mag.image_url || '/images/fitness_pillar.png'}
+                    src={getSafeImageUrl(mag.image_url, mag.category || 'magazine', '/images/fitness_pillar.png')}
                     alt={mag.title}
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                     className="object-cover"
                     unoptimized
                   />

@@ -23,6 +23,7 @@ export default function ScienceSection() {
                 src="/images/mental_health_pillar.png"
                 alt="Yoga and Science"
                 fill
+                sizes="(max-width: 1024px) 100vw, 45vw"
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent opacity-80" />

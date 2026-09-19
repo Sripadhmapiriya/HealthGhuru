@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { PillBadge } from "@/components/ui/PillBadge";
 import { Button } from "@/components/ui/Button";
-import { formatDate } from "@/lib/utils";
+import { formatDate, getSafeImageUrl } from "@/lib/utils";
 
 export default function FeaturedArticle({ post }: { post?: any }) {
   if (!post) return null;
@@ -17,9 +17,10 @@ export default function FeaturedArticle({ post }: { post?: any }) {
         {/* Left: Image */}
         <div className="w-full lg:w-[55%] relative aspect-[16/9] lg:aspect-auto overflow-hidden">
           <Image
-            src={post.hero_image_url || post.image_url || "/images/nutrition_pillar.png"}
+            src={getSafeImageUrl(post.hero_image_url || post.image_url, post.category, "/images/nutrition_pillar.png")}
             alt={post.hero_image_alt || post.title}
             fill
+            sizes="(max-width: 1024px) 100vw, 55vw"
             className="object-cover transition-transform duration-700 group-hover:scale-105"
           />
         </div>
@@ -49,9 +50,10 @@ export default function FeaturedArticle({ post }: { post?: any }) {
           <div className="mt-auto pt-6 border-t border-border flex items-center gap-4 w-full">
             <div className="w-10 h-10 rounded-full bg-primary/20 relative overflow-hidden shrink-0">
               <Image 
-                src={post.author_avatar || "/images/fitness_pillar.png"} 
+                src={getSafeImageUrl(post.author_avatar, 'fitness', "/images/fitness_pillar.png")} 
                 alt={post.author_name || "Author"} 
                 fill 
+                sizes="40px"
                 className="object-cover"
               />
             </div>

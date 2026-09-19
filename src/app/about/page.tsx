@@ -2,12 +2,14 @@
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { CheckCircle2, Shield, Heart, MapPin, Phone, Mail, Globe, ArrowRight, ShieldCheck } from "lucide-react";
+import { CheckCircle2, Shield, Heart, MapPin, Phone, Mail, Globe, ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { Card } from "@/components/ui/Card";
 import TrustBar from "@/components/home/TrustBar";
 import { sql } from "@/lib/db";
+
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: "About Us | HealthGhuru — Evidence-Based Health Intelligence",
@@ -16,28 +18,44 @@ export const metadata: Metadata = {
 
 export default async function AboutPage() {
   let sources: any[] = [];
+  let pageData: any = null;
+
   try {
-    const rows = await sql`
-      SELECT name, type, website_url, trust_score, item_count,
-             LOWER(REPLACE(name, ' ', '-')) as slug
-      FROM content_sources 
-      WHERE enabled = TRUE 
-      ORDER BY priority ASC, name ASC
-    `;
-    sources = rows as any[];
-  } catch {
-    // Fallback if network or table error
+    const [pageRows, sourceRows] = await Promise.all([
+      sql`
+        SELECT slug, title, subtitle, content, meta_description, updated_at
+        FROM website_pages 
+        WHERE slug = 'about-us' 
+        LIMIT 1
+      `,
+      sql`
+        SELECT name, type, website_url, trust_score, item_count,
+               LOWER(REPLACE(name, ' ', '-')) as slug
+        FROM content_sources 
+        WHERE enabled = TRUE 
+        ORDER BY priority ASC, name ASC
+      `
+    ]);
+    if (pageRows.length > 0) pageData = pageRows[0];
+    sources = sourceRows as any[];
+  } catch (err) {
+    console.error("Error loading about page data:", err);
   }
+
+  const pageTitle = pageData?.title || "About HealthGhuru";
+  const pageSubtitle = pageData?.subtitle || "Your trusted source for evidence-based health and wellness information.";
+  const dynamicContent = pageData?.content;
+
   return (
     <>
       {/* Hero Banner */}
-      <section className="bg-surface min-h-[40vh] flex items-center pt-8 sm:pt-12 pb-12">
+      <section className="bg-surface min-h-[35vh] flex items-center pt-8 sm:pt-12 pb-12">
         <div className="site-container">
           <ScrollReveal variant="fadeUp" className="text-center">
             <SectionHeader
               eyebrow="WHO WE ARE"
-              title="About HealthGhuru"
-              subtitle="Your trusted source for evidence-based health and wellness information."
+              title={pageTitle}
+              subtitle={pageSubtitle}
             />
             <div className="mt-6 flex items-center justify-center gap-2 text-sm text-text-secondary font-heading">
               <Link href="/" className="hover:text-primary transition-colors">Home</Link>
@@ -48,30 +66,58 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* Mission Section */}
+      {/* Dynamic Editorial Content & Mission Section */}
       <section className="section-padding bg-white">
         <div className="site-container">
-          <div className="flex flex-col lg:flex-row gap-16 items-center">
-            <div className="w-full lg:w-1/2">
-              <ScrollReveal variant="slideRight" className="relative w-full aspect-square md:aspect-[4/3] rounded-[24px] overflow-hidden shadow-2xl">
+          <div className="flex flex-col lg:flex-row gap-16 items-start">
+            <div className="w-full lg:w-5/12 sticky top-24">
+              <ScrollReveal variant="slideRight" className="relative w-full aspect-square md:aspect-[4/3] rounded-[24px] overflow-hidden shadow-xl border border-primary/10">
                 <Image
                   src="/images/nutrition_pillar.png"
                   alt="Our Mission"
                   fill
+                  sizes="(max-width: 1024px) 100vw, 42vw"
                   className="object-cover"
+                  priority
                 />
               </ScrollReveal>
+
+              <div className="mt-6 p-6 rounded-2xl bg-surface border border-primary/10">
+                <div className="flex items-center gap-2 text-primary font-heading font-bold text-xs uppercase mb-2">
+                  <Sparkles size={14} />
+                  <span>Clinical Fact</span>
+                </div>
+                <p className="text-xs text-text-secondary leading-relaxed">
+                  HealthGhuru covers six core medical specialties with daily clinical updates sourced directly from accredited global journals.
+                </p>
+              </div>
             </div>
             
-            <div className="w-full lg:w-1/2">
+            <div className="w-full lg:w-7/12">
               <ScrollReveal variant="slideLeft">
-                <SectionHeader eyebrow="OUR MISSION" title="Empowering Your Wellness Journey" centered={false} className="mb-6" />
-                <p className="text-text-secondary text-lg leading-relaxed mb-6">
-                  At HealthGhuru, we believe that everyone deserves access to reliable, science-backed health information. In a world full of confusing wellness trends and misinformation, we strive to be your clear, trusted guide.
-                </p>
-                <p className="text-text-secondary text-lg leading-relaxed">
-                  Our mission is to empower individuals to make informed decisions about their health through expert-reviewed content spanning nutrition, fitness, sleep, and mental health. We translate complex medical research into actionable, everyday advice.
-                </p>
+                {dynamicContent ? (
+                  <div
+                    dangerouslySetInnerHTML={{ __html: dynamicContent }}
+                    className="text-slate-700 leading-relaxed text-base prose prose-slate max-w-none
+                      [&_h2]:font-heading [&_h2]:text-2xl sm:[&_h2]:text-3xl [&_h2]:font-extrabold [&_h2]:text-dark [&_h2]:mb-4 [&_h2]:mt-0
+                      [&_h3]:font-heading [&_h3]:text-xl sm:[&_h3]:text-2xl [&_h3]:font-bold [&_h3]:text-dark [&_h3]:mb-3 [&_h3]:mt-8
+                      [&_p]:text-text-secondary [&_p]:text-base [&_p]:leading-relaxed [&_p]:mb-5
+                      [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-6 [&_ul]:space-y-2 [&_ul_li]:text-text-secondary
+                      [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-6 [&_ol]:space-y-2 [&_ol_li]:text-text-secondary
+                      [&_strong]:text-dark [&_strong]:font-bold
+                      [&_a]:text-primary [&_a]:underline font-medium hover:[&_a]:text-primary-dark"
+                  />
+                ) : (
+                  <>
+                    <SectionHeader eyebrow="OUR MISSION" title="Empowering Your Wellness Journey" centered={false} className="mb-6" />
+                    <p className="text-text-secondary text-lg leading-relaxed mb-6">
+                      At HealthGhuru, we believe that everyone deserves access to reliable, science-backed health information. In a world full of confusing wellness trends and misinformation, we strive to be your clear, trusted guide.
+                    </p>
+                    <p className="text-text-secondary text-lg leading-relaxed">
+                      Our mission is to empower individuals to make informed decisions about their health through expert-reviewed content spanning nutrition, fitness, sleep, and mental health. We translate complex medical research into actionable, everyday advice.
+                    </p>
+                  </>
+                )}
               </ScrollReveal>
             </div>
           </div>
@@ -87,7 +133,7 @@ export default async function AboutPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
             <ScrollReveal delay={0.1}>
-              <Card className="p-8 text-center flex flex-col items-center">
+              <Card className="p-8 text-center flex flex-col items-center h-full">
                 <div className="w-16 h-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-6">
                   <Shield size={32} />
                 </div>
@@ -99,7 +145,7 @@ export default async function AboutPage() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.2}>
-              <Card className="p-8 text-center flex flex-col items-center">
+              <Card className="p-8 text-center flex flex-col items-center h-full">
                 <div className="w-16 h-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-6">
                   <Heart size={32} />
                 </div>
@@ -111,7 +157,7 @@ export default async function AboutPage() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.3}>
-              <Card className="p-8 text-center flex flex-col items-center">
+              <Card className="p-8 text-center flex flex-col items-center h-full">
                 <div className="w-16 h-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-6">
                   <CheckCircle2 size={32} />
                 </div>
@@ -260,13 +306,12 @@ export default async function AboutPage() {
                   </div>
                 </div>
                 
-                {/* Embedded Map Placeholder */}
                 <div className="w-full h-full min-h-[300px] rounded-2xl overflow-hidden relative shadow-inner bg-gray-100 flex items-center justify-center">
-                  {/* Ideally, put an iframe Google Map here, for now using a placeholder image */}
                   <Image 
                     src="/images/fitness_pillar.png" 
                     alt="Map" 
                     fill 
+                    sizes="(max-width: 1024px) 100vw, 50vw"
                     className="object-cover opacity-60 grayscale" 
                   />
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">

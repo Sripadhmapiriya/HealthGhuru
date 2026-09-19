@@ -2,6 +2,7 @@ import type { ArticleBlock } from '@/lib/types/article';
 import { Leaf, Heart, Moon, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
+import { getSafeImageUrl } from '@/lib/utils';
 
 const TIP_ICONS = { leaf: Leaf, heart: Heart, moon: Moon, check: CheckCircle2 };
 
@@ -132,7 +133,13 @@ function BlockRenderer({ block }: { block: ArticleBlock }) {
       return (
         <figure className="my-10">
           <div className="relative w-full rounded-2xl overflow-hidden shadow-md" style={{ aspectRatio: '16/9' }}>
-            <Image src={block.url} alt={block.alt} fill className="object-cover" />
+            <Image
+              src={getSafeImageUrl(block.url, 'medical', '/images/nutrition_pillar.png')}
+              alt={block.alt || 'Article visual'}
+              fill
+              sizes="(max-width: 1024px) 100vw, 760px"
+              className="object-cover"
+            />
           </div>
           {block.caption && (
             <figcaption

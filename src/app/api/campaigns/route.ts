@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
+import { createAdminNotification } from '@/lib/notifications-server';
 
 // GET — return all campaigns (in a real app filtered by session user; here returning all for demo)
 export async function GET() {
@@ -55,6 +56,20 @@ export async function POST(req: NextRequest) {
       )
       RETURNING *
     `;
+
+    // Trigger admin notification for new ad campaign
+    try {
+      await createAdminNotification(
+        `New Ad Campaign: ${campaign_title}`,
+        `${advertiser_name} submitted a ${placement} campaign (₹${total_amount}). Pending approval.`,
+        '/admin/campaigns',
+        'campaign',
+        'high',
+        'Megaphone'
+      );
+    } catch (notifErr) {
+      console.error('Non-critical notification trigger error:', notifErr);
+    }
 
     // 2. Also insert into advertisements table as pending (is_active = FALSE until admin approves!)
     try {

@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Hospital } from 'lucide-react';
 import { SponsoredArticle } from '@/lib/types/advertisement';
+import { getSafeImageUrl } from '@/lib/utils';
 
 interface SponsoredBadgeProps {
   sponsor: SponsoredArticle;
@@ -24,9 +25,10 @@ export function SponsoredBadge({ sponsor, variant = 'inline' }: SponsoredBadgePr
       {sponsor.advertiser_logo_url ? (
         <div className="relative w-6 h-6 rounded-md overflow-hidden border border-border shrink-0 bg-white">
           <Image
-            src={sponsor.advertiser_logo_url}
+            src={getSafeImageUrl(sponsor.advertiser_logo_url, 'hospital', '/images/logo_transparent.png')}
             alt={sponsor.advertiser_name}
             fill
+            sizes="24px"
             className="object-contain p-0.5"
             unoptimized
           />

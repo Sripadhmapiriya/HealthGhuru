@@ -7,6 +7,7 @@ import { Advertisement } from '@/lib/types/advertisement';
 import { trackAdEvent } from './adTracking';
 import Image from 'next/image';
 import { useSubscription } from '@/lib/hooks/useSubscription';
+import { getSafeImageUrl } from '@/lib/utils';
 
 interface SideFloatingBannersProps {
   initialLeftAd?: Advertisement | null;
@@ -114,9 +115,10 @@ export function SideFloatingBanners({ initialLeftAd, initialRightAd, category }:
             {leftAd.image_url && (
               <div className="relative w-full h-36 rounded-lg overflow-hidden border border-border bg-surface group-hover:scale-105 transition-transform duration-300">
                 <Image
-                  src={leftAd.image_url}
+                  src={getSafeImageUrl(leftAd.image_url, 'advertisement')}
                   alt={leftAd.title}
                   fill
+                  sizes="140px"
                   className="object-cover"
                   unoptimized
                 />
@@ -164,9 +166,10 @@ export function SideFloatingBanners({ initialLeftAd, initialRightAd, category }:
             {rightAd.image_url && (
               <div className="relative w-full h-36 rounded-lg overflow-hidden border border-border bg-surface group-hover:scale-105 transition-transform duration-300">
                 <Image
-                  src={rightAd.image_url}
+                  src={getSafeImageUrl(rightAd.image_url, 'advertisement')}
                   alt={rightAd.title}
                   fill
+                  sizes="140px"
                   className="object-cover"
                   unoptimized
                 />

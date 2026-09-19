@@ -1,8 +1,9 @@
 import { requireAdmin } from '@/lib/auth/session';
 import { sql } from '@/lib/db';
-import { SectionHeader } from '@/components/ui/SectionHeader';
-import { ScrollReveal } from '@/components/ui/ScrollReveal';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import { ReviewQueueClient } from './ReviewQueueClient';
+
+export const dynamic = 'force-dynamic';
 
 export default async function AdminReviewQueuePage() {
   await requireAdmin();
@@ -36,18 +37,16 @@ export default async function AdminReviewQueuePage() {
   ]);
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
-      <ScrollReveal>
-        <SectionHeader
-          title="Editorial Review Queue"
-          eyebrow="Moderation & Quality Gate"
-          subtitle="Review, categorize, verify, and approve incoming external health articles, videos, and news before public syndication."
-        />
-      </ScrollReveal>
+    <div className="w-full space-y-6 animate-in fade-in duration-300">
+      <AdminPageHeader
+        tag="Quality Gate"
+        title="Editorial Review Queue"
+        subtitle="Review, verify clinical citations, re-categorize, and approve pending medical news, videos, and articles."
+      />
 
-      <ScrollReveal delay={0.1}>
+      <div className="w-full">
         <ReviewQueueClient initialItems={items} categories={categories} />
-      </ScrollReveal>
+      </div>
     </div>
   );
 }

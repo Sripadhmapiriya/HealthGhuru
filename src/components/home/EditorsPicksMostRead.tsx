@@ -4,6 +4,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Award, BookOpen, Clock, ShieldCheck, ArrowRight } from 'lucide-react';
+import { getSafeImageUrl } from '@/lib/utils';
 
 interface EditorsPicksMostReadProps {
   editorPicks: any[];
@@ -49,9 +50,10 @@ export function EditorsPicksMostRead({
                       {story.image_url && (
                         <div className="relative aspect-[16/10] w-full rounded-lg overflow-hidden mb-3 bg-gray-200">
                           <Image
-                            src={story.image_url}
+                            src={getSafeImageUrl(story.image_url, story.category)}
                             alt={story.title}
                             fill
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                             className="object-cover group-hover:scale-105 transition-transform duration-300"
                             unoptimized
                           />

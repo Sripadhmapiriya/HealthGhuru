@@ -4,6 +4,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
+import { getSafeImageUrl } from '@/lib/utils';
 
 interface CategorySectionBlockProps {
   title: string;
@@ -66,9 +67,10 @@ export function CategorySectionBlock({
               <div className="relative aspect-[16/10] w-full bg-gray-100 overflow-hidden">
                 {featured.image_url && (
                   <Image
-                    src={featured.image_url}
+                    src={getSafeImageUrl(featured.image_url, title)}
                     alt={featured.title}
                     fill
+                    sizes="(max-width: 1024px) 100vw, 50vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                     unoptimized
                   />
@@ -113,9 +115,10 @@ export function CategorySectionBlock({
                 {item.image_url && (
                   <div className="relative w-20 h-20 sm:w-24 sm:h-20 rounded-lg overflow-hidden shrink-0 bg-gray-100 border border-gray-100">
                     <Image
-                      src={item.image_url}
+                      src={getSafeImageUrl(item.image_url, item.subcategory || title)}
                       alt={item.title}
                       fill
+                      sizes="96px"
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
                       unoptimized
                     />

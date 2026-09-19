@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Clock, ArrowRight, Filter, ShieldCheck, Flame, BookOpen, Layers, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { formatDate } from '@/lib/utils';
+import { formatDate, getSafeImageUrl } from '@/lib/utils';
 
 interface LatestNewsFeedProps {
   initialItems: any[];
@@ -125,7 +125,7 @@ export function LatestNewsFeed({ initialItems }: LatestNewsFeedProps) {
           <AnimatePresence mode="popLayout">
             {displayedItems.map((item, index) => {
               const slug = item.slug || `news-${index}`;
-              const imageSrc = item.image_url || '/images/exercise_plank.png';
+              const imageSrc = getSafeImageUrl(item.image_url, item.category);
               return (
                 <motion.article
                   key={item.id || index}
@@ -142,6 +142,7 @@ export function LatestNewsFeed({ initialItems }: LatestNewsFeedProps) {
                         src={imageSrc}
                         alt={item.title}
                         fill
+                        sizes="(max-width: 640px) 100vw, 176px"
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
                         unoptimized
                       />

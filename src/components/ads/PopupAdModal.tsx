@@ -7,6 +7,7 @@ import { Advertisement } from '@/lib/types/advertisement';
 import { trackAdEvent } from './adTracking';
 import Image from 'next/image';
 import { useSubscription } from '@/lib/hooks/useSubscription';
+import { getSafeImageUrl } from '@/lib/utils';
 
 interface PopupAdModalProps {
   initialAd?: Advertisement | null;
@@ -100,9 +101,10 @@ export function PopupAdModal({ initialAd, category, delayMs = 6000 }: PopupAdMod
         {ad.image_url && (
           <div className="relative w-full h-52 sm:h-60 bg-dark">
             <Image
-              src={ad.image_url}
+              src={getSafeImageUrl(ad.image_url, 'advertisement')}
               alt={ad.title}
               fill
+              sizes="(max-width: 640px) 100vw, 512px"
               className="object-cover"
               unoptimized
             />

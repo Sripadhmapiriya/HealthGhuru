@@ -298,7 +298,7 @@ export function AddAdvertisementForm() {
 
         {formData.image_url && (
           <div className="relative w-full h-44 rounded-xl overflow-hidden border-2 border-primary/20 bg-surface">
-            <Image src={formData.image_url} alt="Banner preview" fill className="object-cover" unoptimized />
+            <Image src={formData.image_url} alt="Banner preview" fill sizes="(max-width: 640px) 100vw, 450px" className="object-cover" unoptimized />
           </div>
         )}
       </div>

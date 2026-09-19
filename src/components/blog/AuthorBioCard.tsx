@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { getSafeImageUrl } from '@/lib/utils';
 
 interface AuthorBioCardProps {
   name: string;
@@ -8,13 +9,14 @@ interface AuthorBioCardProps {
 }
 
 export function AuthorBioCard({ name, avatarUrl, credential, bio }: AuthorBioCardProps) {
+  const safeAvatar = getSafeImageUrl(avatarUrl, 'medical', '/images/exercise_plank.png');
   return (
     <div
       className="flex gap-4 items-start rounded-[14px] p-5 my-10"
       style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
     >
       <div className="relative w-14 h-14 rounded-full overflow-hidden flex-shrink-0">
-        <Image src={avatarUrl} alt={name} fill className="object-cover" />
+        <Image src={safeAvatar} alt={name} fill sizes="56px" className="object-cover" />
       </div>
       <div>
         <p className="font-semibold text-lg" style={{ fontFamily: 'var(--font-heading)', color: 'var(--color-text-primary)' }}>

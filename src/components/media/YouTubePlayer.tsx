@@ -15,6 +15,7 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import { parseVideoSource } from '@/lib/video';
+import { getSafeImageUrl } from '@/lib/utils';
 
 export interface YouTubePlayerProps {
   videoId?: string | null;
@@ -268,8 +269,9 @@ export function YouTubePlayer({
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
-  const displayThumbnail =
+  const rawThumbnail =
     thumbnailUrl || (cleanVideoId ? `https://i.ytimg.com/vi/${cleanVideoId}/hqdefault.jpg` : '/images/exercise_plank.png');
+  const displayThumbnail = getSafeImageUrl(rawThumbnail, 'fitness', '/images/exercise_plank.png');
 
   // ==========================================
   // CASE 1: INSTAGRAM REEL DIRECT WEB PLAYER
@@ -553,7 +555,7 @@ export function YouTubePlayer({
       <div className="w-full bg-gradient-to-br from-[#121820] to-[#0A0E13] rounded-3xl overflow-hidden shadow-2xl aspect-video relative border border-border flex flex-col items-center justify-center p-6 sm:p-10 text-center transition-all duration-500 hover:shadow-2xl hover:border-primary/30 hover:-translate-y-1">
         {displayThumbnail && (
           <div className="absolute inset-0 opacity-20 filter blur-md">
-            <Image src={displayThumbnail} alt={title} fill className="object-cover" unoptimized />
+            <Image src={displayThumbnail} alt={title} fill sizes="(max-width: 768px) 100vw, 800px" className="object-cover" unoptimized />
           </div>
         )}
         <div className="relative z-10 max-w-lg space-y-4">

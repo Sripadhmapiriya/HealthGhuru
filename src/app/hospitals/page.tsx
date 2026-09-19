@@ -13,6 +13,7 @@ import {
   ArrowRight,
   CheckCircle2,
 } from 'lucide-react';
+import { getSafeImageUrl } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -74,9 +75,10 @@ export default async function HospitalsPage() {
                 <div className="lg:col-span-4 relative aspect-[16/10] lg:aspect-auto min-h-[220px] bg-gray-100">
                   {hosp.cover_url && (
                     <Image
-                      src={hosp.cover_url}
+                      src={getSafeImageUrl(hosp.cover_url, 'hospital', 'https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?auto=format&fit=crop&w=800&q=80')}
                       alt={hosp.name}
                       fill
+                      sizes="(max-width: 1024px) 100vw, 400px"
                       className="object-cover"
                       unoptimized
                     />

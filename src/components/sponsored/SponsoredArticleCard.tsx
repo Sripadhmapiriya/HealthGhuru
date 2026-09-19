@@ -79,7 +79,9 @@ export function SponsoredArticleCard({ article }: SponsoredArticleCardProps) {
                 src={article.sponsor_logo_url}
                 alt={article.sponsor_name || 'Sponsor'}
                 fill
+                sizes="24px"
                 className="object-cover"
+                unoptimized
               />
             ) : isDoctor ? (
               <User size={13} className="text-emerald-700 m-auto mt-0.5" />

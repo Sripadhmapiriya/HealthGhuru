@@ -4,6 +4,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Play, ShieldCheck, Stethoscope, Video, ArrowRight } from 'lucide-react';
+import { getSafeImageUrl } from '@/lib/utils';
 
 interface DoctorInterviewsSectionProps {
   interviews: any[];
@@ -42,6 +43,8 @@ export function DoctorInterviewsSection({ interviews }: DoctorInterviewsSectionP
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {interviews.slice(0, 3).map((item, index) => {
             const slug = item.slug || `interview-${index}`;
+            const safeCover = getSafeImageUrl(item.cover_image_url, item.category || 'medical');
+            const safeDocPhoto = getSafeImageUrl(item.doctor_photo, 'medical', 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=300&q=80');
             return (
               <div
                 key={item.id || index}
@@ -49,15 +52,14 @@ export function DoctorInterviewsSection({ interviews }: DoctorInterviewsSectionP
               >
                 {/* Video / Cover Image with Play Overlay */}
                 <div className="relative aspect-[16/9] w-full bg-gray-900 overflow-hidden">
-                  {item.cover_image_url && (
-                    <Image
-                      src={item.cover_image_url}
-                      alt={item.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
-                      unoptimized
-                    />
-                  )}
+                  <Image
+                    src={safeCover}
+                    alt={item.title || 'Doctor Interview'}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+                    unoptimized
+                  />
                   {/* Dark gradient */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
 
@@ -81,17 +83,16 @@ export function DoctorInterviewsSection({ interviews }: DoctorInterviewsSectionP
                   <div>
                     {/* Doctor Info Pill */}
                     <div className="flex items-center gap-2.5 mb-3">
-                      {item.doctor_photo && (
-                        <div className="relative w-9 h-9 rounded-full overflow-hidden border-2 border-[#2E7D32] shrink-0">
-                          <Image
-                            src={item.doctor_photo}
-                            alt={item.doctor_name || "Doctor"}
-                            fill
-                            className="object-cover"
-                            unoptimized
-                          />
-                        </div>
-                      )}
+                      <div className="relative w-9 h-9 rounded-full overflow-hidden border-2 border-[#2E7D32] shrink-0">
+                        <Image
+                          src={safeDocPhoto}
+                          alt={item.doctor_name || "Doctor"}
+                          fill
+                          sizes="36px"
+                          className="object-cover"
+                          unoptimized
+                        />
+                      </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-1">
                           <h4 className="font-heading font-bold text-xs text-[#1A2E1A] truncate">

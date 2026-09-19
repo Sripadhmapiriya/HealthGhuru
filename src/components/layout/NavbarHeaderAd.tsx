@@ -7,6 +7,7 @@ import { ArrowRight } from 'lucide-react';
 import { Advertisement } from '@/lib/types/advertisement';
 import { trackAdEvent } from '@/components/ads/adTracking';
 import { useSubscription } from '@/lib/hooks/useSubscription';
+import { getSafeImageUrl } from '@/lib/utils';
 
 export function NavbarHeaderAd() {
   const { isAdFree } = useSubscription();
@@ -106,9 +107,10 @@ export function NavbarHeaderAd() {
             <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0 border border-emerald-400/30 bg-white/5">
               {currentAd.image_url ? (
                 <Image
-                  src={currentAd.image_url}
+                  src={getSafeImageUrl(currentAd.image_url, 'advertisement')}
                   alt={currentAd.title || 'Header Advertisement'}
                   fill
+                  sizes="48px"
                   className="object-cover"
                   unoptimized
                 />
