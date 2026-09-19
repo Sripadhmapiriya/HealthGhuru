@@ -1,9 +1,9 @@
 import { requireAdmin } from '@/lib/auth/session';
 import { sql } from '@/lib/db';
 import Link from 'next/link';
-import { SectionHeader } from '@/components/ui/SectionHeader';
-import { ScrollReveal } from '@/components/ui/ScrollReveal';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import { UnifiedContentClient } from './UnifiedContentClient';
+import { Plus, CheckSquare } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -40,37 +40,34 @@ export default async function AdminContentPage() {
   ]);
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-300">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
-        <ScrollReveal>
-          <SectionHeader 
-            title="Content Management" 
-            eyebrow="Admin Console"
-            subtitle="Manage and syndicate HealthGhuru original articles alongside external health news, videos, and periodicals."
-          />
-        </ScrollReveal>
-        
-        <ScrollReveal delay={0.1}>
-          <div className="flex items-center gap-3">
+    <div className="w-full space-y-6 animate-in fade-in duration-300">
+      <AdminPageHeader
+        tag="Editorial Wire"
+        title="Content Management"
+        subtitle="Manage, filter, verify, and publish HealthGhuru original articles alongside syndicated health news, videos, and clinical research."
+        actions={
+          <>
             <Link 
               href="/admin/review-queue"
-              className="bg-surface hover:bg-surface-alt text-text-primary px-5 py-2 rounded-full font-medium text-sm transition-colors border border-border inline-block shadow-sm"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-heading font-bold shadow-2xs transition-all"
             >
-              Review Queue
+              <CheckSquare size={15} className="text-[#16A34A]" />
+              <span>Review Queue</span>
             </Link>
             <Link 
               href="/admin/content/new"
-              className="bg-accent hover:opacity-90 text-white px-5 py-2 rounded-full font-medium text-sm transition-colors shadow-sm hover:shadow-md inline-block"
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#f06d2f] hover:bg-[#e05a1b] text-white text-xs font-heading font-bold shadow-md hover:shadow-orange-500/20 active:scale-98 transition-all"
             >
-              + Write Original Article
+              <Plus size={16} />
+              <span>Write Original Article</span>
             </Link>
-          </div>
-        </ScrollReveal>
-      </div>
+          </>
+        }
+      />
 
-      <ScrollReveal delay={0.15} className="bg-white rounded-2xl shadow-card border border-border overflow-hidden p-4">
+      <div className="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden p-4 sm:p-5">
         <UnifiedContentClient initialItems={items} categories={categories} sources={sources} />
-      </ScrollReveal>
+      </div>
     </div>
   );
 }

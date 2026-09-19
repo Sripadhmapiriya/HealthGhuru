@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Sparkles, Building2, Stethoscope, ArrowRight, ExternalLink, Megaphone } from 'lucide-react';
 import { useAuthModal } from '@/context/AuthModalContext';
 import { useSubscription } from '@/lib/hooks/useSubscription';
+import { getSafeImageUrl } from '@/lib/utils';
 
 export function SponsoredEditorialSection() {
   const { isAdFree } = useSubscription();
@@ -85,9 +86,10 @@ export function SponsoredEditorialSection() {
             >
               <div className="relative aspect-[16/10] w-full bg-gray-100 overflow-hidden">
                 <Image
-                  src={item.image_url}
+                  src={getSafeImageUrl(item.image_url, 'hospital', 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=800&q=80')}
                   alt={item.title}
                   fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                   unoptimized
                 />

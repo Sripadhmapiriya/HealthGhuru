@@ -19,6 +19,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { BreakingNewsTicker } from '@/components/media/BreakingNewsTicker';
+import { getSafeImageUrl } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -280,9 +281,10 @@ export default async function ArticlePage({
             <div className="my-6 bg-[#F5FAF5] border border-[#2E7D32]/30 rounded-2xl p-4 sm:p-5 flex items-start gap-3.5">
               <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 border-2 border-[#2E7D32]">
                 <Image
-                  src={reviewingDoctor.photo_url}
+                  src={getSafeImageUrl(reviewingDoctor.photo_url, 'medical', 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=300&q=80')}
                   alt={reviewingDoctor.name}
                   fill
+                  sizes="48px"
                   className="object-cover"
                   unoptimized
                 />
@@ -308,9 +310,10 @@ export default async function ArticlePage({
               <div className="my-6 rounded-2xl overflow-hidden border border-gray-200 bg-gray-100 shadow-xs">
                 <div className="relative aspect-[16/10] w-full">
                   <Image
-                    src={article.image_url}
+                    src={getSafeImageUrl(article.image_url, article.category)}
                     alt={article.title}
                     fill
+                    sizes="(max-width: 1024px) 100vw, 800px"
                     className="object-cover"
                     priority
                     unoptimized
@@ -366,9 +369,10 @@ export default async function ArticlePage({
             <div className="mt-10 p-5 rounded-2xl bg-[#fffbf8] border border-orange-200 flex flex-col sm:flex-row items-center sm:items-start gap-4">
               <div className="relative w-16 h-16 rounded-full overflow-hidden shrink-0 border-2 border-[#f06d2f]">
                 <Image
-                  src={reviewingDoctor.photo_url}
+                  src={getSafeImageUrl(reviewingDoctor.photo_url, 'medical', 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=300&q=80')}
                   alt={reviewingDoctor.name}
                   fill
+                  sizes="64px"
                   className="object-cover"
                   unoptimized
                 />

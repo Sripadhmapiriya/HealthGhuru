@@ -41,6 +41,7 @@ export default function Footer() {
                     src="/images/logo_transparent.png"
                     alt="HealthGhuru"
                     fill
+                    sizes="36px"
                     className="object-contain"
                   />
                 </div>
@@ -190,9 +191,12 @@ export default function Footer() {
 
           {/* ── Col 4: CONTACT US ── */}
           <div className="space-y-2.5 text-xs text-slate-700">
-            <h4 className="font-heading font-extrabold text-xs uppercase tracking-wider text-[#f06d2f] mb-3.5">
-              CONTACT US
-            </h4>
+            <Link href="/contact" className="inline-block group">
+              <h4 className="font-heading font-extrabold text-xs uppercase tracking-wider text-[#f06d2f] group-hover:text-[#e05a1b] transition-colors mb-3.5 flex items-center gap-1">
+                <span>CONTACT US</span>
+                <span className="text-xs group-hover:translate-x-1 transition-transform">→</span>
+              </h4>
+            </Link>
             <p>
               Email:{' '}
               <a
@@ -208,6 +212,14 @@ export default function Footer() {
             <p className="text-[11px] italic text-slate-600 leading-relaxed pt-1">
               HealthGhuru is a digital health media brand dedicated to medical truth and patient wellness.
             </p>
+            <div className="pt-2">
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-1 text-xs font-heading font-bold text-[#16A34A] hover:text-[#15803D] hover:underline"
+              >
+                <span>Send a Message Online →</span>
+              </Link>
+            </div>
           </div>
 
         </div>

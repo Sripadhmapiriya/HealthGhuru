@@ -4,6 +4,7 @@ import Link from "next/link";
 import { BlogPost } from "@/lib/types";
 import { Card } from "@/components/ui/Card";
 import { PillBadge } from "@/components/ui/PillBadge";
+import { getSafeImageUrl } from "@/lib/utils";
 
 interface BlogCardProps {
   post: BlogPost;
@@ -16,9 +17,10 @@ export const BlogCard = React.memo(function BlogCard({ post, image }: BlogCardPr
       <Link href={`/blog/${post.slug}`} className="flex-grow flex flex-col">
         <div className="relative w-full aspect-[16/9] overflow-hidden shrink-0">
           <Image
-            src={image}
+            src={getSafeImageUrl(image, post.category)}
             alt={post.title}
             fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
         </div>

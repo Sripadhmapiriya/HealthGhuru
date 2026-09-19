@@ -252,6 +252,7 @@ function LoginForm() {
                   src="/images/logo_transparent.png"
                   alt="HealthGuru Logo"
                   fill
+                  sizes="208px"
                   className="object-contain object-left"
                   priority
                 />
@@ -344,6 +345,7 @@ function LoginForm() {
                     src="/images/logo_transparent.png"
                     alt="HealthGuru Logo"
                     fill
+                    sizes="176px"
                     className="object-contain"
                     priority
                   />

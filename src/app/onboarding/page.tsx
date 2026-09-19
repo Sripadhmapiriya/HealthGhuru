@@ -191,6 +191,7 @@ function OnboardingWizard() {
             src="/images/logo_transparent.png"
             alt="HealthGuru Logo"
             fill
+            sizes="(max-width: 640px) 176px, 208px"
             className="object-contain object-left"
             priority
           />

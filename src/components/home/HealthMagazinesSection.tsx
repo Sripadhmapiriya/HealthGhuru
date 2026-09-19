@@ -4,6 +4,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { BookOpen, Download, ArrowRight, Sparkles } from 'lucide-react';
+import { getSafeImageUrl } from '@/lib/utils';
 
 interface HealthMagazinesSectionProps {
   magazines: any[];
@@ -76,9 +77,10 @@ export function HealthMagazinesSection({ magazines }: HealthMagazinesSectionProp
             >
               <div className="relative aspect-[3/4] w-full rounded-xl overflow-hidden bg-gray-200 mb-3 shadow-sm">
                 <Image
-                  src={mag.cover_url || mag.image_url}
+                  src={getSafeImageUrl(mag.cover_url || mag.image_url, 'magazine', 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=600&q=80')}
                   alt={mag.title}
                   fill
+                  sizes="(max-width: 640px) 50vw, 25vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                   unoptimized
                 />

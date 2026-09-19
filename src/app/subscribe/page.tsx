@@ -174,6 +174,7 @@ export default function SubscribePage() {
               src="/images/logo_transparent.png"
               alt="HealthGhuru Logo"
               fill
+              sizes="(max-width: 640px) 176px, 208px"
               className="object-contain"
               priority
             />

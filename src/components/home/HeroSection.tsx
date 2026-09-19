@@ -88,6 +88,7 @@ export default function HeroSection() {
                 src="/images/fitness_pillar.png"
                 alt="Wellness Lifestyle"
                 fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
                 priority
                 className="object-cover"
               />

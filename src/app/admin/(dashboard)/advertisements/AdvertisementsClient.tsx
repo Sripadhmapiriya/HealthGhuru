@@ -406,6 +406,7 @@ export function AdvertisementsClient({ initialAds }: AdvertisementsClientProps) 
                               src={ad.image_url}
                               alt={ad.title}
                               fill
+                              sizes="64px"
                               className="object-cover"
                               unoptimized
                             />
@@ -622,6 +623,7 @@ export function AdvertisementsClient({ initialAds }: AdvertisementsClientProps) 
                     src={previewAd.image_url}
                     alt={previewAd.title}
                     fill
+                    sizes="(max-width: 640px) 100vw, 450px"
                     className="object-contain"
                     unoptimized
                   />

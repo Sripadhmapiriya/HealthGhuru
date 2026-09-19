@@ -58,6 +58,7 @@ export default function FoodCategories({ categories }: { categories?: any[] }) {
                     src={category.image}
                     alt={category.name}
                     fill
+                    sizes="(max-width: 640px) 100vw, 33vw"
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-dark/85 via-dark/25 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-300" />

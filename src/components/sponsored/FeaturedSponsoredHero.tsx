@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Building2, User, Clock, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { SponsoredArticleWithSponsor } from '@/lib/types/sponsored';
 import { SponsoredBadge } from './SponsoredBadge';
+import { getSafeImageUrl } from '@/lib/utils';
 
 interface FeaturedSponsoredHeroProps {
   article: SponsoredArticleWithSponsor;
@@ -35,7 +36,7 @@ export function FeaturedSponsoredHero({ article }: FeaturedSponsoredHeroProps) {
           {/* Left: Large Image (5 cols) */}
           <div className="lg:col-span-6 relative aspect-[16/10] lg:aspect-auto lg:min-h-[400px] w-full bg-emerald-50 overflow-hidden">
             <Image
-              src={article.featured_image || 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=1200&q=80'}
+              src={getSafeImageUrl(article.featured_image, article.category, 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=1200&q=80')}
               alt={article.title}
               fill
               priority
@@ -62,9 +63,10 @@ export function FeaturedSponsoredHero({ article }: FeaturedSponsoredHeroProps) {
                     <div className="w-5 h-5 rounded-full overflow-hidden relative bg-gray-100 shrink-0 border border-gray-200">
                       {article.sponsor_logo_url ? (
                         <Image
-                          src={article.sponsor_logo_url}
+                          src={getSafeImageUrl(article.sponsor_logo_url, 'hospital', '/images/logo_transparent.png')}
                           alt={article.sponsor_name}
                           fill
+                          sizes="20px"
                           className="object-cover"
                         />
                       ) : isDoctor ? (

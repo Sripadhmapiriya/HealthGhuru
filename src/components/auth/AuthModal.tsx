@@ -267,6 +267,7 @@ export function AuthModal() {
                     src="/images/logo_transparent.png"
                     alt="HealthGhuru"
                     fill
+                    sizes="160px"
                     className="object-contain"
                     priority
                   />

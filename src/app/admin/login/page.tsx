@@ -79,6 +79,7 @@ export default function AdminLoginPage() {
                   src="/images/logo_transparent.png"
                   alt="HealthGhuru Logo"
                   fill
+                  sizes="192px"
                   className="object-contain outline-none border-0"
                   style={{ outline: 'none', border: 'none' }}
                   priority

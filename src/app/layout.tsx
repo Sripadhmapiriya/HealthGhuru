@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+     import type { Metadata } from "next";
 import { DM_Serif_Display, Plus_Jakarta_Sans, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";

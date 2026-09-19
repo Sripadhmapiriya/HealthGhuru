@@ -15,6 +15,7 @@ import { MedicalReviewerBadge } from '@/components/sponsored/MedicalReviewerBadg
 import { MedicalDisclaimerBox } from '@/components/sponsored/MedicalDisclaimerBox';
 import { SponsoredTracker } from '@/components/sponsored/SponsoredTracker';
 import { SponsoredEditorialSidebar } from '@/components/sponsored/SponsoredEditorialSidebar';
+import { getSafeImageUrl } from '@/lib/utils';
 import {
   Calendar,
   Clock,
@@ -195,7 +196,7 @@ export default async function SponsoredArticleDetailPage({ params }: PageProps) 
             {article.featured_image && (
               <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-emerald-50 mb-6 border border-emerald-100">
                 <Image
-                  src={article.featured_image}
+                  src={getSafeImageUrl(article.featured_image, 'hospital', 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=800&q=80')}
                   alt={article.title}
                   fill
                   priority

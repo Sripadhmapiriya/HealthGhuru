@@ -39,6 +39,7 @@ import { MegaMenu } from "./MegaMenu";
 import { NavbarHeaderAd } from "./NavbarHeaderAd";
 import { useAuthModal } from "@/context/AuthModalContext";
 import { useSubscription } from "@/lib/hooks/useSubscription";
+import { PublicNotificationBell } from "@/components/notifications/PublicNotificationBell";
 
 const PRIMARY_CATEGORIES = [
   { label: "Home", href: "/", icon: Home },
@@ -143,6 +144,7 @@ export default function Navbar() {
                     src="/images/logo_transparent.png"
                     alt="HealthGhuru Logo"
                     fill
+                    sizes="(max-width: 640px) 44px, 56px"
                     className="object-contain"
                     priority
                   />
@@ -170,6 +172,9 @@ export default function Navbar() {
             >
               <Search size={20} />
             </button>
+
+            {/* Health Alerts & Notifications Bell */}
+            <PublicNotificationBell />
 
             {/* Dark Mode Indicator Icon */}
             <button
@@ -428,8 +433,12 @@ export default function Navbar() {
               </button>
             </div>
 
-            {/* Mobile Categories list */}
+            {/* Mobile Notifications and Categories */}
             <div className="py-4 space-y-4">
+              <div className="bg-slate-50 p-2 rounded-2xl border border-slate-100">
+                <PublicNotificationBell isMobile />
+              </div>
+
               <div>
                 <p className="text-[10px] font-mono uppercase tracking-widest text-gray-400 font-bold mb-2">
                   Primary Categories

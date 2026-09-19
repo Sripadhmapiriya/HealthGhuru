@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { BreakingNewsTicker } from '@/components/media/BreakingNewsTicker';
 import { Clock, ShieldCheck, Flame, ArrowRight, BookOpen, Layers } from 'lucide-react';
+import { getSafeImageUrl } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -114,9 +115,10 @@ export default async function CategoryPage({
                 <div className="relative aspect-[16/9] w-full bg-gray-100">
                   {featuredStory.image_url && (
                     <Image
-                      src={featuredStory.image_url}
+                      src={getSafeImageUrl(featuredStory.image_url, featuredStory.category || categoryName)}
                       alt={featuredStory.title}
                       fill
+                      sizes="(max-width: 1024px) 100vw, 750px"
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
                       unoptimized
                     />
@@ -171,9 +173,10 @@ export default async function CategoryPage({
                     {story.image_url && (
                       <div className="relative w-full sm:w-36 aspect-[16/10] sm:aspect-auto sm:h-28 rounded-xl overflow-hidden shrink-0 bg-gray-100">
                         <Image
-                          src={story.image_url}
+                          src={getSafeImageUrl(story.image_url, story.category || categoryName)}
                           alt={story.title}
                           fill
+                          sizes="(max-width: 640px) 100vw, 150px"
                           className="object-cover group-hover:scale-105 transition-transform duration-300"
                           unoptimized
                         />

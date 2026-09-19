@@ -13,6 +13,7 @@ import {
   ArrowRight,
   Filter,
 } from 'lucide-react';
+import { getSafeImageUrl } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -114,9 +115,10 @@ export default async function DoctorsPage({
                 <div className="flex items-start gap-4 mb-4">
                   <div className="relative w-20 h-20 rounded-2xl overflow-hidden shrink-0 border-2 border-[#2E7D32]/30 bg-gray-100 shadow-sm">
                     <Image
-                      src={doc.photo_url || "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=400&q=80"}
+                      src={getSafeImageUrl(doc.photo_url, 'medical', 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=400&q=80')}
                       alt={doc.name}
                       fill
+                      sizes="80px"
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
                       unoptimized
                     />

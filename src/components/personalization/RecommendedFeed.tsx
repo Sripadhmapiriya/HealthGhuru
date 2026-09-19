@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { RecommendedContentItem } from '@/lib/recommendations';
 import { PillBadge } from '@/components/ui/PillBadge';
+import { getSafeImageUrl } from '@/lib/utils';
 
 interface RecommendedFeedProps {
   initialItems?: RecommendedContentItem[];
@@ -293,9 +294,10 @@ export function RecommendedFeed({
                   className="w-full aspect-[16/10] relative overflow-hidden bg-surface block cursor-pointer"
                 >
                   <Image
-                    src={item.imageUrl || '/images/exercise_plank.png'}
+                    src={getSafeImageUrl(item.imageUrl, item.category, '/images/exercise_plank.png')}
                     alt={item.title}
                     fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                     unoptimized
                   />

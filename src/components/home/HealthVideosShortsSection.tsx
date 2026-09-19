@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Play, Video, Smartphone, Sparkles, ArrowRight } from 'lucide-react';
+import { getSafeImageUrl } from '@/lib/utils';
 
 interface HealthVideosShortsSectionProps {
   videos: any[];
@@ -56,9 +57,10 @@ export function HealthVideosShortsSection({ videos, shorts }: HealthVideosShorts
             {videos && videos.length > 0 && (
               <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-black/60 border border-emerald-800/60 shadow-lg group">
                 <Image
-                  src={videos[0].image_url || "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=80"}
+                  src={getSafeImageUrl(videos[0].image_url, videos[0].category, "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=80")}
                   alt={videos[0].title}
                   fill
+                  sizes="(max-width: 1024px) 100vw, 58vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-80 group-hover:opacity-95"
                   unoptimized
                 />
@@ -100,9 +102,10 @@ export function HealthVideosShortsSection({ videos, shorts }: HealthVideosShorts
                   <div className="relative w-20 h-14 rounded-lg overflow-hidden shrink-0 bg-black">
                     {vid.image_url && (
                       <Image
-                        src={vid.image_url}
+                        src={getSafeImageUrl(vid.image_url, vid.category)}
                         alt={vid.title}
                         fill
+                        sizes="80px"
                         className="object-cover"
                         unoptimized
                       />
@@ -148,9 +151,10 @@ export function HealthVideosShortsSection({ videos, shorts }: HealthVideosShorts
                   >
                     {short.image_url && (
                       <Image
-                        src={short.image_url}
+                        src={getSafeImageUrl(short.image_url, short.category)}
                         alt={short.title}
                         fill
+                        sizes="(max-width: 640px) 144px, 160px"
                         className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-75 group-hover:opacity-90"
                         unoptimized
                       />

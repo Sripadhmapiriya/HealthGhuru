@@ -429,6 +429,7 @@ export function AdFormModal({ isOpen, onClose, adToEdit, onSaved }: AdFormModalP
                     src={formData.image_url}
                     alt="Banner preview"
                     fill
+                    sizes="(max-width: 640px) 100vw, 400px"
                     className="object-cover"
                     unoptimized
                   />

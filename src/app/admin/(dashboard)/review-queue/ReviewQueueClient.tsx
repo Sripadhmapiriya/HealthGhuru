@@ -12,7 +12,7 @@ import {
   CheckCheck,
   Trash2,
 } from 'lucide-react';
-import { formatDate } from '@/lib/utils';
+import { formatDate, getSafeImageUrl } from '@/lib/utils';
 
 interface ReviewQueueClientProps {
   initialItems: any[];
@@ -189,9 +189,10 @@ export function ReviewQueueClient({ initialItems, categories }: ReviewQueueClien
                   {item.image_url ? (
                     <div className="w-full md:w-44 aspect-[16/10] relative rounded-xl overflow-hidden bg-surface shrink-0 border border-border/50">
                       <Image
-                        src={item.image_url}
+                        src={getSafeImageUrl(item.image_url, item.category)}
                         alt={item.title}
                         fill
+                        sizes="(max-width: 768px) 100vw, 176px"
                         className="object-cover"
                         unoptimized
                       />

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Clock, Flame, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { useSubscription } from '@/lib/hooks/useSubscription';
+import { getSafeImageUrl } from '@/lib/utils';
 
 interface TopStoriesGridProps {
   featuredStory: any;
@@ -67,9 +68,10 @@ export function TopStoriesGrid({
               <div className="relative aspect-16/10 w-full overflow-hidden bg-gray-100">
                 {primary.image_url ? (
                   <Image
-                    src={primary.image_url}
+                    src={getSafeImageUrl(primary.image_url, primary.category, "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=1200&q=80")}
                     alt={primary.title}
                     fill
+                    sizes="(max-width: 1024px) 100vw, 42vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                     priority
                     unoptimized
@@ -147,9 +149,10 @@ export function TopStoriesGrid({
                     {story.image_url && (
                       <div className="relative w-20 h-20 sm:w-24 sm:h-20 rounded-xl overflow-hidden shrink-0 bg-gray-100 border border-gray-100">
                         <Image
-                          src={story.image_url}
+                          src={getSafeImageUrl(story.image_url, story.category)}
                           alt={story.title}
                           fill
+                          sizes="96px"
                           className="object-cover group-hover:scale-105 transition-transform duration-300"
                           unoptimized
                         />

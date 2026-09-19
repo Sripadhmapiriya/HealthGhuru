@@ -2,9 +2,10 @@
 import { requireAdmin } from '@/lib/auth/session';
 import { sql } from '@/lib/db';
 import { evaluateSourceHealth } from '@/lib/ingestion/health';
-import { SectionHeader } from '@/components/ui/SectionHeader';
-import { ScrollReveal } from '@/components/ui/ScrollReveal';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import { SourcesClient } from './SourcesClient';
+
+export const dynamic = 'force-dynamic';
 
 export default async function AdminSourcesPage() {
   await requireAdmin();
@@ -27,18 +28,16 @@ export default async function AdminSourcesPage() {
   }));
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
-      <ScrollReveal>
-        <SectionHeader
-          title="Content Sources & Adapters"
-          eyebrow="Ingestion Pipeline"
-          subtitle="Configure external health feeds, YouTube channels, News APIs, and generic endpoints."
-        />
-      </ScrollReveal>
+    <div className="w-full space-y-6 animate-in fade-in duration-300">
+      <AdminPageHeader
+        tag="Ingestion Engine"
+        title="Content Sources & Adapters"
+        subtitle="Configure external RSS medical feeds, YouTube channels, Clinical News APIs, and automated syndication endpoints."
+      />
 
-      <ScrollReveal delay={0.1}>
+      <div className="w-full">
         <SourcesClient initialSources={enrichedSources} categories={categories} />
-      </ScrollReveal>
+      </div>
     </div>
   );
 }

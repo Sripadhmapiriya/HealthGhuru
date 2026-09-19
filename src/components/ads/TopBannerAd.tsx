@@ -7,6 +7,7 @@ import { Advertisement } from '@/lib/types/advertisement';
 import { trackAdEvent } from './adTracking';
 import Image from 'next/image';
 import { useSubscription } from '@/lib/hooks/useSubscription';
+import { getSafeImageUrl } from '@/lib/utils';
 
 interface TopBannerAdProps {
   initialAd?: Advertisement | null;
@@ -124,9 +125,10 @@ export function TopBannerAd({ initialAd, category }: TopBannerAdProps) {
             {ad.image_url && (
               <div className="relative w-6 h-6 sm:w-9 sm:h-9 rounded-full overflow-hidden border border-white/25 shrink-0 shadow bg-white/5">
                 <Image
-                  src={ad.image_url}
+                  src={getSafeImageUrl(ad.image_url, 'advertisement')}
                   alt={ad.title}
                   fill
+                  sizes="36px"
                   className="object-cover"
                   unoptimized
                 />

@@ -2,10 +2,11 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import React from 'react';
-import { Trash2, Plus } from 'lucide-react';
+import React, { useState } from 'react';
+import { Trash2, Plus, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '@/components/providers/ToastProvider';
 import type { ArticleBlock } from '@/lib/types/article';
+import { MediaPickerModal } from '@/components/admin/media/MediaPickerModal';
 
 interface BlockFieldsProps {
   block: ArticleBlock;
@@ -14,6 +15,7 @@ interface BlockFieldsProps {
 
 export function BlockFields({ block, onUpdate }: BlockFieldsProps) {
   const { toast } = useToast();
+  const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -190,7 +192,17 @@ export function BlockFields({ block, onUpdate }: BlockFieldsProps) {
       return (
         <div className="space-y-3 bg-gray-50 p-4 rounded-lg border border-dashed border-gray-300">
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Upload Image</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-xs font-medium text-gray-500">Image Source</label>
+              <button
+                type="button"
+                onClick={() => setMediaPickerOpen(true)}
+                className="inline-flex items-center gap-1.5 text-xs font-heading font-bold text-[#16A34A] hover:text-[#15803D] hover:underline"
+              >
+                <ImageIcon size={13} />
+                <span>Choose from Media Library</span>
+              </button>
+            </div>
             <div className="flex gap-3 items-center">
               <input
                 type="file" accept="image/*"
@@ -227,6 +239,19 @@ export function BlockFields({ block, onUpdate }: BlockFieldsProps) {
               />
             </div>
           </div>
+
+          <MediaPickerModal
+            isOpen={mediaPickerOpen}
+            onClose={() => setMediaPickerOpen(false)}
+            onSelect={(asset) => {
+              onUpdate({
+                ...block,
+                url: asset.url,
+                alt: asset.alt_text || asset.title || block.alt || '',
+                caption: asset.caption || block.caption || '',
+              });
+            }}
+          />
         </div>
       );
 

@@ -1,7 +1,6 @@
 import { requireAdmin } from '@/lib/auth/session';
 import { sql } from '@/lib/db';
-import { SectionHeader } from '@/components/ui/SectionHeader';
-import { ScrollReveal } from '@/components/ui/ScrollReveal';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import { SponsoredCMSClient } from './SponsoredCMSClient';
 import { getAdminSponsoredKPIs } from '@/lib/sponsored/db';
 
@@ -70,22 +69,20 @@ export default async function AdminSponsoredArticlesPage() {
 
   return (
     <div className="w-full space-y-6 animate-in fade-in duration-300">
-      <ScrollReveal>
-        <SectionHeader
-          title="Sponsored Articles CMS"
-          eyebrow="Content Management · Commercial Editorial"
-          subtitle="Manage sponsored health content, clinical partner campaigns, medical reviewer sign-offs, and commercial campaign performance."
-        />
-      </ScrollReveal>
+      <AdminPageHeader
+        tag="Commercial Editorial"
+        title="Sponsored Articles CMS"
+        subtitle="Manage sponsored health content, clinical partner campaigns, medical reviewer sign-offs, and commercial campaign performance."
+      />
 
-      <ScrollReveal delay={0.1}>
+      <div className="w-full">
         <SponsoredCMSClient
           initialArticles={articles}
           sponsors={sponsors}
           campaigns={campaigns}
           kpis={kpis}
         />
-      </ScrollReveal>
+      </div>
     </div>
   );
 }

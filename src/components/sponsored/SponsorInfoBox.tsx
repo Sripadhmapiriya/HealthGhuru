@@ -13,6 +13,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { SponsoredArticleWithSponsor } from '@/lib/types/sponsored';
+import { getSafeImageUrl } from '@/lib/utils';
 
 interface SponsorInfoBoxProps {
   article: SponsoredArticleWithSponsor;
@@ -58,9 +59,10 @@ export function SponsorInfoBox({ article }: SponsorInfoBoxProps) {
         <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-white shadow-xs border border-emerald-200 shrink-0">
           {article.sponsor_logo_url ? (
             <Image
-              src={article.sponsor_logo_url}
+              src={getSafeImageUrl(article.sponsor_logo_url, 'hospital', '/images/logo_transparent.png')}
               alt={article.sponsor_name || 'Sponsor Logo'}
               fill
+              sizes="96px"
               className="object-cover"
             />
           ) : isDoctor ? (

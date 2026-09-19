@@ -7,6 +7,7 @@ import { Advertisement } from '@/lib/types/advertisement';
 import { trackAdEvent } from './adTracking';
 import Image from 'next/image';
 import { useSubscription } from '@/lib/hooks/useSubscription';
+import { getSafeImageUrl } from '@/lib/utils';
 
 interface FloatingFooterAdProps {
   initialAd?: Advertisement | null;
@@ -165,9 +166,10 @@ export function FloatingFooterAd({ initialAd, category }: FloatingFooterAdProps)
           {ad.image_url && (
             <div className="relative w-full h-44 sm:h-48 rounded-2xl overflow-hidden border border-border shadow-inner bg-surface group-hover:scale-[1.02] transition-transform duration-300">
               <Image
-                src={ad.image_url}
+                src={getSafeImageUrl(ad.image_url, 'advertisement')}
                 alt={ad.title}
                 fill
+                sizes="(max-width: 640px) 100vw, 360px"
                 className="object-cover"
                 unoptimized
               />

@@ -11,6 +11,7 @@ import {
   Stethoscope,
   ArrowRight,
 } from 'lucide-react';
+import { getSafeImageUrl } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -70,9 +71,10 @@ export default async function InterviewsPage() {
               <div className="relative aspect-[16/9] w-full bg-black">
                 {item.cover_image_url && (
                   <Image
-                    src={item.cover_image_url}
+                    src={getSafeImageUrl(item.cover_image_url, item.category || 'medical')}
                     alt={item.title}
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
                     unoptimized
                   />
@@ -96,9 +98,10 @@ export default async function InterviewsPage() {
                     {item.doctor_photo && (
                       <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-[#2E7D32] shrink-0">
                         <Image
-                          src={item.doctor_photo}
-                          alt={item.doctor_name}
+                          src={getSafeImageUrl(item.doctor_photo, 'medical', 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=300&q=80')}
+                          alt={item.doctor_name || 'Doctor'}
                           fill
+                          sizes="40px"
                           className="object-cover"
                           unoptimized
                         />

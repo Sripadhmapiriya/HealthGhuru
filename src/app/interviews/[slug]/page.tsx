@@ -15,6 +15,7 @@ import {
   ArrowRight,
   ShieldAlert,
 } from 'lucide-react';
+import { getSafeImageUrl } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -101,9 +102,10 @@ export default async function InterviewDetailPage({
                 <div className="relative w-full h-full">
                   {interview.cover_image_url && (
                     <Image
-                      src={interview.cover_image_url}
+                      src={getSafeImageUrl(interview.cover_image_url, interview.category || 'medical')}
                       alt={interview.title}
                       fill
+                      sizes="(max-width: 1024px) 100vw, 800px"
                       className="object-cover"
                       unoptimized
                     />
@@ -180,9 +182,10 @@ export default async function InterviewDetailPage({
                 <div className="relative w-14 h-14 rounded-2xl overflow-hidden border-2 border-[#2E7D32] shrink-0">
                   {interview.doctor_photo && (
                     <Image
-                      src={interview.doctor_photo}
-                      alt={interview.doctor_name}
+                      src={getSafeImageUrl(interview.doctor_photo, 'medical', 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=300&q=80')}
+                      alt={interview.doctor_name || 'Doctor'}
                       fill
+                      sizes="56px"
                       className="object-cover"
                       unoptimized
                     />

@@ -10,7 +10,7 @@ import { AuthorBioCard } from "@/components/blog/AuthorBioCard";
 import { ArticleBodyClientWrapper } from "@/components/blog/ArticleBodyClientWrapper";
 import { SidebarAd } from "@/components/ads/SidebarAd";
 import { Metadata } from "next";
-import { formatDate } from "@/lib/utils";
+import { formatDate, getSafeImageUrl } from "@/lib/utils";
 import { SaveArticleButton } from "@/components/community/SaveArticleButton";
 import { ShareActions } from "@/components/community/ShareActions";
 import { DiscussionThread } from "@/components/community/DiscussionThread";
@@ -164,9 +164,10 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               <div className="flex items-center gap-4 py-5 border-t border-b border-border mb-8">
                 <div className="w-12 h-12 rounded-full relative overflow-hidden bg-surface-alt shrink-0 border border-primary/20">
                   <Image 
-                    src={post.author_avatar || "/images/exercise_plank.png"} 
+                    src={getSafeImageUrl(post.author_avatar, 'medical', '/images/exercise_plank.png')} 
                     alt={post.author_name || "Author"} 
                     fill 
+                    sizes="48px"
                     className="object-cover"
                   />
                 </div>
@@ -184,9 +185,10 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             <ScrollReveal variant="scaleUp" delay={0.1} className="mb-10">
               <div className="relative w-full aspect-[16/9] rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg border border-border/50">
                 <Image
-                  src={post.hero_image_url || "/images/exercise_push.png"}
+                  src={getSafeImageUrl(post.hero_image_url, post.category, '/images/exercise_push.png')}
                   alt={post.hero_image_alt || post.title}
                   fill
+                  sizes="(max-width: 1024px) 100vw, 800px"
                   className="object-cover"
                   priority
                 />
@@ -309,9 +311,10 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                   >
                     <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-surface-alt shrink-0 border border-border/50">
                       <Image
-                        src={rel.hero_image_url || "/images/nutrition_pillar.png"}
+                        src={getSafeImageUrl(rel.hero_image_url, rel.category, '/images/nutrition_pillar.png')}
                         alt={rel.title}
                         fill
+                        sizes="64px"
                         className="object-cover group-hover:scale-105 transition-transform"
                       />
                     </div>

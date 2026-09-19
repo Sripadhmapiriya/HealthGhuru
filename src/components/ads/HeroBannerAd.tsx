@@ -7,6 +7,7 @@ import { Advertisement } from '@/lib/types/advertisement';
 import { trackAdEvent } from './adTracking';
 import Image from 'next/image';
 import { useSubscription } from '@/lib/hooks/useSubscription';
+import { getSafeImageUrl } from '@/lib/utils';
 
 interface HeroBannerAdProps {
   initialAd?: Advertisement | null;
@@ -214,9 +215,10 @@ export function HeroBannerAd({ initialAd, category, className = '' }: HeroBanner
               className="relative w-full md:w-80 lg:w-96 h-48 sm:h-56 rounded-2xl overflow-hidden border border-white/20 shadow-2xl shrink-0 block group-hover:scale-[1.02] transition-transform duration-300 bg-black/40"
             >
               <Image
-                src={ad.image_url}
+                src={getSafeImageUrl(ad.image_url, 'advertisement')}
                 alt={ad.title}
                 fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 320px, 384px"
                 className="object-cover"
                 unoptimized
               />

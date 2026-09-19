@@ -207,7 +207,7 @@ function SponsoredArticleModal({
                 </label>
                 {formData.advertiser_logo_url && (
                   <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-blue-200">
-                    <Image src={formData.advertiser_logo_url} alt="logo" fill className="object-contain p-1" unoptimized />
+                    <Image src={formData.advertiser_logo_url} alt="logo" fill sizes="48px" className="object-contain p-1" unoptimized />
                   </div>
                 )}
                 {formData.advertiser_logo_url && (
@@ -397,7 +397,7 @@ export function SponsoredArticlesClient({ initialArticles }: { initialArticles: 
                       <div className="flex items-center gap-2">
                         {article.advertiser_logo_url && (
                           <div className="relative w-7 h-7 rounded-md overflow-hidden border border-border shrink-0">
-                            <Image src={article.advertiser_logo_url} alt={article.advertiser_name} fill className="object-contain p-0.5" unoptimized />
+                            <Image src={article.advertiser_logo_url} alt={article.advertiser_name} fill sizes="28px" className="object-contain p-0.5" unoptimized />
                           </div>
                         )}
                         <div>

@@ -475,6 +475,7 @@ export function VisualStoriesSection() {
                   src={activeStory.slides[activeSlideIndex].image}
                   alt={activeStory.slides[activeSlideIndex].title}
                   fill
+                  sizes="(max-width: 640px) 100vw, 448px"
                   priority
                   className="object-cover"
                 />

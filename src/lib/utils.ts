@@ -35,3 +35,46 @@ export function formatMonthYear(dateInput: string | Date | undefined | null): st
   return `${MONTHS_FULL[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 }
 
+const CATEGORY_FALLBACK_IMAGES: Record<string, string> = {
+  cancer: '/images/nutrition_pillar.png',
+  heart: '/images/fitness_pillar.png',
+  diabetes: '/images/nutrition_pillar.png',
+  fitness: '/images/exercise_plank.png',
+  nutrition: '/images/nutrition_pillar.png',
+  pediatrics: '/images/nutrition_pillar.png',
+  mental: '/images/fitness_pillar.png',
+  ayurveda: '/images/nutrition_pillar.png',
+};
+
+/**
+ * Sanitizes and validates image URLs. If the URL is empty, or is an expired/blocked
+ * hotlinking Instagram/Facebook CDN link, it returns a verified health placeholder image.
+ */
+export function getSafeImageUrl(
+  url?: string | null,
+  category?: string | null,
+  defaultFallback: string = '/images/fitness_pillar.png'
+): string {
+  if (!url || typeof url !== 'string' || url.trim() === '') {
+    if (category && CATEGORY_FALLBACK_IMAGES[category.toLowerCase()]) {
+      return CATEGORY_FALLBACK_IMAGES[category.toLowerCase()];
+    }
+    return defaultFallback;
+  }
+
+  const trimmed = url.trim();
+
+  // Handle blocked/expired Meta/Instagram CDN hotlinks
+  if (
+    trimmed.includes('cdninstagram.com') ||
+    trimmed.includes('fbcdn.net') ||
+    trimmed.includes('instagram.f')
+  ) {
+    if (category && CATEGORY_FALLBACK_IMAGES[category.toLowerCase()]) {
+      return CATEGORY_FALLBACK_IMAGES[category.toLowerCase()];
+    }
+    return defaultFallback;
+  }
+
+  return trimmed;
+}
