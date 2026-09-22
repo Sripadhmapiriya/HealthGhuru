@@ -1,6 +1,5 @@
 import { requireAdmin } from '@/lib/auth/session';
 import { sql } from '@/lib/db';
-import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import { SponsoredCMSClient } from './SponsoredCMSClient';
 import { getAdminSponsoredKPIs } from '@/lib/sponsored/db';
 
@@ -9,10 +8,10 @@ export const dynamic = 'force-dynamic';
 export default async function AdminSponsoredArticlesPage() {
   await requireAdmin();
 
-  // Load initial articles with joined sponsors, campaigns, advertisers
   let articles: any[] = [];
   let sponsors: any[] = [];
   let campaigns: any[] = [];
+  let requests: any[] = [];
   let kpis = {
     totalArticles: 0,
     activeCampaigns: 0,
@@ -26,7 +25,7 @@ export default async function AdminSponsoredArticlesPage() {
   };
 
   try {
-    const [articlesRes, sponsorsRes, campaignsRes, kpisRes] = await Promise.all([
+    const [articlesRes, sponsorsRes, campaignsRes, requestsRes, kpisRes] = await Promise.all([
       sql`
         SELECT
           sa.*,
@@ -56,33 +55,32 @@ export default async function AdminSponsoredArticlesPage() {
         LEFT JOIN advertisers a ON c.advertiser_id = a.id
         ORDER BY c.created_at DESC
       `,
+      sql`
+        SELECT *
+        FROM campaign_requests
+        ORDER BY created_at DESC
+      `,
       getAdminSponsoredKPIs(),
     ]);
 
     articles = articlesRes;
     sponsors = sponsorsRes;
     campaigns = campaignsRes;
+    requests = requestsRes;
     kpis = kpisRes;
   } catch (err) {
     console.error('Failed to load initial admin sponsored data:', err);
   }
 
   return (
-    <div className="w-full space-y-6 animate-in fade-in duration-300">
-      <AdminPageHeader
-        tag="Commercial Editorial"
-        title="Sponsored Articles CMS"
-        subtitle="Manage sponsored health content, clinical partner campaigns, medical reviewer sign-offs, and commercial campaign performance."
+    <div className="w-full">
+      <SponsoredCMSClient
+        initialArticles={articles}
+        sponsors={sponsors}
+        campaigns={campaigns}
+        initialRequests={requests}
+        kpis={kpis}
       />
-
-      <div className="w-full">
-        <SponsoredCMSClient
-          initialArticles={articles}
-          sponsors={sponsors}
-          campaigns={campaigns}
-          kpis={kpis}
-        />
-      </div>
     </div>
   );
 }

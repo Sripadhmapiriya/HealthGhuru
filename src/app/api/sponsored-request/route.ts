@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { sql } from '@/lib/db';
+import { sendSponsorshipEmails } from '@/lib/email/mailer';
 
 export const dynamic = 'force-dynamic';
 
@@ -97,12 +98,14 @@ export async function POST(request: NextRequest) {
     `;
 
     // 2. Also register in sponsored_articles as submitted inquiry linked to campaign_requests
+    // 2. Also register in sponsored_articles as submitted inquiry
     const slug = `${company_name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now().toString().slice(-6)}`;
+    const formattedPrice = total_amount ? `₹${Number(total_amount).toLocaleString('en-IN')}` : (base_price ? `₹${Number(base_price).toLocaleString('en-IN')}` : '₹20,000');
     try {
       await sql`
         INSERT INTO sponsored_articles (
           title, slug, excerpt, content, featured_image,
-          campaign_id,
+          company_name, package_name, package_price, placement, assigned_reporter,
           category, author_name,
           status, review_status,
           requires_medical_review,
@@ -115,7 +118,11 @@ export async function POST(request: NextRequest) {
           ${article_content ? article_content.slice(0, 200) : 'Partner article submission pending editorial review.'},
           ${article_content || ''},
           ${featured_image_url || null},
-          ${requestRow.id}::uuid,
+          ${company_name},
+          ${package_name || 'Event Coverage'},
+          ${formattedPrice},
+          ${placement || 'homepage_sponsored'},
+          'Unassigned',
           'General Health',
           ${contact_person},
           'submitted',
@@ -129,7 +136,7 @@ export async function POST(request: NextRequest) {
         )
       `;
     } catch (e) {
-      console.warn('Could not dual-create sponsored_article entry (non-fatal):', e);
+      console.warn('Could not dual-create sponsored_article entry:', e);
     }
 
     // Revalidate admin queues so the new submission is immediately visible
@@ -139,6 +146,12 @@ export async function POST(request: NextRequest) {
     } catch {
       // ignore
     }
+
+    // Trigger email notifications in background
+    sendSponsorshipEmails({
+      ...body,
+      request_id: requestRow.id,
+    }).catch((mailErr) => console.error('Error triggering sponsorship emails:', mailErr));
 
     return NextResponse.json({
       success: true,

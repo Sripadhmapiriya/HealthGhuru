@@ -104,9 +104,17 @@ export async function POST(request: NextRequest) {
       if (sp) advertiser_id = sp.advertiser_id;
     }
 
+    const company_name = body.company_name || body.advertiser_name || title.split(':')[0] || 'Health Partner';
+    const assigned_reporter = body.assigned_reporter || 'Unassigned';
+    const package_name = body.package_name || 'Clinical Brand Story';
+    const package_price = body.package_price || '₹20,000';
+    const placement = body.placement || 'homepage_sponsored';
+    const video_url = body.video_url || null;
+
     const [newArticle] = await sql`
       INSERT INTO sponsored_articles (
         title, slug, excerpt, content, featured_image,
+        company_name, assigned_reporter, package_name, package_price, placement, video_url,
         sponsor_id, advertiser_id, campaign_id,
         category, tags,
         author_name, author_title,
@@ -121,6 +129,7 @@ export async function POST(request: NextRequest) {
         rights_confirmed
       ) VALUES (
         ${title}, ${slug}, ${excerpt || ''}, ${content || ''}, ${featured_image || ''},
+        ${company_name}, ${assigned_reporter}, ${package_name}, ${package_price}, ${placement}, ${video_url},
         ${sponsor_id ? sql`${sponsor_id}::uuid` : null},
         ${advertiser_id ? sql`${advertiser_id}::uuid` : null},
         ${campaign_id ? sql`${campaign_id}::uuid` : null},

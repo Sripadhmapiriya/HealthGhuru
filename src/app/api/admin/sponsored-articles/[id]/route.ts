@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { sql } from '@/lib/db';
+import { sendSponsoredArticleStatusUpdateEmail } from '@/lib/email/mailer';
 
 export const dynamic = 'force-dynamic';
 
@@ -100,6 +101,12 @@ export async function PUT(
         tags = ${tags !== undefined ? tags : sql`tags`},
         author_name = COALESCE(${author_name}, author_name),
         author_title = ${author_title !== undefined ? author_title : sql`author_title`},
+        company_name = ${body.company_name !== undefined ? body.company_name : sql`company_name`},
+        assigned_reporter = ${body.assigned_reporter !== undefined ? body.assigned_reporter : sql`assigned_reporter`},
+        package_name = ${body.package_name !== undefined ? body.package_name : sql`package_name`},
+        package_price = ${body.package_price !== undefined ? body.package_price : sql`package_price`},
+        placement = ${body.placement !== undefined ? body.placement : sql`placement`},
+        video_url = ${body.video_url !== undefined ? body.video_url : sql`video_url`},
         medical_reviewer_name = ${medical_reviewer_name !== undefined ? medical_reviewer_name : sql`medical_reviewer_name`},
         medical_reviewer_credentials = ${medical_reviewer_credentials !== undefined ? medical_reviewer_credentials : sql`medical_reviewer_credentials`},
         requires_medical_review = ${requires_medical_review !== undefined ? requires_medical_review : sql`requires_medical_review`},
@@ -144,6 +151,37 @@ export async function PUT(
       revalidatePath('/admin/sponsored-articles');
     } catch {
       // ignore
+    }
+
+    // Trigger status update email if status was modified
+    if (status && status !== existing[0]?.status) {
+      try {
+        const articleRow = updated[0];
+        let recipientEmail = '';
+        if (articleRow.campaign_id) {
+          const cr = await sql`SELECT contact_email FROM campaign_requests WHERE id = ${articleRow.campaign_id}::uuid LIMIT 1`;
+          if (cr.length && cr[0].contact_email) recipientEmail = cr[0].contact_email;
+        }
+        if (!recipientEmail && articleRow.company_name) {
+          const cr = await sql`SELECT contact_email FROM campaign_requests WHERE advertiser_name ILIKE ${articleRow.company_name} OR campaign_title ILIKE ${'%' + articleRow.company_name + '%'} ORDER BY created_at DESC LIMIT 1`;
+          if (cr.length && cr[0].contact_email) recipientEmail = cr[0].contact_email;
+        }
+        if (!recipientEmail && articleRow.sponsor_id) {
+          const sp = await sql`SELECT contact_email FROM sponsors WHERE id = ${articleRow.sponsor_id}::uuid LIMIT 1`;
+          if (sp.length && sp[0].contact_email) recipientEmail = sp[0].contact_email;
+        }
+
+        if (recipientEmail) {
+          sendSponsoredArticleStatusUpdateEmail(
+            articleRow,
+            status,
+            body.admin_notes || body.reviewer_notes || undefined,
+            recipientEmail
+          ).catch((mailErr) => console.error('Error sending sponsored article status email:', mailErr));
+        }
+      } catch (e) {
+        console.warn('Warning sending sponsored article status email:', e);
+      }
     }
 
     return NextResponse.json({ success: true, article: updated[0] });

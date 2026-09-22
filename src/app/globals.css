@@ -33,13 +33,13 @@
   --color-border-strong:  rgba(22,163,74,0.30);
 
   /* Scale */
-  --text-hero:    clamp(2.5rem, 5vw, 4rem);
-  --text-h1:      clamp(2rem, 4vw, 3rem);
-  --text-h2:      clamp(1.5rem, 3vw, 2.25rem);
-  --text-h3:      clamp(1.25rem, 2vw, 1.75rem);
-  --text-body:    1rem;
-  --text-sm:      0.875rem;
-  --text-xs:      0.75rem;
+  --text-hero:    clamp(2.75rem, 5.5vw, 4.5rem);
+  --text-h1:      clamp(2.15rem, 3.75vw, 3.25rem);
+  --text-h2:      clamp(1.65rem, 2.75vw, 2.45rem);
+  --text-h3:      clamp(1.35rem, 2vw, 1.85rem);
+  --text-body:    1.025rem;
+  --text-sm:      0.9rem;
+  --text-xs:      0.785rem;
 
   /* Component Tokens */
   --btn-primary-bg:     linear-gradient(135deg, #16A34A 0%, #22C55E 100%);
@@ -61,8 +61,8 @@
   --gradient-accent:    linear-gradient(135deg, #f06d2f 0%, #ff8a57 100%);
 
   /* Dashboard - Sidebar */
-  --sidebar-width:        260px;
-  --sidebar-collapsed:    72px;
+  --sidebar-width:        280px;
+  --sidebar-collapsed:    80px;
   --sidebar-bg:           #0F172A;
 
   /* Dashboard - Chart colors */
@@ -89,7 +89,8 @@
   }
 
   body {
-    @apply font-body text-text-primary;
+    @apply font-body text-text-primary antialiased;
+    letter-spacing: -0.011em;
     background: linear-gradient(180deg, #EDF8F1 0%, #F4FAF6 35%, #EAF6EF 75%, #F0FDF4 100%);
     background-color: #F2FAF5;
     background-attachment: fixed;
@@ -97,11 +98,11 @@
   }
 
   h1, h2 {
-    @apply font-display text-text-primary;
+    @apply font-display text-text-primary tracking-tight leading-[1.18];
   }
   
-  h3, h4 {
-    @apply font-heading text-text-primary;
+  h3, h4, h5, h6 {
+    @apply font-heading text-text-primary tracking-tight font-bold;
   }
 
   a, button, [role="button"] {
