@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: "Expert insights on Nutrition, Fitness, Sleep, and Mental Health.",
 };
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export default async function BlogPage() {
   const articles = await sql`

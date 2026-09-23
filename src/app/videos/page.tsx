@@ -8,7 +8,7 @@ import { HealthDisclaimer } from '@/components/media/HealthDisclaimer';
 import { Film, Layers } from 'lucide-react';
 import Link from 'next/link';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Health Videos & Wellness Shorts | HealthGhuru',

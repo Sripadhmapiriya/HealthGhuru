@@ -8,7 +8,7 @@ import { BreakingNewsTicker } from '@/components/media/BreakingNewsTicker';
 import { HealthDisclaimer } from '@/components/media/HealthDisclaimer';
 import Link from 'next/link';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Health News | HealthGhuru — Verified Global Health & Medical Headlines',
