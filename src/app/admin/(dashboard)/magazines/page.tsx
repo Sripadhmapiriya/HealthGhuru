@@ -23,7 +23,6 @@ import {
   Sliders,
   Share2,
 } from 'lucide-react';
-import { MagazinePrintView } from '@/components/admin/magazine/MagazinePrintView';
 import { MagazineReaderModal } from '@/components/admin/magazine/MagazineReaderModal';
 
 const MONTH_NAMES = [
@@ -49,6 +48,7 @@ export default function AdminMagazinesPage() {
   const [availableMonths, setAvailableMonths] = useState<any[]>([]);
   const [loadingMonths, setLoadingMonths] = useState(true);
 
+  const [contentTypeFilter, setContentTypeFilter] = useState<'all' | 'article' | 'news'>('all');
   const [articles, setArticles] = useState<any[]>([]);
   const [selectedArticleIds, setSelectedArticleIds] = useState<Set<string>>(new Set());
   const [loadingArticles, setLoadingArticles] = useState(false);
@@ -88,14 +88,14 @@ export default function AdminMagazinesPage() {
     fetchAvailableMonths();
   }, []);
 
-  // Fetch articles whenever selectedYear or selectedMonth changes
+  // Fetch articles whenever selectedYear, selectedMonth or contentTypeFilter changes
   useEffect(() => {
     async function fetchArticlesForMonth() {
       try {
         setLoadingArticles(true);
         setPublishMessage(null);
         const res = await fetch(
-          `/api/admin/magazine/articles?year=${selectedYear}&month=${selectedMonth}`
+          `/api/admin/magazine/articles?year=${selectedYear}&month=${selectedMonth}&type=${contentTypeFilter}`
         );
         const data = await res.json();
         if (data.success && Array.isArray(data.articles)) {
@@ -125,7 +125,7 @@ export default function AdminMagazinesPage() {
     }
 
     fetchArticlesForMonth();
-  }, [selectedYear, selectedMonth]);
+  }, [selectedYear, selectedMonth, contentTypeFilter]);
 
   // Active articles filtered by selection
   const activeArticles = useMemo(() => {
@@ -162,9 +162,12 @@ export default function AdminMagazinesPage() {
     }
   };
 
-  // Trigger Print / PDF Download
+  // Trigger Print / PDF Download (Opens clean full-page multi-page print document)
   const handlePrintPdf = () => {
-    window.print();
+    window.open(
+      `/magazines/print?year=${selectedYear}&month=${selectedMonth}&autoPrint=true`,
+      '_blank'
+    );
   };
 
   // Export articles as JSON
@@ -257,21 +260,8 @@ export default function AdminMagazinesPage() {
 
   return (
     <div className="space-y-8 pb-16">
-      {/* Hidden container for print stylesheet */}
-      <div className="hidden print:block">
-        <MagazinePrintView
-          year={selectedYear}
-          month={selectedMonth}
-          monthName={monthName}
-          issueVolume={issueVolume}
-          issueTitle={issueTitle}
-          editorNote={editorNote}
-          articles={activeArticles}
-        />
-      </div>
-
-      {/* Screen Admin UI (Hidden during print) */}
-      <div className="no-print space-y-8">
+      {/* Screen Admin UI */}
+      <div className="space-y-8">
         {/* Header Title & Status */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 text-white p-6 sm:p-8 rounded-2xl shadow-md">
           <div className="space-y-1">
@@ -298,6 +288,21 @@ export default function AdminMagazinesPage() {
             </button>
 
             <button
+              onClick={() =>
+                window.open(
+                  `/magazines/print?year=${selectedYear}&month=${selectedMonth}&autoPrint=true`,
+                  '_blank'
+                )
+              }
+              disabled={activeArticles.length === 0}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600/90 hover:bg-emerald-600 border border-emerald-400/40 text-white text-xs font-bold transition-all disabled:opacity-50"
+              title="Open full-page clean print preview in new tab"
+            >
+              <ExternalLink size={14} />
+              <span>Clean Print Tab</span>
+            </button>
+
+            <button
               onClick={handlePrintPdf}
               disabled={activeArticles.length === 0}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white text-xs font-black shadow-lg shadow-orange-500/25 transition-all disabled:opacity-50"
@@ -318,23 +323,47 @@ export default function AdminMagazinesPage() {
               </h2>
             </div>
 
-            {/* Year Selector */}
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-text-muted">Target Year:</span>
+            {/* Filter by Type & Year Selector */}
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Content Type Filter */}
               <div className="flex bg-surface rounded-xl p-1 border border-border">
-                {[2025, 2026, 2027].map((y) => (
+                {[
+                  { key: 'all', label: 'All Content' },
+                  { key: 'article', label: 'Articles' },
+                  { key: 'news', label: 'News' },
+                ].map((t) => (
                   <button
-                    key={y}
-                    onClick={() => setSelectedYear(y)}
+                    key={t.key}
+                    onClick={() => setContentTypeFilter(t.key as any)}
                     className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                      selectedYear === y
-                        ? 'bg-primary text-white shadow-xs'
+                      contentTypeFilter === t.key
+                        ? 'bg-emerald-600 text-white shadow-xs'
                         : 'text-text-secondary hover:text-dark'
                     }`}
                   >
-                    {y}
+                    {t.label}
                   </button>
                 ))}
+              </div>
+
+              {/* Year Selector */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold text-text-muted">Year:</span>
+                <div className="flex bg-surface rounded-xl p-1 border border-border">
+                  {[2024, 2025, 2026, 2027].map((y) => (
+                    <button
+                      key={y}
+                      onClick={() => setSelectedYear(y)}
+                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                        selectedYear === y
+                          ? 'bg-primary text-white shadow-xs'
+                          : 'text-text-secondary hover:text-dark'
+                      }`}
+                    >
+                      {y}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>

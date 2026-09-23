@@ -59,8 +59,8 @@ export default async function Home() {
       FROM content_items i
       LEFT JOIN content_sources s ON i.source_id = s.id
       WHERE i.status = 'published' AND i.deleted_at IS NULL
-      ORDER BY (i.is_featured::int * 10 + i.quality_score) DESC, i.published_at DESC
-      LIMIT 6
+      ORDER BY (i.is_breaking::int * 1000 + i.is_featured::int * 50) DESC, i.published_at DESC
+      LIMIT 12
     `,
 
     // 3. Trending 01-05
@@ -287,7 +287,13 @@ export default async function Home() {
       }
     }
   }
-  const topStoriesList = topItems.filter((i: any) => i.id !== featuredStory?.id).slice(0, 4);
+  const remainingTopStories = topItems.filter((i: any) => i.id !== featuredStory?.id);
+  const topStoriesPool = [
+    ...remainingTopStories,
+    ...latestNews.filter((i: any) => i.id !== featuredStory?.id && !remainingTopStories.some((r: any) => r.id === i.id))
+  ];
+  const heroSubStories = topStoriesPool.slice(0, 2);
+  const topStoriesList = topStoriesPool.slice(2, 7);
 
   // 2. Trending Stories Resolution (Pinned list 01-05 in exact order or fallback)
   let finalTrendingStories = trendingItems.slice(0, 5);
@@ -425,6 +431,7 @@ export default async function Home() {
           <TopStoriesGrid
             key={section.id}
             featuredStory={featuredStory}
+            heroSubStories={heroSubStories}
             topStories={topStoriesList}
             trendingStories={finalTrendingStories}
             title={title}

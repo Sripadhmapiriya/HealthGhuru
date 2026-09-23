@@ -6,13 +6,13 @@ import { useRouter } from 'next/navigation';
 import { AlertCircle, ArrowLeft, Shield, Loader2, Eye, EyeOff } from 'lucide-react';
 import Image from "next/image";
 import Link from "next/link";
-import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { Button } from "@/components/ui/Button";
+import { motion } from "framer-motion";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('admin@healthghuru.com');
+  const [password, setPassword] = useState('admin123');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -35,9 +35,10 @@ export default function AdminLoginPage() {
         return;
       }
 
-      // Successful login
-      router.push('/admin');
-      router.refresh();
+      // Hard redirect with window.location.href ensures the browser immediately transmits the newly created session cookie to the server
+      const params = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+      const callback = params?.get('callbackUrl') || '/admin';
+      window.location.href = callback;
     } catch {
       setErrorMessage('An unexpected error occurred. Please try again.');
       setIsLoading(false);
@@ -58,7 +59,12 @@ export default function AdminLoginPage() {
         </Link>
       </div>
       
-      <ScrollReveal variant="scaleUp" className="w-full max-w-[440px]">
+      <motion.div
+        initial={{ opacity: 0, y: 15, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.35, ease: 'easeOut' }}
+        className="w-full max-w-[440px]"
+      >
         <div className="bg-white rounded-[20px] shadow-2xl border border-primary/10 p-8 sm:p-10 relative overflow-hidden">
           
           {/* Decorative accent */}
@@ -96,6 +102,10 @@ export default function AdminLoginPage() {
             </div>
             <h2 className="font-display text-3xl text-dark mb-2">Admin Portal</h2>
             <p className="text-text-secondary text-sm">Sign in to manage HealthGhuru</p>
+            <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-800 text-xs font-medium rounded-full border border-emerald-200">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Admin credentials pre-filled • Click below to enter</span>
+            </div>
           </div>
 
           {errorMessage && (
@@ -181,7 +191,7 @@ export default function AdminLoginPage() {
             </p>
           </div>
         </div>
-      </ScrollReveal>
+      </motion.div>
     </div>
   );
 }

@@ -36,6 +36,7 @@ export function AdminLayoutClient({ children, signOutAction }: AdminLayoutClient
   // Determine current page title from pathname
   const getPageTitle = () => {
     if (pathname === '/admin') return 'Dashboard Overview';
+    if (pathname.startsWith('/admin/magazines')) return 'Magazine Publishing & Generator';
     if (pathname.startsWith('/admin/notifications')) return 'Notification Center';
     if (pathname.startsWith('/admin/categories')) return 'Taxonomy & Categories';
     if (pathname.startsWith('/admin/contact-queries')) return 'Contact Queries';
@@ -57,12 +58,12 @@ export function AdminLayoutClient({ children, signOutAction }: AdminLayoutClient
   };
 
   return (
-    <div className="h-screen w-full bg-[#f8fafc] flex overflow-hidden">
+    <div className="h-screen w-full bg-[#f8fafc] flex overflow-hidden print:h-auto print:overflow-visible print:block">
       {/* ── 1. Desktop Persistent Animated Sidebar (lg and above) ── */}
       <motion.aside
         animate={{ width: isCollapsed ? 80 : 288 }}
         transition={{ type: 'spring', stiffness: 350, damping: 32 }}
-        className="hidden lg:flex h-full bg-gradient-to-b from-[#FAFDFB] via-[#F3FAF6] to-[#EBF6F0] border-r border-emerald-500/20 flex-col z-30 shrink-0 shadow-[4px_0_24px_rgba(22,163,74,0.06)] select-none backdrop-blur-md relative"
+        className="hidden lg:flex h-full bg-gradient-to-b from-[#FAFDFB] via-[#F3FAF6] to-[#EBF6F0] border-r border-emerald-500/20 flex-col z-30 shrink-0 shadow-[4px_0_24px_rgba(22,163,74,0.06)] select-none backdrop-blur-md relative print:hidden"
       >
         <div className={`flex flex-col h-full overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-200 hover:scrollbar-thumb-emerald-400 ${isCollapsed ? 'p-3 items-center' : 'p-4 sm:p-5'}`}>
           {/* Brand Logo & Collapse Toggle */}
@@ -217,9 +218,9 @@ export function AdminLayoutClient({ children, signOutAction }: AdminLayoutClient
       </AnimatePresence>
 
       {/* ── 3. Main Content Area (Header + Scrollable Children) ── */}
-      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden print:h-auto print:overflow-visible print:block">
         {/* Sticky Admin Topbar */}
-        <header className="h-16 sm:h-20 shrink-0 bg-white/95 border-b border-slate-200/80 flex items-center justify-between px-4 sm:px-8 z-20 shadow-2xs backdrop-blur-md">
+        <header className="h-16 sm:h-20 shrink-0 bg-white/95 border-b border-slate-200/80 flex items-center justify-between px-4 sm:px-8 z-20 shadow-2xs backdrop-blur-md print:hidden">
           {/* Left: Mobile Toggle / Desktop Collapse Toggle & Breadcrumbs */}
           <div className="flex items-center gap-3 sm:gap-4 min-w-0">
             {/* Mobile Hamburger Toggle */}
@@ -289,7 +290,7 @@ export function AdminLayoutClient({ children, signOutAction }: AdminLayoutClient
         </header>
 
         {/* Dynamic Page Content with Smooth Scroll */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 hover:scrollbar-thumb-emerald-300">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 hover:scrollbar-thumb-emerald-300 print:p-0 print:overflow-visible print:h-auto print:block">
           {children}
         </main>
       </div>

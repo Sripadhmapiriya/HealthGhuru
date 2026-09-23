@@ -353,3 +353,144 @@ video,
   pointer-events: auto;
 }
 
+/* ─────────────────────────────────────────────────────────────
+   HEALTHGHURU DIGITAL MAGAZINE PRINT & EDITORIAL SPECIFICATIONS
+   Standard A4: 210mm x 297mm
+   Continuous Editorial Flow • No Empty Gaps • Single Heading
+   ───────────────────────────────────────────────────────────── */
+.font-editorial-heading {
+  font-family: 'Playfair Display', Georgia, Cambria, 'Times New Roman', serif;
+}
+
+.magazine-cover,
+.magazine-backcover {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto 30px auto;
+  padding: 16mm 18mm 20mm 18mm;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  position: relative;
+  background-color: #CBF2DB !important;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.magazine-content-flow {
+  width: 210mm;
+  max-width: 210mm;
+  margin: 0 auto 30px auto;
+  padding: 16mm 18mm 22mm 18mm;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.magazine-article {
+  break-inside: auto;
+  margin-bottom: 28px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.magazine-article:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.magazine-article h2 {
+  break-after: avoid;
+  page-break-after: avoid;
+}
+
+.magazine-img-container {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.magazine-page-mint {
+  background-color: #CBF2DB !important;
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 12mm 15mm 15mm 15mm;
+  }
+  @page :first {
+    margin: 0mm;
+  }
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    background: #ffffff !important;
+    height: auto !important;
+    min-height: 100% !important;
+    overflow: visible !important;
+  }
+  .magazine-cover {
+    page-break-after: always !important;
+    break-after: page !important;
+    width: 210mm !important;
+    height: 297mm !important;
+    max-height: 297mm !important;
+    box-sizing: border-box !important;
+    margin: 0 auto !important;
+    padding: 16mm 18mm 20mm 18mm !important;
+    box-shadow: none !important;
+    background-color: #CBF2DB !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    overflow: hidden !important;
+  }
+  .magazine-content-flow {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+  .magazine-article {
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+    margin-bottom: 20px !important;
+    padding-bottom: 20px !important;
+  }
+  .magazine-article h2 {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+  }
+  .magazine-img-container {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+  .magazine-backcover {
+    page-break-before: always !important;
+    break-before: page !important;
+    width: 210mm !important;
+    height: 297mm !important;
+    max-height: 297mm !important;
+    box-sizing: border-box !important;
+    margin: 0 auto !important;
+    padding: 16mm 18mm 20mm 18mm !important;
+    box-shadow: none !important;
+    background-color: #CBF2DB !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    overflow: hidden !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
+
+
+

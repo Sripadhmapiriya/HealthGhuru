@@ -98,7 +98,7 @@ export function MagazineReaderModal({
 
         {/* Scrollable Document Container */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-8 bg-slate-950/60 flex justify-center">
-          <div className="w-full max-w-[210mm] bg-white rounded-lg shadow-2xl overflow-hidden">
+          <div className="w-full max-w-[210mm]">
             <MagazinePrintView
               year={year}
               month={month}

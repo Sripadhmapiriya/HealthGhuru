@@ -135,6 +135,8 @@ export async function publishNews(payload: NewsPublishPayload) {
       seo_keywords: seoKeywords,
     };
 
+    const contentType = (payload as any).contentType || 'news';
+
     await sql`
       INSERT INTO content_items (
         id, content_type, title, slug, excerpt, description, canonical_url,
@@ -144,7 +146,7 @@ export async function publishNews(payload: NewsPublishPayload) {
       )
       VALUES (
         ${articleId}::uuid,
-        'article',
+        ${contentType},
         ${title},
         ${slug},
         ${excerpt},
@@ -159,7 +161,7 @@ export async function publishNews(payload: NewsPublishPayload) {
         FALSE,
         TRUE,
         FALSE,
-        ${isBreaking},
+        ${Boolean(isBreaking)},
         TRUE,
         TRUE,
         98.0,

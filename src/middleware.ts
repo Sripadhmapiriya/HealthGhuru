@@ -10,7 +10,9 @@ export default auth((req: NextRequest & { auth: any }) => {
 
   if (isAdminRoute) {
     if (!session?.user || session.user.role !== 'admin') {
-      return NextResponse.redirect(new URL('/admin/login', nextUrl));
+      const loginUrl = new URL('/admin/login', nextUrl);
+      loginUrl.searchParams.set('callbackUrl', nextUrl.pathname + nextUrl.search);
+      return NextResponse.redirect(loginUrl);
     }
   }
   return NextResponse.next();
