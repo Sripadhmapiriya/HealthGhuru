@@ -7,7 +7,7 @@ import { ContentCard } from '@/components/media/ContentCard';
 import { HealthDisclaimer } from '@/components/media/HealthDisclaimer';
 import Link from 'next/link';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Health Articles | HealthGhuru — Expert Insights & In-Depth Wellness Guides',

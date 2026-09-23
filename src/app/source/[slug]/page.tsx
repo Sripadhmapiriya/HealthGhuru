@@ -8,6 +8,8 @@ import { HealthDisclaimer } from '@/components/media/HealthDisclaimer';
 import Link from 'next/link';
 import { ArrowLeft, ExternalLink, ShieldCheck, Globe } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const sources = await sql`
     SELECT name FROM content_sources WHERE LOWER(REPLACE(name, ' ', '-')) = LOWER(${params.slug})

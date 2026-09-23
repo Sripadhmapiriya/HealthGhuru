@@ -12,6 +12,8 @@ export const metadata: Metadata = {
   description: 'Trending health discussions, high-engagement wellness breakthroughs, and popular health guides.',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function TrendingPage() {
   const items = await sql`
     SELECT i.*, s.name as source_name

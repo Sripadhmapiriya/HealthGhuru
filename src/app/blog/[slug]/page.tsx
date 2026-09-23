@@ -16,6 +16,8 @@ import { ShareActions } from "@/components/community/ShareActions";
 import { DiscussionThread } from "@/components/community/DiscussionThread";
 import { auth } from "@/lib/auth/auth.config";
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const posts = await sql`SELECT title, excerpt FROM articles WHERE slug = ${params.slug} AND status = 'published'`;
   

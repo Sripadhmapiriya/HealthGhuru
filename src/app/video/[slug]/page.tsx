@@ -21,6 +21,8 @@ import { VideoDescription } from '@/components/media/VideoDescription';
 import { ScrollReveal } from '@/components/ui/ScrollReveal';
 import { formatDate } from '@/lib/utils';
 
+export const dynamic = 'force-dynamic';
+
 function InstagramIcon({ size = 14, className = '' }: { size?: number; className?: string }) {
   return (
     <svg

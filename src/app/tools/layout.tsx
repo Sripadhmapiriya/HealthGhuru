@@ -3,6 +3,8 @@ import { auth } from '@/lib/auth/auth.config';
 import { sql } from '@/lib/db';
 import { PremiumPaywall } from '@/components/community/PremiumPaywall';
 
+export const dynamic = 'force-dynamic';
+
 export default async function ToolsLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
   
