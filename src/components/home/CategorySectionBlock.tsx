@@ -45,14 +45,14 @@ export function CategorySectionBlock({
 
         <Link
           href={`/category/${categorySlug}`}
-          className="inline-flex items-center gap-1.5 text-xs font-heading font-bold text-[#16A34A] hover:text-[#f06d2f] transition-colors py-1.5 px-3.5 rounded-full hover:bg-emerald-50 border border-emerald-500/20"
+          className="inline-flex items-center gap-1.5 text-xs font-heading font-bold text-[#16A34A] hover:text-[#f06d2f] transition-all py-1.5 px-4 rounded-full bg-white hover:bg-orange-50/80 border border-emerald-500/20 hover:border-[#f06d2f]/40 hover:scale-[1.03] shadow-2xs"
         >
           <span>View All {title}</span>
           <ArrowRight size={13} />
         </Link>
 
-        {/* Mint Green Underline */}
-        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#CBF2DB] rounded-full opacity-70" />
+        {/* Brand Dual-Gradient Underline */}
+        <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#16A34A] via-[#22C55E] to-[#f06d2f] rounded-full" />
       </div>
 
       {/* Grid: 1 Large Story (left) + 2 or 3 Supporting Stories (right) */}
@@ -62,7 +62,7 @@ export function CategorySectionBlock({
           <div className="lg:col-span-6 flex flex-col">
             <Link
               href={`/article/${featured.slug}`}
-              className="group block bg-white rounded-2xl overflow-hidden border border-emerald-500/20 shadow-xs hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between"
+              className="group block bg-white rounded-2xl overflow-hidden border border-emerald-500/20 hover:border-emerald-500/50 shadow-xs hover:shadow-card-brand hover:-translate-y-1 transition-all duration-300 h-full flex flex-col justify-between"
             >
               <div className="relative aspect-[16/10] w-full bg-gray-100 overflow-hidden">
                 {featured.image_url && (
@@ -71,12 +71,12 @@ export function CategorySectionBlock({
                     alt={featured.title}
                     fill
                     sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
                     unoptimized
                   />
                 )}
                 <div className="absolute top-3 left-3">
-                  <span className="bg-gradient-to-r from-[#16A34A] to-[#15803D] text-white text-[10px] font-heading font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-xs">
+                  <span className="bg-gradient-to-r from-[#16A34A] to-[#f06d2f] text-white text-[10px] font-heading font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-xs">
                     {title}
                   </span>
                 </div>
@@ -94,7 +94,7 @@ export function CategorySectionBlock({
 
                 <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-slate-400">
                   <span className="truncate">{featured.source_name || "HealthGhuru Bureau"}</span>
-                  <span className="text-[#f06d2f] font-bold group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
+                  <span className="text-[#f06d2f] font-bold group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
                     <span>Read More</span>
                     <ArrowRight size={11} />
                   </span>
@@ -109,7 +109,7 @@ export function CategorySectionBlock({
           {supporting.map((item, idx) => (
             <article
               key={item.id || idx}
-              className="group bg-white rounded-xl p-3.5 sm:p-4 border border-emerald-500/15 hover:border-emerald-500/40 shadow-xs hover:shadow-md transition-all duration-200"
+              className="group bg-white rounded-xl p-3.5 sm:p-4 border border-emerald-500/15 hover:border-emerald-500/40 shadow-xs hover:shadow-card-brand hover:-translate-y-0.5 transition-all duration-200"
             >
               <Link href={`/article/${item.slug}`} className="flex gap-3 sm:gap-4 items-center">
                 {item.image_url && (

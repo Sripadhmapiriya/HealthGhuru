@@ -70,10 +70,39 @@ const config: Config = {
         "gradient-accent": "linear-gradient(135deg, #f06d2f 0%, #ff8a57 100%)",
       },
       boxShadow: {
+        "2xs": "0 1px 2px 0 rgba(0, 0, 0, 0.04)",
+        "xs": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
         "card": "0 4px 24px rgba(46,125,50,0.08)",
         "card-hover": "0 12px 40px rgba(46,125,50,0.18)",
+        "card-brand": "0 10px 30px -5px rgba(22,163,74,0.15), 0 0 15px -2px rgba(240,109,47,0.12)",
+        "glow-green": "0 0 25px -3px rgba(34,197,94,0.35)",
+        "glow-orange": "0 0 25px -3px rgba(240,109,47,0.4)",
         "btn-primary": "0 4px 0 #1B5E20",
         "btn-accent": "0 4px 0 #b24920",
+      },
+      animation: {
+        "shimmer": "shimmer 2.5s infinite linear",
+        "pulse-subtle": "pulseSubtle 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "gradient-x": "gradientX 8s ease infinite",
+        "float": "float 4s ease-in-out infinite",
+      },
+      keyframes: {
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
+        pulseSubtle: {
+          "0%, 100%": { opacity: "1", transform: "scale(1)" },
+          "50%": { opacity: "0.85", transform: "scale(1.02)" },
+        },
+        gradientX: {
+          "0%, 100%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+        },
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-6px)" },
+        },
       },
       borderRadius: {
         "card": "14px",

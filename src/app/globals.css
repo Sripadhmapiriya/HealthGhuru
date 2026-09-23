@@ -91,8 +91,13 @@
   body {
     @apply font-body text-text-primary antialiased;
     letter-spacing: -0.011em;
-    background: linear-gradient(180deg, #EDF8F1 0%, #F4FAF6 35%, #EAF6EF 75%, #F0FDF4 100%);
-    background-color: #F2FAF5;
+    background-color: #F6FAF7;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(22, 163, 74, 0.10) 0px, transparent 45%),
+      radial-gradient(at 100% 0%, rgba(240, 109, 47, 0.10) 0px, transparent 45%),
+      radial-gradient(at 50% 50%, rgba(22, 163, 74, 0.04) 0px, transparent 60%),
+      radial-gradient(at 100% 100%, rgba(240, 109, 47, 0.08) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(22, 163, 74, 0.07) 0px, transparent 50%);
     background-attachment: fixed;
     min-height: 100vh;
   }
@@ -154,12 +159,70 @@
   .text-h3 { font-size: var(--text-h3); line-height: 1.3; }
   .text-body { font-size: var(--text-body); line-height: 1.6; }
   
+  /* Brand interactive animations & hover states */
+  .brand-card-hover {
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .brand-card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px -8px rgba(22, 163, 74, 0.18), 0 4px 16px -2px rgba(240, 109, 47, 0.12);
+  }
+
+  .brand-gradient-text {
+    background: linear-gradient(135deg, #16A34A 0%, #15803D 35%, #f06d2f 85%, #ea580c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .brand-accent-text {
+    background: linear-gradient(135deg, #f06d2f 0%, #ea580c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .brand-pill-cancer {
+    @apply bg-rose-50 text-rose-700 border border-rose-300 font-bold shadow-sm;
+  }
+  .brand-pill-heart {
+    @apply bg-red-50 text-red-700 border border-red-300 font-bold shadow-sm;
+  }
+  .brand-pill-diabetes {
+    @apply bg-amber-50 text-amber-800 border border-amber-300 font-bold shadow-sm;
+  }
+  .brand-pill-mental {
+    @apply bg-purple-50 text-purple-700 border border-purple-300 font-bold shadow-sm;
+  }
+  .brand-pill-womens {
+    @apply bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-300 font-bold shadow-sm;
+  }
+  .brand-pill-pediatrics {
+    @apply bg-sky-50 text-sky-700 border border-sky-300 font-bold shadow-sm;
+  }
+  .brand-pill-nutrition {
+    @apply bg-emerald-50 text-emerald-800 border border-emerald-300 font-bold shadow-sm;
+  }
+  .brand-pill-fitness {
+    @apply bg-orange-50 text-orange-700 border border-orange-300 font-bold shadow-sm;
+  }
+  .brand-pill-ayurveda {
+    @apply bg-lime-50 text-lime-800 border border-lime-300 font-bold shadow-sm;
+  }
+  .brand-pill-research {
+    @apply bg-indigo-50 text-indigo-700 border border-indigo-300 font-bold shadow-sm;
+  }
+
+  /* Shimmer effect for breaking badges */
+  .badge-shimmer {
+    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 2.2s infinite;
+  }
+
   .section-padding { padding-top: var(--section-py); padding-bottom: var(--section-py); }
 
-  /* Hide scrollbar for horizontal scrolling elements */
   .hide-scrollbar {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
   .hide-scrollbar::-webkit-scrollbar {
     display: none;

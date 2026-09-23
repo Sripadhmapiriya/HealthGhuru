@@ -43,17 +43,17 @@ import { PublicNotificationBell } from "@/components/notifications/PublicNotific
 import { formatTimeAgo } from "@/lib/utils";
 
 const PRIMARY_CATEGORIES = [
-  { label: "Home", href: "/", icon: Home },
-  { label: "Latest News", href: "/latest", icon: Newspaper },
-  { label: "Cancer", href: "/category/cancer", icon: Activity },
-  { label: "Heart", href: "/category/heart", icon: Heart },
-  { label: "Diabetes", href: "/category/diabetes", icon: Stethoscope },
-  { label: "Women's Health", href: "/category/womens-health", icon: Sparkles },
-  { label: "Pediatrics", href: "/category/pediatrics", icon: Baby },
-  { label: "Mental Health", href: "/category/mental-health", icon: Brain },
-  { label: "Fitness", href: "/category/fitness", icon: Flame },
-  { label: "Nutrition", href: "/category/nutrition", icon: Utensils },
-  { label: "Ayurveda", href: "/category/ayurveda", icon: Leaf },
+  { label: "Home", href: "/", icon: Home, color: "#16A34A", hoverBg: "hover:bg-emerald-50 hover:text-emerald-700" },
+  { label: "Latest News", href: "/latest", icon: Newspaper, color: "#2563EB", hoverBg: "hover:bg-blue-50 hover:text-blue-700" },
+  { label: "Cancer", href: "/category/cancer", icon: Activity, color: "#E11D48", hoverBg: "hover:bg-rose-50 hover:text-rose-700" },
+  { label: "Heart", href: "/category/heart", icon: Heart, color: "#EF4444", hoverBg: "hover:bg-red-50 hover:text-red-700" },
+  { label: "Diabetes", href: "/category/diabetes", icon: Stethoscope, color: "#D97706", hoverBg: "hover:bg-amber-50 hover:text-amber-800" },
+  { label: "Women's Health", href: "/category/womens-health", icon: Sparkles, color: "#9333EA", hoverBg: "hover:bg-purple-50 hover:text-purple-700" },
+  { label: "Pediatrics", href: "/category/pediatrics", icon: Baby, color: "#0284C7", hoverBg: "hover:bg-sky-50 hover:text-sky-700" },
+  { label: "Mental Health", href: "/category/mental-health", icon: Brain, color: "#7C3AED", hoverBg: "hover:bg-violet-50 hover:text-violet-700" },
+  { label: "Fitness", href: "/category/fitness", icon: Flame, color: "#EA580C", hoverBg: "hover:bg-orange-50 hover:text-orange-700" },
+  { label: "Nutrition", href: "/category/nutrition", icon: Utensils, color: "#059669", hoverBg: "hover:bg-emerald-50 hover:text-emerald-700" },
+  { label: "Ayurveda", href: "/category/ayurveda", icon: Leaf, color: "#65A30D", hoverBg: "hover:bg-lime-50 hover:text-lime-800" },
 ];
 
 export default function Navbar() {
@@ -167,7 +167,10 @@ export default function Navbar() {
   };
 
   return (
-    <header className="w-full bg-white text-slate-900 shadow-sm sticky top-0 z-40">
+    <header className="w-full bg-white text-slate-900 shadow-xs sticky top-0 z-40">
+      {/* Animated Brand Dual-Gradient Accent Stripe (Emerald to Coral) */}
+      <div className="w-full h-1 bg-gradient-to-r from-[#16A34A] via-[#22C55E] to-[#f06d2f] bg-[length:200%_100%] animate-gradient-x" />
+
       {/* 1. Main Portal Header Row */}
       <div className="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex items-center justify-between gap-4">
@@ -176,7 +179,7 @@ export default function Navbar() {
             {/* Hamburger Button */}
             <button
               onClick={() => setMobileDrawerOpen(!mobileDrawerOpen)}
-              className="p-2 -ml-1 text-slate-800 hover:text-[#16A34A] hover:bg-slate-100 rounded-xl transition-colors focus:outline-none"
+              className="p-2 -ml-1 text-slate-800 hover:text-[#16A34A] hover:bg-emerald-50 rounded-xl transition-all hover:scale-105 active:scale-95 focus:outline-none"
               aria-label="Toggle Navigation Menu"
             >
               <Menu size={26} />
@@ -185,7 +188,7 @@ export default function Navbar() {
             {/* HealthGhuru Logo + Tagline */}
             <Link href="/" className="flex flex-col group">
               <div className="flex items-center gap-2.5">
-                <div className="relative w-11 h-11 sm:w-14 sm:h-14 shrink-0">
+                <div className="relative w-11 h-11 sm:w-14 sm:h-14 shrink-0 transition-transform group-hover:scale-105 duration-300">
                   <Image
                     src="/images/logo_transparent.png"
                     alt="HealthGhuru Logo"
@@ -213,7 +216,7 @@ export default function Navbar() {
             {/* Search Trigger */}
             <button
               onClick={() => setSearchOpen(!searchOpen)}
-              className="p-2 text-slate-700 hover:text-[#f06d2f] hover:bg-slate-100 rounded-full transition-colors"
+              className="p-2 text-slate-700 hover:text-[#f06d2f] hover:bg-orange-50/80 rounded-full transition-all hover:scale-105 active:scale-95"
               aria-label="Search Health News"
             >
               <Search size={20} />
@@ -313,9 +316,9 @@ export default function Navbar() {
                     'Sign in or register your medical organization to launch, book, and manage ad campaigns on HealthGhuru.',
                 });
               }}
-              className="bg-[#f06d2f] hover:bg-[#e05a1b] text-white text-xs sm:text-sm font-heading font-bold px-3.5 sm:px-4 py-2 rounded-lg shadow-xs hover:shadow transition-all inline-flex items-center gap-1.5 cursor-pointer"
+              className="bg-gradient-to-r from-[#f06d2f] to-[#ea580c] hover:from-[#e05a1b] hover:to-[#c2410c] text-white text-xs sm:text-sm font-heading font-bold px-3.5 sm:px-4 py-2 rounded-lg shadow-sm hover:shadow-md hover:scale-[1.03] active:scale-[0.97] transition-all inline-flex items-center gap-1.5 cursor-pointer"
             >
-              <Megaphone size={14} className="hidden sm:inline" />
+              <Megaphone size={14} className="hidden sm:inline text-orange-200" />
               <span>Advertise With Us</span>
             </button>
 
@@ -323,15 +326,15 @@ export default function Navbar() {
             {isSubscribed ? (
               <Link
                 href="/account"
-                className="bg-emerald-800 hover:bg-emerald-900 text-emerald-100 text-xs sm:text-sm font-heading font-bold px-3.5 sm:px-4 py-2 rounded-lg shadow-xs hover:shadow transition-all hidden sm:inline-flex items-center gap-1.5"
+                className="bg-gradient-to-r from-emerald-800 to-teal-900 hover:from-emerald-900 hover:to-teal-950 text-emerald-100 text-xs sm:text-sm font-heading font-bold px-3.5 sm:px-4 py-2 rounded-lg shadow-sm hover:shadow-md hover:scale-[1.03] active:scale-[0.97] transition-all hidden sm:inline-flex items-center gap-1.5"
               >
-                <Sparkles size={13} className="text-amber-300" />
+                <Sparkles size={13} className="text-amber-300 animate-spin" style={{ animationDuration: '6s' }} />
                 <span>VIP Member</span>
               </Link>
             ) : (
               <Link
                 href="/subscribe"
-                className="bg-[#16A34A] hover:bg-[#15803D] text-white text-xs sm:text-sm font-heading font-bold px-3.5 sm:px-4 py-2 rounded-lg shadow-xs hover:shadow transition-all hidden sm:inline-flex items-center"
+                className="bg-gradient-to-r from-[#16A34A] to-[#15803D] hover:from-[#15803D] hover:to-[#0D5C3A] text-white text-xs sm:text-sm font-heading font-bold px-3.5 sm:px-4 py-2 rounded-lg shadow-sm hover:shadow-md hover:scale-[1.03] active:scale-[0.97] transition-all hidden sm:inline-flex items-center"
               >
                 Subscribe
               </Link>
@@ -544,12 +547,12 @@ export default function Navbar() {
         )}
       </div>
 
-      {/* 2. Main Category Navigation (Clean White Theme with Equal Spacing & Crisp Icons) */}
-      <nav className="w-full bg-white text-slate-800 border-t border-b border-gray-200/90 relative shadow-2xs">
+      {/* 2. Main Category Navigation (Vibrant Logo Theme with Color-Coded Category Icons) */}
+      <nav className="w-full bg-white/95 backdrop-blur-md text-slate-800 border-t border-b-2 border-emerald-500/20 relative shadow-xs">
         <div className="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-2 sm:px-4 lg:px-6">
-          <div className="flex items-center w-full">
-            {/* Category Links List with Icons & Equal Spacing */}
-            <div className="flex items-center justify-between w-full overflow-x-auto scrollbar-none text-xs sm:text-sm lg:text-[14.5px] font-heading font-bold tracking-wide">
+          <div className="flex items-center w-full py-2">
+            {/* Category Links List with Color-Coded Icons & Vibrant Active Pill */}
+            <div className="flex items-center justify-between w-full overflow-x-auto scrollbar-none gap-1 sm:gap-1.5 text-xs sm:text-sm lg:text-[14px] font-heading font-bold tracking-tight">
               {PRIMARY_CATEGORIES.map((cat) => {
                 const IconComponent = cat.icon;
                 const currentPath = pathname || "";
@@ -562,13 +565,19 @@ export default function Navbar() {
                   <Link
                     key={cat.label}
                     href={cat.href}
-                    className={`flex-1 min-w-fit whitespace-nowrap px-2.5 sm:px-3 lg:px-4 py-4 sm:py-5 flex items-center justify-center gap-1.5 transition-all duration-150 relative text-center group ${
+                    className={`min-w-fit whitespace-nowrap px-3 sm:px-3.5 lg:px-4 py-2 sm:py-2.5 rounded-xl flex items-center justify-center gap-1.5 transition-all duration-200 text-center group ${
                       isActive
-                        ? "text-[#16A34A] bg-emerald-50/90 font-black after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[3.5px] after:bg-[#16A34A] shadow-2xs"
-                        : "text-slate-700 hover:text-[#16A34A] hover:bg-emerald-50/50"
+                        ? "bg-gradient-to-r from-[#16A34A] via-[#15803D] to-[#0D5C3A] text-white font-black shadow-md shadow-emerald-700/25 scale-[1.02]"
+                        : `text-slate-700 ${cat.hoverBg} hover:scale-[1.03]`
                     }`}
                   >
-                    <IconComponent size={16} className={`shrink-0 transition-colors ${isActive ? "text-[#16A34A]" : "text-slate-500 group-hover:text-[#16A34A]"}`} />
+                    <IconComponent
+                      size={15}
+                      className={`shrink-0 transition-transform group-hover:scale-110 ${
+                        isActive ? "text-white" : ""
+                      }`}
+                      style={!isActive ? { color: cat.color } : undefined}
+                    />
                     <span>{cat.label}</span>
                   </Link>
                 );
@@ -577,10 +586,10 @@ export default function Navbar() {
               {/* "MORE ▼" Mega Menu Trigger */}
               <button
                 onClick={() => setMegaMenuOpen(!megaMenuOpen)}
-                className={`flex-1 min-w-fit whitespace-nowrap px-2.5 sm:px-3 lg:px-4 py-4 sm:py-5 flex items-center justify-center gap-1.5 transition-all font-heading font-bold text-xs sm:text-sm lg:text-[14.5px] uppercase tracking-wider relative text-center group ${
+                className={`min-w-fit whitespace-nowrap px-3 sm:px-3.5 lg:px-4 py-2 sm:py-2.5 rounded-xl flex items-center justify-center gap-1.5 transition-all font-heading font-extrabold text-xs sm:text-sm lg:text-[14px] uppercase tracking-wider text-center group cursor-pointer ${
                   megaMenuOpen
-                    ? "text-[#16A34A] bg-emerald-50/90 font-black after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[3.5px] after:bg-[#16A34A]"
-                    : "text-slate-700 hover:text-[#16A34A] hover:bg-emerald-50/50"
+                    ? "bg-gradient-to-r from-[#ea580c] to-[#f06d2f] text-white shadow-md shadow-orange-600/25 scale-[1.02]"
+                    : "text-[#f06d2f] hover:bg-orange-50 hover:text-[#ea580c] hover:scale-[1.03]"
                 }`}
                 aria-expanded={megaMenuOpen}
               >
@@ -588,7 +597,7 @@ export default function Navbar() {
                 <ChevronDown
                   size={15}
                   className={`transition-transform duration-200 ${
-                    megaMenuOpen ? "rotate-180 text-[#16A34A]" : "text-slate-500 group-hover:text-[#16A34A]"
+                    megaMenuOpen ? "rotate-180 text-white" : "text-[#f06d2f] group-hover:translate-y-0.5"
                   }`}
                 />
               </button>

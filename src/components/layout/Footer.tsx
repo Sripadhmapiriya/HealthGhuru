@@ -24,8 +24,8 @@ export default function Footer() {
 
   return (
     <footer className="bg-[#CBF2DB] text-slate-800 pt-12 pb-6 border-t border-emerald-300/70 relative">
-      {/* 2px Signature Brand Green Top Accent Line */}
-      <div className="absolute top-0 left-0 right-0 h-0.5 bg-[#16A34A]" />
+      {/* Signature Brand Dual-Gradient Accent Line (Emerald to Coral) */}
+      <div className="absolute top-0 left-0 right-0 h-[3.5px] bg-gradient-to-r from-[#16A34A] via-[#22C55E] to-[#f06d2f] bg-[length:200%_100%] animate-gradient-x" />
 
       <div className="max-w-7xl xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
 
