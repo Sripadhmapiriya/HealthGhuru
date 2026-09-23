@@ -12,7 +12,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
   useEffect(() => {
     const dashboardRoutes = [
       '/vault', '/records', '/goals', 
-      '/library', '/profile', '/admin'
+      '/library', '/profile', '/admin', '/print'
     ];
     
     // Disable smooth scroll on dashboard routes since they have their own inner scroll containers

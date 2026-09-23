@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { sql } from '@/lib/db';
 import { getSession } from '@/lib/auth/session';
+import { sendCampaignStatusUpdateEmail } from '@/lib/email/mailer';
 
 // GET — single campaign
 export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
@@ -152,6 +153,13 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       revalidatePath('/admin/campaigns');
     } catch {
       // ignore
+    }
+
+    // Trigger status update email (Publish, Reject, Pending) in background
+    if (status && campaign.contact_email) {
+      sendCampaignStatusUpdateEmail(campaign, status, admin_notes).catch((mailErr) => {
+        console.error('Error triggering campaign status update email:', mailErr);
+      });
     }
 
     return NextResponse.json({ success: true, campaign: rows[0] });

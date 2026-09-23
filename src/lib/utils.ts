@@ -35,6 +35,28 @@ export function formatMonthYear(dateInput: string | Date | undefined | null): st
   return `${MONTHS_FULL[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 }
 
+/**
+ * Formats a timestamp into an intuitive, real-time relative string:
+ * - < 60 seconds: "Just now"
+ * - < 60 minutes: "Xm ago"
+ * - < 24 hours: "Xh ago"
+ * - < 7 days: "Xd ago"
+ * - Otherwise: formatted date
+ */
+export function formatTimeAgo(dateInput: string | Date | undefined | null): string {
+  if (!dateInput) return 'Just now';
+  const d = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
+  const time = d.getTime();
+  if (isNaN(time)) return 'Just now';
+
+  const diffSec = Math.floor((Date.now() - time) / 1000);
+  if (diffSec < 60) return 'Just now';
+  if (diffSec < 3600) return `${Math.floor(diffSec / 60)}m ago`;
+  if (diffSec < 86400) return `${Math.floor(diffSec / 3600)}h ago`;
+  if (diffSec < 604800) return `${Math.floor(diffSec / 86400)}d ago`;
+  return formatDate(dateInput);
+}
+
 const CATEGORY_FALLBACK_IMAGES: Record<string, string> = {
   cancer: '/images/nutrition_pillar.png',
   heart: '/images/fitness_pillar.png',

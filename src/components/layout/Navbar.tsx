@@ -29,10 +29,10 @@ import {
   Flame,
   Utensils,
   Leaf,
-  Moon,
   Megaphone,
   LogIn,
   CreditCard,
+  TrendingUp,
 } from "lucide-react";
 import { DateUtilityBar } from "./DateUtilityBar";
 import { MegaMenu } from "./MegaMenu";
@@ -40,6 +40,7 @@ import { NavbarHeaderAd } from "./NavbarHeaderAd";
 import { useAuthModal } from "@/context/AuthModalContext";
 import { useSubscription } from "@/lib/hooks/useSubscription";
 import { PublicNotificationBell } from "@/components/notifications/PublicNotificationBell";
+import { formatTimeAgo } from "@/lib/utils";
 
 const PRIMARY_CATEGORIES = [
   { label: "Home", href: "/", icon: Home },
@@ -64,8 +65,53 @@ export default function Navbar() {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [liveSearchResults, setLiveSearchResults] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
   const pathname = usePathname();
   const userMenuRef = useRef<HTMLDivElement>(null);
+
+  // Debounced live search
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setLiveSearchResults([]);
+      setIsSearching(false);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      try {
+        setIsSearching(true);
+        const res = await fetch(`/api/search?q=${encodeURIComponent(searchQuery.trim())}&limit=5`);
+        const data = await res.json();
+        if (data.success && Array.isArray(data.items)) {
+          setLiveSearchResults(data.items);
+        }
+      } catch (err) {
+        console.error('Search fetch error:', err);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 250);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Handle ESC key and lock body scroll when search modal is open
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && searchOpen) {
+        setSearchOpen(false);
+      }
+    };
+    if (searchOpen) {
+      document.body.style.overflow = "hidden";
+      window.addEventListener('keydown', handleKeyDown);
+    } else if (!mobileDrawerOpen) {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [searchOpen, mobileDrawerOpen]);
 
   // Close menus on route change
   useEffect(() => {
@@ -175,15 +221,6 @@ export default function Navbar() {
 
             {/* Health Alerts & Notifications Bell */}
             <PublicNotificationBell />
-
-            {/* Dark Mode Indicator Icon */}
-            <button
-              className="p-2 text-slate-700 hover:text-[#f06d2f] hover:bg-slate-100 rounded-full transition-colors hidden sm:block"
-              aria-label="Toggle Theme"
-              title="Theme Toggle"
-            >
-              <Moon size={18} />
-            </button>
 
             {/* User Profile Avatar / Dropdown */}
             {status === "loading" ? (
@@ -314,33 +351,196 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Quick Search Bar Dropdown (when toggled) */}
+        {/* Modern Trending Search Modal Overlay */}
         {searchOpen && (
-          <form
-            onSubmit={handleSearchSubmit}
-            className="mt-3 pt-3 border-t border-gray-100 flex items-center gap-2 animate-in fade-in duration-150"
+          <div
+            className="fixed inset-0 z-50 flex items-start justify-center pt-12 sm:pt-20 px-4 bg-slate-950/75 backdrop-blur-md animate-in fade-in duration-200"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setSearchOpen(false);
+            }}
           >
-            <div className="relative flex-1">
-              <Search
-                size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-              />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search health news, clinical research, doctors, hospitals, treatments..."
-                className="w-full pl-9 pr-4 py-2.5 text-xs sm:text-sm rounded-xl border border-emerald-500/30 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none"
-                autoFocus
-              />
+            <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-emerald-500/20 overflow-hidden flex flex-col max-h-[85vh] animate-in zoom-in-95 duration-200">
+              {/* Search Input Bar */}
+              <form onSubmit={handleSearchSubmit} className="p-4 sm:p-5 border-b border-gray-100 flex items-center gap-3">
+                <Search size={22} className="text-[#16A34A] shrink-0" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search symptoms, cardiology, cancer, drugs, ayurveda..."
+                  className="flex-1 text-base sm:text-lg text-slate-900 placeholder-slate-400 outline-none bg-transparent font-medium"
+                  autoFocus
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="p-1 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 cursor-pointer"
+                    title="Clear query"
+                  >
+                    <X size={16} />
+                  </button>
+                )}
+                <button
+                  type="submit"
+                  className="bg-[#16A34A] hover:bg-[#15803D] text-white text-xs sm:text-sm font-bold px-4 py-2 rounded-xl transition-all shadow-xs shrink-0 cursor-pointer"
+                >
+                  Search
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSearchOpen(false)}
+                  className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors ml-1 cursor-pointer"
+                  title="Close (Esc)"
+                >
+                  <X size={20} />
+                </button>
+              </form>
+
+              {/* Modal Body: Live Results OR Trending Topics */}
+              <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+                {searchQuery.trim().length > 0 ? (
+                  /* Live Results */
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-gray-100 pb-2">
+                      <span>Matching Health Reports</span>
+                      {isSearching && <span className="text-[#16A34A] animate-pulse">Searching clinical archive...</span>}
+                    </div>
+
+                    {isSearching && liveSearchResults.length === 0 ? (
+                      <div className="py-8 text-center text-slate-400 text-sm animate-pulse">
+                        Searching medical database...
+                      </div>
+                    ) : liveSearchResults.length > 0 ? (
+                      <div className="divide-y divide-gray-100">
+                        {liveSearchResults.map((item) => (
+                          <Link
+                            key={item.id}
+                            href={item.canonical_url || `/article/${item.slug}`}
+                            onClick={() => setSearchOpen(false)}
+                            className="py-3 flex items-start gap-3 group hover:bg-emerald-50/50 rounded-xl px-2.5 transition-colors"
+                          >
+                            {item.image_url ? (
+                              <img
+                                src={item.image_url}
+                                alt={item.title}
+                                className="w-16 h-16 rounded-xl object-cover shrink-0 border border-slate-200"
+                              />
+                            ) : (
+                              <div className="w-16 h-16 rounded-xl bg-emerald-100/60 text-[#16A34A] flex items-center justify-center font-bold text-xs shrink-0">
+                                HG
+                              </div>
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
+                                  {item.category || 'Clinical'}
+                                </span>
+                                <span className="text-[11px] text-slate-400">
+                                  {formatTimeAgo(item.published_at)}
+                                </span>
+                              </div>
+                              <h4 className="text-sm font-bold text-slate-900 group-hover:text-[#16A34A] transition-colors line-clamp-1">
+                                {item.title}
+                              </h4>
+                              <p className="text-xs text-slate-500 line-clamp-1 mt-0.5">
+                                {item.excerpt || item.description}
+                              </p>
+                            </div>
+                          </Link>
+                        ))}
+                        <div className="pt-3 text-center">
+                          <button
+                            type="button"
+                            onClick={handleSearchSubmit}
+                            className="text-xs font-bold text-[#16A34A] hover:text-[#15803D] inline-flex items-center gap-1.5 hover:underline cursor-pointer"
+                          >
+                            <span>View all results for &ldquo;{searchQuery}&rdquo;</span>
+                            <ArrowRight size={13} />
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="py-8 text-center text-slate-500 text-sm">
+                        No articles found matching &ldquo;{searchQuery}&rdquo;. Try the trending topics below:
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  /* Empty state: Trending Searches & Categories */
+                  <div className="space-y-6">
+                    {/* Trending Searches */}
+                    <div>
+                      <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-900 mb-3">
+                        <Flame size={15} className="text-[#f06d2f] fill-[#f06d2f]" />
+                        <span>Trending Health Topics</span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {[
+                          { title: 'Cardiology Breakthroughs', cat: 'Heart' },
+                          { title: 'Gut Microbiome & Probiotics', cat: 'Nutrition' },
+                          { title: 'GLP-1 Weight Management', cat: 'Diabetes' },
+                          { title: 'Pediatric Immunity & Fevers', cat: 'Pediatrics' },
+                          { title: 'Mental Wellness & Sleep Vagus', cat: 'Mental Health' },
+                          { title: 'Ayurvedic Superfoods & Triphala', cat: 'Ayurveda' },
+                        ].map((trend, i) => (
+                          <button
+                            key={i}
+                            type="button"
+                            onClick={() => {
+                              setSearchQuery(trend.title);
+                            }}
+                            className="flex items-center justify-between p-2.5 rounded-xl border border-gray-100 hover:border-emerald-300 hover:bg-emerald-50/50 text-left transition-all group cursor-pointer"
+                          >
+                            <span className="text-xs font-bold text-slate-800 group-hover:text-[#16A34A]">
+                              {trend.title}
+                            </span>
+                            <span className="text-[10px] font-semibold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
+                              {trend.cat}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Quick Category Chips */}
+                    <div>
+                      <div className="text-xs font-black uppercase tracking-wider text-slate-900 mb-2.5">
+                        Browse by Category
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {['Cancer', 'Heart', 'Diabetes', "Women's Health", 'Pediatrics', 'Mental Health', 'Nutrition', 'Ayurveda'].map((cat) => (
+                          <button
+                            key={cat}
+                            type="button"
+                            onClick={() => {
+                              window.location.href = `/category/${cat.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+                            }}
+                            className="px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-100 hover:bg-[#16A34A] hover:text-white text-slate-700 transition-all cursor-pointer"
+                          >
+                            {cat}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Modal Footer */}
+              <div className="px-5 py-3 bg-slate-50 border-t border-gray-100 flex items-center justify-between text-[11px] text-slate-400">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <span>Verified Medical Search &bull; 100% Peer-Reviewed Sources</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span>Press <kbd className="font-mono bg-white px-1.5 py-0.5 rounded border border-gray-200 text-slate-600">Enter</kbd> to search</span>
+                  <span>&bull;</span>
+                  <span><kbd className="font-mono bg-white px-1.5 py-0.5 rounded border border-gray-200 text-slate-600">Esc</kbd> to close</span>
+                </div>
+              </div>
             </div>
-            <button
-              type="submit"
-              className="bg-[#16A34A] text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-xl hover:bg-[#15803D] transition-colors"
-            >
-              Search
-            </button>
-          </form>
+          </div>
         )}
       </div>
 

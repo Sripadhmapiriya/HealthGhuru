@@ -4,6 +4,7 @@ import { requireAdmin } from '@/lib/auth/session';
 import { canOverridePlan } from '@/lib/admin/permissions';
 import { sql } from '@/lib/db';
 import { writeAuditLog } from './auditLog';
+import { sendSubscriptionStatusUpdateEmail } from '@/lib/email/mailer';
 import { z } from 'zod';
 
 const planOverrideSchema = z.object({
@@ -59,6 +60,19 @@ export async function overrideUserPlan(input: z.infer<typeof planOverrideSchema>
     beforeValue: beforePlan,
     afterValue: { ...afterPlan, reason: validated.reason },
   });
+
+  // Send status update notification to the user in background
+  try {
+    const userRows = await sql`SELECT email, name FROM users WHERE id = ${validated.targetUserId}::uuid`;
+    if (userRows.length && userRows[0].email) {
+      sendSubscriptionStatusUpdateEmail(
+        { email: userRows[0].email, name: userRows[0].name, planName: validated.tier.toUpperCase() },
+        validated.tier === 'free' ? 'expired' : 'active'
+      ).catch((err) => console.error('Error sending override email:', err));
+    }
+  } catch (mailErr) {
+    console.warn('Mail override warning:', mailErr);
+  }
 
   return { success: true };
 }

@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth/auth.config';
 import { sql } from '@/lib/db';
 
 import { DEFAULT_SUBSCRIPTION_PLANS } from '@/lib/types/subscription-plan';
+import { sendSubscriptionEmails } from '@/lib/email/mailer';
 
 export const dynamic = 'force-dynamic';
 
@@ -118,6 +119,44 @@ export async function POST(req: NextRequest) {
         data_export_enabled = ${isSubscribed};
     `;
 
+    // Record subscription history / payment details if applicable
+    const { paymentMethod = 'free', utrNumber = '' } = body;
+    try {
+      await sql`
+        CREATE TABLE IF NOT EXISTS user_subscriptions (
+          id SERIAL PRIMARY KEY,
+          user_id UUID NOT NULL,
+          plan_id VARCHAR(50) NOT NULL,
+          status VARCHAR(50) DEFAULT 'active',
+          payment_id VARCHAR(255),
+          payment_method VARCHAR(50) DEFAULT 'free',
+          starts_at TIMESTAMP DEFAULT NOW(),
+          expires_at TIMESTAMP,
+          created_at TIMESTAMP DEFAULT NOW(),
+          updated_at TIMESTAMP DEFAULT NOW()
+        )
+      `;
+
+      const durationDays = billingCycle === 'annual' ? 365 : 30;
+      await sql`
+        INSERT INTO user_subscriptions (
+          user_id, plan_id, status, payment_id, payment_method, starts_at, expires_at, created_at, updated_at
+        ) VALUES (
+          ${session.user.id}::uuid,
+          ${targetTier},
+          'active',
+          ${utrNumber || 'manual_' + Date.now()},
+          ${paymentMethod},
+          NOW(),
+          NOW() + (${durationDays} || ' days')::interval,
+          NOW(),
+          NOW()
+        )
+      `;
+    } catch (subLogErr) {
+      console.warn('Could not record user_subscriptions entry:', subLogErr);
+    }
+
     // Optionally update name in users table if provided
     if (name && typeof name === 'string' && name.trim()) {
       try {
@@ -129,6 +168,19 @@ export async function POST(req: NextRequest) {
       } catch (nameErr) {
         console.warn('Could not update user name:', nameErr);
       }
+    }
+
+    // Trigger welcome/confirmation email in background
+    if (session.user.email && isSubscribed) {
+      sendSubscriptionEmails({
+        email: session.user.email,
+        name: (name || session.user.name || undefined) as string | undefined,
+        planId: targetTier,
+        planName: targetTier.toUpperCase(),
+        billingCycle,
+        amount: body.amount || (billingCycle === 'annual' ? 999 : 99),
+        paymentId: utrNumber || undefined,
+      }).catch((err) => console.error('Error sending subscription email:', err));
     }
 
     return NextResponse.json({

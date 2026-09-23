@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { getSession } from '@/lib/auth/session';
+import { sendCampaignStatusUpdateEmail } from '@/lib/email/mailer';
 
 export const dynamic = 'force-dynamic';
 
@@ -164,6 +165,38 @@ export async function PUT(
       }
     } catch {
       // Non-blocking
+    }
+
+    // Trigger status update email in background
+    try {
+      let contactEmail = '';
+      if (updatedAd.advertiser_contact && updatedAd.advertiser_contact.includes('@')) {
+        const match = updatedAd.advertiser_contact.match(/[\w.-]+@[\w.-]+\.\w+/);
+        if (match) contactEmail = match[0];
+      }
+      if (!contactEmail && updatedAd.title) {
+        const crRows = await sql`
+          SELECT contact_email FROM campaign_requests WHERE campaign_title = ${updatedAd.title} LIMIT 1
+        `;
+        if (crRows.length > 0 && crRows[0].contact_email) {
+          contactEmail = crRows[0].contact_email;
+        }
+      }
+      if (contactEmail) {
+        sendCampaignStatusUpdateEmail(
+          {
+            campaign_title: updatedAd.title,
+            contact_email: contactEmail,
+            placement: updatedAd.placement,
+            start_date: updatedAd.start_date,
+            end_date: updatedAd.end_date,
+          },
+          status || (updatedAd.is_active ? 'active' : 'unpublished'),
+          body.admin_notes || body.notes || undefined
+        ).catch((err) => console.error('Error triggering ad status email:', err));
+      }
+    } catch (e) {
+      console.warn('Ad status email warning:', e);
     }
 
     return NextResponse.json({ success: true, advertisement: updatedAd });

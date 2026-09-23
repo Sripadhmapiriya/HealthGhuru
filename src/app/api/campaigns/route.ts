@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { createAdminNotification } from '@/lib/notifications-server';
+import { sendCampaignEmails } from '@/lib/email/mailer';
 
 // GET — return all campaigns (in a real app filtered by session user; here returning all for demo)
 export async function GET() {
@@ -117,6 +118,11 @@ export async function POST(req: NextRequest) {
     } catch (adSyncError) {
       console.error('Warning: could not sync campaign to advertisements table:', adSyncError);
     }
+
+    // Send campaign notification emails in background (non-blocking)
+    sendCampaignEmails(body).catch((err) => {
+      console.error('Error triggering campaign emails:', err);
+    });
 
     return NextResponse.json({ success: true, campaign: requestRows[0] }, { status: 201 });
   } catch (err: unknown) {

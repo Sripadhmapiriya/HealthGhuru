@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { BookOpen, ExternalLink, Calendar } from 'lucide-react';
 import { formatMonthYear, getSafeImageUrl } from '@/lib/utils';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Health Magazines & Periodicals | HealthGhuru — Medical Digests & Publications',
@@ -87,17 +87,38 @@ export default async function MagazinesPage() {
                     </p>
                   </div>
 
-                  <div className="pt-4 border-t border-border/40 flex items-center justify-between">
-                    <span className="text-xs text-text-muted">By {mag.author_name || mag.source_name}</span>
-                    <a
-                      href={mag.canonical_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-primary hover:bg-primary-dark text-white text-xs font-semibold shadow-sm transition-colors"
-                    >
-                      <BookOpen size={13} /> View Issue <ExternalLink size={11} />
-                    </a>
-                  </div>
+                  {(() => {
+                    const isInternal = !mag.canonical_url || !mag.canonical_url.startsWith('http');
+                    const targetHref = isInternal ? `/magazines/${mag.slug}` : mag.canonical_url;
+                    const publishDate = new Date(mag.published_at);
+                    const year = mag.raw_metadata?.year || publishDate.getUTCFullYear();
+                    const month = mag.raw_metadata?.month || (publishDate.getUTCMonth() + 1);
+                    const pdfUrl = `/magazines/print?year=${year}&month=${month}&autoPrint=true`;
+
+                    return (
+                      <div className="pt-4 border-t border-border/40 flex flex-wrap items-center justify-between gap-2">
+                        <a
+                          href={pdfUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-[11px] font-bold text-orange-600 hover:text-orange-700 transition-colors"
+                          title="Download printable A4 magazine PDF"
+                        >
+                          <BookOpen size={12} /> PDF Download
+                        </a>
+
+                        <a
+                          href={targetHref}
+                          target={isInternal ? undefined : '_blank'}
+                          rel={isInternal ? undefined : 'noopener noreferrer'}
+                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-primary hover:bg-primary-dark text-white text-xs font-semibold shadow-xs transition-colors"
+                        >
+                          <span>Read Issue</span>
+                          <ExternalLink size={11} />
+                        </a>
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
             ))}

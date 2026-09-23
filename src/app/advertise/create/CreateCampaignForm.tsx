@@ -99,9 +99,25 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
   const [submittedId, setSubmittedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copiedUpi, setCopiedUpi] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'upi' | 'wallet'>('upi');
+  const [paymentMethod, setPaymentMethod] = useState<'upi' | 'razorpay' | 'wallet'>('upi');
   const [selectedUpiApp, setSelectedUpiApp] = useState('GPay');
+  const [utrReference, setUtrReference] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
+
+  // Dynamic Payment Settings from Admin
+  const [paymentSettings, setPaymentSettings] = useState<{
+    razorpay_enabled: boolean;
+    upi_qr_enabled: boolean;
+    business_upi_id: string;
+    razorpay_key_id: string;
+    gst_rate: number;
+  }>({
+    razorpay_enabled: false,
+    upi_qr_enabled: true,
+    business_upi_id: 'manishmadhava91@okicici',
+    razorpay_key_id: '',
+    gst_rate: 18,
+  });
 
   const [form, setForm] = useState<FormData>({
     duration_plan: 'weekly',
@@ -116,6 +132,21 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
     start_date: todayStr(),
     banner_image_url: '',
   });
+
+  // Fetch payment settings from Admin API
+  useEffect(() => {
+    fetch('/api/payment-settings')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.settings) {
+          setPaymentSettings(data.settings);
+          if (data.settings.razorpay_enabled && !data.settings.upi_qr_enabled) {
+            setPaymentMethod('razorpay');
+          }
+        }
+      })
+      .catch((err) => console.error('Error fetching payment settings:', err));
+  }, []);
 
   // Automatically pre-fill contact info if user is authenticated
   useEffect(() => {
@@ -135,11 +166,20 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
       ? selectedSlot.price_per_week
       : selectedSlot.price_per_month
     : 0;
-  const gstAmount = Math.round(basePrice * 0.18 * 100) / 100;
+  const effectiveGstRate = typeof paymentSettings.gst_rate === 'number' ? paymentSettings.gst_rate : 18;
+  const gstAmount = Math.round(basePrice * (effectiveGstRate / 100) * 100) / 100;
   const totalAmount = basePrice + gstAmount;
+  const activeUpiId = paymentSettings.business_upi_id || 'manishmadhava91@okicici';
   const endDate = form.start_date
     ? addDays(form.start_date, form.duration_plan === 'weekly' ? 7 : 30)
     : '';
+
+  const upiDeepLink = `upi://pay?pa=${activeUpiId}&pn=HealthGhuru&am=${totalAmount}&cu=INR&tn=${encodeURIComponent(
+    `HealthGhuru-Ad-${form.campaign_title || 'Campaign'}`
+  )}`;
+  const qrCodeImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(
+    upiDeepLink
+  )}`;
 
   // ── File upload ────────────────────────────────────────────────────────
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -165,9 +205,115 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
   };
 
   const copyUpiId = () => {
-    navigator.clipboard.writeText('healthghuru@upi');
+    navigator.clipboard.writeText(activeUpiId);
     setCopiedUpi(true);
     setTimeout(() => setCopiedUpi(false), 2000);
+  };
+
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      if (typeof window !== 'undefined' && (window as any).Razorpay) return resolve(true);
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const executeCampaignSubmission = async (method: string, refId?: string) => {
+    setSubmitting(true);
+    setError(null);
+    try {
+      const payload = {
+        ...form,
+        end_date: endDate,
+        base_price: basePrice,
+        gst_amount: gstAmount,
+        total_amount: totalAmount,
+        payment_method: method,
+        utr_number: refId || utrReference.trim(),
+      };
+      const res = await fetch('/api/campaigns', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const json = await res.json();
+      if (json.success) {
+        setSubmittedId(json.campaign?.id ?? null);
+        setSubmitted(true);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        setError(json.error || 'Failed to submit campaign');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Submission error');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleRazorpayCampaignPay = async () => {
+    setSubmitting(true);
+    setError(null);
+    const loaded = await loadRazorpayScript();
+    if (!loaded) {
+      setError('Failed to load Razorpay checkout. Please pay with UPI QR Code.');
+      setSubmitting(false);
+      return;
+    }
+
+    try {
+      const orderRes = await fetch('/api/payments/razorpay/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: totalAmount,
+          receipt: `ad_${Date.now()}`,
+          notes: {
+            campaign_title: form.campaign_title,
+            advertiser: form.advertiser_name,
+          },
+        }),
+      });
+
+      const orderData = await orderRes.json();
+      if (!orderRes.ok || !orderData.success) {
+        throw new Error(orderData.error || 'Failed to create payment order');
+      }
+
+      const options = {
+        key: orderData.key_id,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: 'HealthGhuru Advertising',
+        description: `Ad Campaign: ${form.campaign_title}`,
+        image: '/images/logo_transparent.png',
+        order_id: orderData.order_id,
+        handler: async function (response: any) {
+          await executeCampaignSubmission('razorpay', response.razorpay_payment_id);
+        },
+        prefill: {
+          name: form.contact_name,
+          email: form.contact_email,
+          contact: form.contact_phone,
+        },
+        theme: {
+          color: '#16A34A',
+        },
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on('payment.failed', function (resp: any) {
+        setError(resp.error?.description || 'Payment was unsuccessful. Please try again.');
+        setSubmitting(false);
+      });
+      rzp.open();
+    } catch (err: any) {
+      setError(err.message || 'Error processing Razorpay payment.');
+      setSubmitting(false);
+    }
   };
 
   // ── Submit ─────────────────────────────────────────────────────────────
@@ -208,35 +354,21 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
       return;
     }
 
-    setSubmitting(true);
-    setError(null);
-    try {
-      const payload = {
-        ...form,
-        end_date: endDate,
-        base_price: basePrice,
-        gst_amount: gstAmount,
-        total_amount: totalAmount,
-        payment_method: paymentMethod,
-      };
-      const res = await fetch('/api/campaigns', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      const json = await res.json();
-      if (json.success) {
-        setSubmittedId(json.campaign?.id ?? null);
-        setSubmitted(true);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        setError(json.error || 'Failed to submit campaign');
-      }
-    } catch (err: any) {
-      setError(err.message || 'Submission error');
-    } finally {
-      setSubmitting(false);
+    if (paymentMethod === 'razorpay') {
+      await handleRazorpayCampaignPay();
+      return;
     }
+
+    if (paymentMethod === 'upi') {
+      if (!utrReference.trim() || utrReference.trim().length < 6) {
+        setError('Please enter the 12-digit UPI / UTR Transaction Reference Number from your payment receipt.');
+        return;
+      }
+      await executeCampaignSubmission('upi', utrReference);
+      return;
+    }
+
+    setError('Selected payment method is currently unavailable.');
   };
 
   // ── Success screen ─────────────────────────────────────────────────────
@@ -705,7 +837,7 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
               <span className="font-bold text-emerald-950 font-mono">{formatINR(basePrice)}</span>
             </div>
             <div className="flex justify-between items-center text-xs sm:text-sm border-b border-emerald-900/15 pb-2.5">
-              <span className="text-emerald-900/80 font-medium">GST (18%):</span>
+              <span className="text-emerald-900/80 font-medium">GST ({effectiveGstRate}%):</span>
               <span className="font-bold text-emerald-950 font-mono">{formatINR(gstAmount)}</span>
             </div>
             <div className="pt-2 flex justify-between items-center">
@@ -715,26 +847,52 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
           </div>
 
           {/* Payment Method Radio Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <button
-              type="button"
-              onClick={() => setPaymentMethod('upi')}
-              className={`flex items-start gap-3.5 p-4 rounded-xl border-2 text-left transition-all duration-200 cursor-pointer ${
-                paymentMethod === 'upi'
-                  ? 'border-[#16A34A] bg-emerald-50/70 shadow-xs'
-                  : 'border-gray-200 hover:border-gray-300 bg-white'
-              }`}
-            >
-              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center mt-0.5 shrink-0 ${
-                paymentMethod === 'upi' ? 'border-emerald-600 bg-emerald-600' : 'border-gray-300'
-              }`}>
-                {paymentMethod === 'upi' && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-              </div>
-              <div>
-                <span className="font-heading font-bold text-sm text-gray-900 block">Dynamic UPI QR Code Payment</span>
-                <span className="text-xs text-gray-500 mt-0.5 block">Scan QR code using GPay, PhonePe, Paytm or Navi</span>
-              </div>
-            </button>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {paymentSettings.upi_qr_enabled && (
+              <button
+                type="button"
+                onClick={() => setPaymentMethod('upi')}
+                className={`flex items-start gap-3.5 p-4 rounded-xl border-2 text-left transition-all duration-200 cursor-pointer ${
+                  paymentMethod === 'upi'
+                    ? 'border-[#16A34A] bg-emerald-50/70 shadow-xs'
+                    : 'border-gray-200 hover:border-gray-300 bg-white'
+                }`}
+              >
+                <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center mt-0.5 shrink-0 ${
+                  paymentMethod === 'upi' ? 'border-emerald-600 bg-emerald-600' : 'border-gray-300'
+                }`}>
+                  {paymentMethod === 'upi' && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                </div>
+                <div>
+                  <span className="font-heading font-bold text-sm text-gray-900 block">Dynamic UPI QR Code</span>
+                  <span className="text-xs text-gray-500 mt-0.5 block">Scan QR via GPay, PhonePe, Paytm or Navi</span>
+                </div>
+              </button>
+            )}
+
+            {paymentSettings.razorpay_enabled && (
+              <button
+                type="button"
+                onClick={() => setPaymentMethod('razorpay')}
+                className={`flex items-start gap-3.5 p-4 rounded-xl border-2 text-left transition-all duration-200 cursor-pointer ${
+                  paymentMethod === 'razorpay'
+                    ? 'border-[#f06d2f] bg-orange-50/70 shadow-xs'
+                    : 'border-gray-200 hover:border-gray-300 bg-white'
+                }`}
+              >
+                <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center mt-0.5 shrink-0 ${
+                  paymentMethod === 'razorpay' ? 'border-[#f06d2f] bg-[#f06d2f]' : 'border-gray-300'
+                }`}>
+                  {paymentMethod === 'razorpay' && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                </div>
+                <div>
+                  <span className="font-heading font-bold text-sm text-gray-900 block flex items-center justify-between">
+                    <span>Razorpay Gateway</span>
+                  </span>
+                  <span className="text-xs text-gray-500 mt-0.5 block">Cards, NetBanking, and Instant Checkout</span>
+                </div>
+              </button>
+            )}
 
             <button
               type="button"
@@ -760,11 +918,11 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
           </div>
 
           {/* UPI Apps & QR Code Card */}
-          {paymentMethod === 'upi' && (
+          {paymentMethod === 'upi' && paymentSettings.upi_qr_enabled && (
             <div className="border border-gray-200 rounded-2xl p-6 sm:p-8 bg-gray-50/50 space-y-6">
               <div className="flex items-center justify-between flex-wrap gap-4">
                 <h3 className="font-heading font-extrabold text-sm sm:text-base text-gray-900 flex items-center gap-2">
-                  <Smartphone size={17} className="text-emerald-600" /> Select Payment Method:
+                  <Smartphone size={17} className="text-emerald-600" /> Select Payment App:
                 </h3>
                 
                 {/* UPI App Tabs */}
@@ -774,7 +932,7 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
                       key={app}
                       type="button"
                       onClick={() => setSelectedUpiApp(app)}
-                      className={`px-3.5 py-1.5 rounded-lg text-xs font-heading font-bold transition-all ${
+                      className={`px-3.5 py-1.5 rounded-lg text-xs font-heading font-bold transition-all cursor-pointer ${
                         selectedUpiApp === app
                           ? 'bg-[#16A34A] text-white shadow-xs'
                           : 'bg-white border border-gray-200 text-gray-600 hover:border-gray-300'
@@ -789,10 +947,16 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
               {/* QR Code Container */}
               <div className="bg-white border-2 border-emerald-200/80 rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center text-center shadow-xs space-y-4">
                 <div className="p-3 bg-white border border-emerald-100 rounded-2xl shadow-sm">
-                  {/* High Quality Styled QR SVG */}
-                  <svg viewBox="0 0 100 100" className="w-36 h-36 text-gray-900" fill="currentColor">
-                    <path d="M0 0h30v30H0zm4 4v22h22V4zm4 4h14v14H8zM70 0h30v30H70zm4 4v22h22V4zm4 4h14v14H78zM0 70h30v30H0zm4 4v22h22V74zm4 4h14v14H8zM40 0h6v6h-6zm14 0h6v6h-6zm-7 10h8v4h-8zm15 0h6v6h-6zm-15 14h6v6h-6zm12 0h8v6h-8zm16 10h6v8h-6zm-20 6h6v6h-6zm10 0h6v6h-6zm-30 4h6v6h-6zm16 6h6v6h-6zm-8 8h6v6h-6zm20 0h6v6h-6zm10 0h6v6h-6zm-24 8h6v6h-6zm16 0h6v6h-6zm12 0h6v6h-6zm-34 8h6v6h-6zm18 0h6v6h-6zm8 0h6v6h-6zm-48-18h6v6h-6zm10 0h6v6h-6zm-10 10h6v6h-6zm10 0h6v6h-6z" />
-                  </svg>
+                  <img
+                    src={qrCodeImgUrl}
+                    alt="UPI Payment QR Code"
+                    width={200}
+                    height={200}
+                    className="w-48 h-48 object-contain"
+                    onError={(e) => {
+                      (e.target as HTMLElement).style.display = 'none';
+                    }}
+                  />
                 </div>
 
                 <div>
@@ -809,13 +973,47 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
                   onClick={copyUpiId}
                   className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-xs font-mono text-gray-700 transition-all cursor-pointer"
                 >
-                  <span>healthghuru@upi</span>
+                  <strong className="text-gray-900">{activeUpiId}</strong>
                   {copiedUpi ? <CheckCheck size={13} className="text-emerald-600" /> : <Copy size={13} className="text-gray-400" />}
                 </button>
 
-                <div className="text-xs text-emerald-900 bg-emerald-50/90 border border-emerald-200/90 rounded-xl px-4 py-3 max-w-md">
-                  ⏳ After scanning &amp; completing payment, click <strong>&quot;Submit Campaign&quot;</strong> below. Our admin team will verify your transaction and activate the campaign.
+                {/* 12-digit UTR input */}
+                <div className="w-full max-w-md text-left pt-2 space-y-1">
+                  <label className="text-xs font-semibold text-gray-800 block">
+                    Enter 12-digit UTR / UPI Transaction Reference No. <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={utrReference}
+                    onChange={(e) => setUtrReference(e.target.value)}
+                    placeholder="e.g. 421512345678"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-hidden focus:border-[#16A34A] focus:bg-white text-xs font-mono"
+                  />
+                  <span className="text-[11px] text-gray-500 block">
+                    Found in your payment receipt after completing UPI transfer.
+                  </span>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Razorpay Preview Card */}
+          {paymentMethod === 'razorpay' && paymentSettings.razorpay_enabled && (
+            <div className="border border-orange-200 bg-orange-50/40 rounded-2xl p-6 sm:p-8 space-y-4 text-center">
+              <div className="w-12 h-12 rounded-full bg-orange-100 text-[#f06d2f] flex items-center justify-center mx-auto">
+                <Sparkles size={24} />
+              </div>
+              <div>
+                <h3 className="font-heading font-bold text-base text-gray-900">
+                  Razorpay Secure Gateway
+                </h3>
+                <p className="text-xs text-gray-600 max-w-md mx-auto mt-1">
+                  Pay instantly using Credit Cards, Debit Cards, NetBanking, or Wallet via Razorpay standard modal checkout.
+                </p>
+              </div>
+              <div className="bg-white border border-orange-200 rounded-xl p-3 inline-block font-mono text-xs text-gray-700">
+                Total Payable: <strong className="text-gray-900">{formatINR(totalAmount)}</strong>
               </div>
             </div>
           )}
@@ -831,12 +1029,17 @@ export function CreateCampaignForm({ pricingSlots }: { pricingSlots: AdSlotPrici
           <button
             type="submit"
             disabled={submitting || paymentMethod === 'wallet'}
-            className="w-full sm:w-auto px-10 py-4 bg-[#16A34A] hover:bg-[#15803D] text-white rounded-xl font-heading font-extrabold text-base transition-all shadow-lg shadow-emerald-700/25 hover:shadow-xl hover:shadow-emerald-700/35 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-10 py-4 bg-[#16A34A] hover:bg-[#15803D] text-white rounded-xl font-heading font-extrabold text-base transition-all shadow-lg shadow-emerald-700/25 hover:shadow-xl hover:shadow-emerald-700/35 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 cursor-pointer"
           >
             {submitting ? (
               <>
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 <span>Processing Submission…</span>
+              </>
+            ) : paymentMethod === 'razorpay' ? (
+              <>
+                <Sparkles size={17} />
+                <span>Pay Now with Razorpay ({formatINR(totalAmount)})</span>
               </>
             ) : (
               <>

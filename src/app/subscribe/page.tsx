@@ -7,7 +7,21 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useAuthModal } from "@/context/AuthModalContext";
 import { motion } from "framer-motion";
-import { Check, Sparkles, Shield, Star, HelpCircle, ArrowRight, ArrowLeft, CheckCircle2, Lock } from "lucide-react";
+import {
+  Check,
+  Sparkles,
+  Shield,
+  Star,
+  HelpCircle,
+  ArrowRight,
+  ArrowLeft,
+  CheckCircle2,
+  Lock,
+  Copy,
+  CheckCheck,
+  CreditCard,
+  Smartphone,
+} from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { PillBadge } from "@/components/ui/PillBadge";
 import { SubscriptionPlan, DEFAULT_SUBSCRIPTION_PLANS } from "@/lib/types/subscription-plan";
@@ -22,8 +36,8 @@ const FAQS = [
     a: "Members get full digital and high-resolution PDF access to every issue of HealthGhuru Magazine, including back-issues.",
   },
   {
-    q: "Is payment integration active right now?",
-    a: "Currently, HealthGhuru is previewing membership tiers during our launch phase. You can select and activate your plan immediately with zero upfront payment charge.",
+    q: "What payment methods are supported?",
+    a: "We support instant Dynamic UPI QR Code payments (GPay, PhonePe, Paytm, BHIM, Navi) and secure Razorpay Credit/Debit cards & NetBanking checkout.",
   },
   {
     q: "Are the health articles verified by experts?",
@@ -42,6 +56,40 @@ export default function SubscribePage() {
   const [checkoutName, setCheckoutName] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [subError, setSubError] = useState<string | null>(null);
+
+  // Dynamic Payment Settings from Admin
+  const [paymentSettings, setPaymentSettings] = useState<{
+    razorpay_enabled: boolean;
+    upi_qr_enabled: boolean;
+    business_upi_id: string;
+    razorpay_key_id: string;
+    gst_rate: number;
+  }>({
+    razorpay_enabled: false,
+    upi_qr_enabled: true,
+    business_upi_id: 'manishmadhava91@okicici',
+    razorpay_key_id: '',
+    gst_rate: 18,
+  });
+  const [paymentMode, setPaymentMode] = useState<'upi' | 'razorpay'>('upi');
+  const [selectedUpiApp, setSelectedUpiApp] = useState('GPay');
+  const [utrReference, setUtrReference] = useState('');
+  const [copiedUpi, setCopiedUpi] = useState(false);
+
+  // Fetch dynamic payment settings
+  useEffect(() => {
+    fetch('/api/payment-settings')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success && data.settings) {
+          setPaymentSettings(data.settings);
+          if (data.settings.razorpay_enabled && !data.settings.upi_qr_enabled) {
+            setPaymentMode('razorpay');
+          }
+        }
+      })
+      .catch((err) => console.error('Error fetching payment settings:', err));
+  }, []);
 
   // Fetch dynamic plans from DB
   useEffect(() => {
@@ -88,22 +136,38 @@ export default function SubscribePage() {
     plans[0] ||
     DEFAULT_SUBSCRIPTION_PLANS[0];
 
-  const handleCompleteSubscription = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!checkoutEmail || !checkoutEmail.includes("@")) return;
+  const planBasePrice = activePlanObj.price || 0;
+  const isFreePlan = planBasePrice === 0;
+  const effectiveGstRate = typeof paymentSettings.gst_rate === 'number' ? paymentSettings.gst_rate : 18;
+  const gstAmount = isFreePlan ? 0 : Math.round(planBasePrice * (effectiveGstRate / 100) * 100) / 100;
+  const totalPayable = isFreePlan ? 0 : planBasePrice + gstAmount;
+  const activeUpiId = paymentSettings.business_upi_id || 'manishmadhava91@okicici';
 
-    if (!session?.user) {
-      openLoginModal({
-        initialMode: "signin",
-        intentTitle: "Member Account Required",
-        intentSubtitle: "Please sign in to complete subscription activation.",
-        onSuccess: () => {
-          handleCompleteSubscription(e);
-        },
-      });
-      return;
-    }
+  const upiDeepLink = `upi://pay?pa=${activeUpiId}&pn=HealthGhuru&am=${totalPayable}&cu=INR&tn=${encodeURIComponent(
+    `HealthGhuru-Sub-${activePlanObj.name}`
+  )}`;
+  const qrCodeImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(
+    upiDeepLink
+  )}`;
 
+  const handleCopyUpi = () => {
+    navigator.clipboard.writeText(activeUpiId);
+    setCopiedUpi(true);
+    setTimeout(() => setCopiedUpi(false), 2000);
+  };
+
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      if (typeof window !== "undefined" && (window as any).Razorpay) return resolve(true);
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const activateSubscriptionBackend = async (method: string, refId?: string) => {
     setSubmitting(true);
     setSubError(null);
 
@@ -115,9 +179,11 @@ export default function SubscribePage() {
           planId: activePlanObj.id,
           planName: activePlanObj.name,
           billingCycle: activePlanObj.duration_label,
-          price: activePlanObj.price,
+          price: totalPayable,
           name: checkoutName,
           email: checkoutEmail,
+          paymentMethod: method,
+          utrNumber: refId || utrReference.trim(),
         }),
       });
 
@@ -154,6 +220,128 @@ export default function SubscribePage() {
       setSubError(err?.message || "An error occurred while activating your plan.");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleRazorpaySubscription = async () => {
+    setSubmitting(true);
+    setSubError(null);
+
+    const loaded = await loadRazorpayScript();
+    if (!loaded) {
+      setSubError("Failed to load Razorpay payment gateway. Please use UPI QR code.");
+      setSubmitting(false);
+      return;
+    }
+
+    try {
+      const orderRes = await fetch("/api/payments/razorpay/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: totalPayable,
+          receipt: `sub_${Date.now()}`,
+          notes: {
+            plan_id: activePlanObj.id,
+            plan_name: activePlanObj.name,
+          },
+        }),
+      });
+
+      const orderData = await orderRes.json();
+      if (!orderRes.ok || !orderData.success) {
+        throw new Error(orderData.error || "Failed to initialize Razorpay checkout");
+      }
+
+      const options = {
+        key: orderData.key_id,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: "HealthGhuru Membership",
+        description: `Plan: ${activePlanObj.name}`,
+        image: "/images/logo_transparent.png",
+        order_id: orderData.order_id,
+        handler: async function (response: any) {
+          // Verify on backend
+          try {
+            const verifyRes = await fetch("/api/payments/razorpay/verify", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                ...response,
+                payment_type: "subscription",
+                metadata: {
+                  userId: session?.user?.id,
+                  planId: activePlanObj.id,
+                  billingCycle: activePlanObj.duration_label,
+                },
+              }),
+            });
+            const verifyData = await verifyRes.json();
+            if (!verifyData.success) {
+              throw new Error(verifyData.error || "Signature verification failed");
+            }
+
+            await activateSubscriptionBackend("razorpay", response.razorpay_payment_id);
+          } catch (e: any) {
+            setSubError(e.message || "Payment verification failed.");
+            setSubmitting(false);
+          }
+        },
+        prefill: {
+          name: checkoutName,
+          email: checkoutEmail,
+        },
+        theme: {
+          color: "#16A34A",
+        },
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on("payment.failed", function (resp: any) {
+        setSubError(resp.error?.description || "Payment failed. Please try again.");
+        setSubmitting(false);
+      });
+      rzp.open();
+    } catch (err: any) {
+      setSubError(err.message || "Error preparing checkout.");
+      setSubmitting(false);
+    }
+  };
+
+  const handleCompleteSubscription = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!checkoutEmail || !checkoutEmail.includes("@")) return;
+
+    if (!session?.user) {
+      openLoginModal({
+        initialMode: "signin",
+        intentTitle: "Member Account Required",
+        intentSubtitle: "Please sign in to complete subscription activation.",
+        onSuccess: () => {
+          handleCompleteSubscription(e);
+        },
+      });
+      return;
+    }
+
+    if (isFreePlan) {
+      await activateSubscriptionBackend("free");
+      return;
+    }
+
+    if (paymentMode === "razorpay") {
+      await handleRazorpaySubscription();
+      return;
+    }
+
+    if (paymentMode === "upi") {
+      if (!utrReference.trim() || utrReference.trim().length < 6) {
+        setSubError("Please enter the 12-digit UPI / UTR Transaction Reference Number from your payment receipt.");
+        return;
+      }
+      await activateSubscriptionBackend("upi", utrReference);
+      return;
     }
   };
 
@@ -329,7 +517,7 @@ export default function SubscribePage() {
               <ArrowLeft size={16} /> Back to Plan Selection
             </button>
 
-            <div className="bg-white rounded-3xl shadow-xl border border-primary/10 p-8 sm:p-10 relative overflow-hidden">
+            <div className="bg-white rounded-3xl shadow-xl border border-primary/10 p-6 sm:p-10 relative overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-2 bg-[#CBF2DB]" />
 
               <div className="flex items-center justify-between pb-6 border-b border-border mb-6">
@@ -345,7 +533,7 @@ export default function SubscribePage() {
                 </div>
               </div>
 
-              <form onSubmit={handleCompleteSubscription} className="space-y-4">
+              <form onSubmit={handleCompleteSubscription} className="space-y-5">
                 <div className="space-y-1.5">
                   <label className="block text-xs font-heading font-semibold uppercase tracking-wider text-text-primary">
                     Your Full Name
@@ -374,13 +562,164 @@ export default function SubscribePage() {
                   />
                 </div>
 
-                <div className="p-4 rounded-2xl bg-surface-alt border border-border/80 flex items-start gap-3 mt-4">
-                  <Lock size={18} className="text-primary shrink-0 mt-0.5" />
-                  <div className="text-xs text-text-secondary leading-relaxed">
-                    <span className="font-semibold text-dark block mb-0.5">Zero Risk Launch Preview</span>
-                    No credit card required. Membership benefits are activated instantly for your account during our community launch period.
+                {/* Free Plan Notice */}
+                {isFreePlan ? (
+                  <div className="p-4 rounded-2xl bg-surface-alt border border-border/80 flex items-start gap-3 mt-4">
+                    <Lock size={18} className="text-primary shrink-0 mt-0.5" />
+                    <div className="text-xs text-text-secondary leading-relaxed">
+                      <span className="font-semibold text-dark block mb-0.5">Free Member Access</span>
+                      No payment required. Community features are activated immediately for your account.
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <>
+                    {/* Billing Summary Box */}
+                    <div className="rounded-2xl p-5 bg-[#CBF2DB] border border-emerald-300 text-slate-800 space-y-2">
+                      <div className="flex items-center justify-between text-xs text-slate-700">
+                        <span>Plan Base Fee:</span>
+                        <span className="font-mono font-bold text-slate-900">₹{planBasePrice.toLocaleString('en-IN')}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-slate-700 pb-2 border-b border-emerald-300/80">
+                        <span>GST ({effectiveGstRate}%):</span>
+                        <span className="font-mono font-bold text-slate-900">₹{gstAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                      </div>
+                      <div className="flex items-center justify-between pt-1">
+                        <span className="font-heading font-extrabold text-sm sm:text-base text-slate-950">
+                          Total Payable Amount:
+                        </span>
+                        <span className="font-heading font-black text-xl sm:text-2xl text-emerald-950">
+                          ₹{totalPayable.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Gateway Selectors */}
+                    {paymentSettings.razorpay_enabled && paymentSettings.upi_qr_enabled && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                        <button
+                          type="button"
+                          onClick={() => setPaymentMode('upi')}
+                          className={`p-3.5 rounded-xl border-2 text-left transition-all cursor-pointer ${
+                            paymentMode === 'upi'
+                              ? 'border-[#16A34A] bg-emerald-50/70 shadow-xs'
+                              : 'border-gray-200 bg-white hover:border-gray-300'
+                          }`}
+                        >
+                          <div className="font-heading font-bold text-xs sm:text-sm text-gray-900 flex items-center justify-between">
+                            <span>Dynamic UPI QR Code</span>
+                            {paymentMode === 'upi' && <span className="w-2 h-2 rounded-full bg-[#16A34A]" />}
+                          </div>
+                          <div className="text-[11px] text-gray-500 mt-0.5">
+                            GPay, PhonePe, Paytm, BHIM
+                          </div>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setPaymentMode('razorpay')}
+                          className={`p-3.5 rounded-xl border-2 text-left transition-all cursor-pointer ${
+                            paymentMode === 'razorpay'
+                              ? 'border-[#f06d2f] bg-orange-50/70 shadow-xs'
+                              : 'border-gray-200 bg-white hover:border-gray-300'
+                          }`}
+                        >
+                          <div className="font-heading font-bold text-xs sm:text-sm text-gray-900 flex items-center justify-between">
+                            <span>Razorpay Gateway</span>
+                            {paymentMode === 'razorpay' && <span className="w-2 h-2 rounded-full bg-[#f06d2f]" />}
+                          </div>
+                          <div className="text-[11px] text-gray-500 mt-0.5">
+                            Credit/Debit Cards &amp; NetBanking
+                          </div>
+                        </button>
+                      </div>
+                    )}
+
+                    {/* UPI QR Payment Container */}
+                    {paymentMode === 'upi' && paymentSettings.upi_qr_enabled && (
+                      <div className="border border-emerald-300/80 rounded-2xl p-5 sm:p-6 bg-white flex flex-col items-center justify-center text-center space-y-4 shadow-xs">
+                        {/* App selector */}
+                        <div className="flex gap-1.5 flex-wrap justify-center">
+                          {['GPay', 'PhonePe', 'Paytm', 'Navi', 'BHIM'].map((app) => (
+                            <button
+                              key={app}
+                              type="button"
+                              onClick={() => setSelectedUpiApp(app)}
+                              className={`px-3 py-1 rounded-lg text-xs font-heading font-bold transition-all cursor-pointer ${
+                                selectedUpiApp === app
+                                  ? 'bg-[#16A34A] text-white shadow-xs'
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                              }`}
+                            >
+                              {app}
+                            </button>
+                          ))}
+                        </div>
+
+                        {/* QR Code image */}
+                        <div className="p-3 bg-white border border-emerald-100 rounded-2xl shadow-sm">
+                          <img
+                            src={qrCodeImgUrl}
+                            alt="UPI QR Code"
+                            width={190}
+                            height={190}
+                            className="w-44 h-44 object-contain"
+                            onError={(e) => {
+                              (e.target as HTMLElement).style.display = 'none';
+                            }}
+                          />
+                        </div>
+
+                        <div className="text-xs text-gray-600">
+                          Scan with <strong className="text-gray-900">{selectedUpiApp}</strong> to pay <strong className="text-emerald-700 font-bold">₹{totalPayable.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong>
+                        </div>
+
+                        {/* Copy UPI ID */}
+                        <button
+                          type="button"
+                          onClick={handleCopyUpi}
+                          className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-xs font-mono text-gray-700 transition-all cursor-pointer"
+                        >
+                          <span className="text-gray-500 font-sans text-[11px]">UPI ID:</span>
+                          <strong className="text-gray-900">{activeUpiId}</strong>
+                          {copiedUpi ? <CheckCheck size={13} className="text-emerald-600" /> : <Copy size={13} className="text-gray-400" />}
+                        </button>
+
+                        {/* 12-digit UTR input */}
+                        <div className="w-full text-left pt-2 space-y-1">
+                          <label className="text-xs font-semibold text-gray-800 block">
+                            Enter 12-digit UPI / UTR Reference No. <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={utrReference}
+                            onChange={(e) => setUtrReference(e.target.value)}
+                            placeholder="e.g. 421512345678"
+                            className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-hidden focus:border-[#16A34A] focus:bg-white text-xs font-mono"
+                          />
+                          <span className="text-[11px] text-gray-500 block">
+                            Enter the 12-digit transaction number from your UPI receipt.
+                          </span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Razorpay Gateway Notice */}
+                    {paymentMode === 'razorpay' && paymentSettings.razorpay_enabled && (
+                      <div className="border border-orange-200 bg-orange-50/40 rounded-2xl p-6 text-center space-y-2">
+                        <div className="w-10 h-10 rounded-full bg-orange-100 text-[#f06d2f] flex items-center justify-center mx-auto">
+                          <Sparkles size={20} />
+                        </div>
+                        <h4 className="font-heading font-bold text-sm text-gray-900">
+                          Razorpay Standard Checkout
+                        </h4>
+                        <p className="text-xs text-gray-600 max-w-sm mx-auto">
+                          Click below to launch secure payment. Credit cards, Debit cards, NetBanking, and Wallets are accepted.
+                        </p>
+                      </div>
+                    )}
+                  </>
+                )}
 
                 {subError && (
                   <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl">
@@ -393,9 +732,21 @@ export default function SubscribePage() {
                   size="md"
                   type="submit"
                   disabled={submitting}
-                  className="w-full mt-4 flex items-center justify-center gap-2 shadow-md h-11 text-sm rounded-full disabled:opacity-60 cursor-pointer"
+                  className="w-full mt-4 flex items-center justify-center gap-2 shadow-md h-12 text-sm rounded-full disabled:opacity-60 cursor-pointer font-heading font-bold"
                 >
-                  {submitting ? "Activating Membership..." : `Activate ${activePlanObj.name}`} <ArrowRight size={16} />
+                  {submitting ? (
+                    "Processing Activation..."
+                  ) : isFreePlan ? (
+                    `Activate ${activePlanObj.name}`
+                  ) : paymentMode === 'razorpay' ? (
+                    <>
+                      <Sparkles size={16} /> Pay ₹{totalPayable.toLocaleString('en-IN', { minimumFractionDigits: 2 })} with Razorpay
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 size={16} /> Confirm UPI Payment &amp; Activate (₹{totalPayable.toLocaleString('en-IN', { minimumFractionDigits: 2 })})
+                    </>
+                  )}
                 </Button>
               </form>
             </div>

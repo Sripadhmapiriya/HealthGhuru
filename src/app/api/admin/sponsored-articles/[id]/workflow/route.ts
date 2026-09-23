@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { sql } from '@/lib/db';
+import { sendSponsoredArticleStatusUpdateEmail } from '@/lib/email/mailer';
 
 export const dynamic = 'force-dynamic';
 
@@ -132,6 +133,34 @@ export async function POST(
       revalidatePath('/admin/campaigns');
     } catch (revalErr) {
       console.warn('Revalidation warning in workflow route:', revalErr);
+    }
+
+    // Trigger status update email to sponsor in background
+    try {
+      let recipientEmail = '';
+      if (updated.campaign_id) {
+        const cr = await sql`SELECT contact_email FROM campaign_requests WHERE id = ${updated.campaign_id}::uuid LIMIT 1`;
+        if (cr.length && cr[0].contact_email) recipientEmail = cr[0].contact_email;
+      }
+      if (!recipientEmail && updated.company_name) {
+        const cr = await sql`SELECT contact_email FROM campaign_requests WHERE advertiser_name ILIKE ${updated.company_name} OR campaign_title ILIKE ${'%' + updated.company_name + '%'} ORDER BY created_at DESC LIMIT 1`;
+        if (cr.length && cr[0].contact_email) recipientEmail = cr[0].contact_email;
+      }
+      if (!recipientEmail && updated.sponsor_id) {
+        const sp = await sql`SELECT contact_email FROM sponsors WHERE id = ${updated.sponsor_id}::uuid LIMIT 1`;
+        if (sp.length && sp[0].contact_email) recipientEmail = sp[0].contact_email;
+      }
+
+      if (recipientEmail) {
+        sendSponsoredArticleStatusUpdateEmail(
+          updated,
+          newStatus,
+          reviewer_notes || undefined,
+          recipientEmail
+        ).catch((err) => console.error('Error sending sponsored workflow email:', err));
+      }
+    } catch (mailErr) {
+      console.warn('Warning sending workflow email:', mailErr);
     }
 
     return NextResponse.json({ success: true, article: updated });

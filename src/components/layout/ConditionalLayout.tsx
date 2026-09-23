@@ -17,19 +17,19 @@ export default function ConditionalLayout({
 }) {
   const pathname = usePathname();
   
-  // Hide site navbar/footer and ads within the Admin console
-  const isAdmin = pathname?.startsWith('/admin');
+  // Hide site navbar/footer and ads within the Admin console or on print routes
+  const isExcluded = pathname?.startsWith('/admin') || pathname?.includes('/print');
 
   return (
     <>
-      {!isAdmin && navbar}
+      {!isExcluded && navbar}
       <main className="flex-grow">
         {children}
       </main>
-      {!isAdmin && <FloatingFooterAd />}
-      {!isAdmin && <PopupAdModal />}
+      {!isExcluded && <FloatingFooterAd />}
+      {!isExcluded && <PopupAdModal />}
       <AuthModal />
-      {!isAdmin && footer}
+      {!isExcluded && footer}
     </>
   );
 }
