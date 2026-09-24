@@ -37,8 +37,25 @@ export default function AdminLoginPage() {
 
       // Hard redirect with window.location.href ensures the browser immediately transmits the newly created session cookie to the server
       const params = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
-      const callback = params?.get('callbackUrl') || '/admin';
-      window.location.href = callback;
+      const rawCallback = params?.get('callbackUrl') || '/admin';
+      
+      let safeCallback = '/admin';
+      if (rawCallback.startsWith('/') && !rawCallback.startsWith('//')) {
+        safeCallback = rawCallback;
+      } else {
+        try {
+          const parsed = new URL(rawCallback, window.location.origin);
+          safeCallback = parsed.pathname + parsed.search || '/admin';
+        } catch {
+          safeCallback = '/admin';
+        }
+      }
+
+      if (safeCallback === '/admin/login' || safeCallback.startsWith('/admin/login?')) {
+        safeCallback = '/admin';
+      }
+
+      window.location.href = safeCallback;
     } catch {
       setErrorMessage('An unexpected error occurred. Please try again.');
       setIsLoading(false);

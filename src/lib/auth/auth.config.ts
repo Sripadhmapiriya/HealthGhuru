@@ -1,4 +1,5 @@
-import NextAuth, { DefaultSession, CredentialsSignin } from 'next-auth';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import NextAuth, { DefaultSession, CredentialsSignin, NextAuthConfig } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { sql } from '@/lib/db';
 import bcrypt from 'bcryptjs';
@@ -25,9 +26,65 @@ declare module "next-auth" {
   }
 }
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const authConfig: NextAuthConfig = {
   trustHost: true,
   secret: process.env.AUTH_SECRET || "7f3e8f9d6c4a2b1e5a9d8f3c7e6b5a4d3c2b1e0f9d8c7b6a5d4e3f2a1b0c9d8",
+  providers: [],
+  session: {
+    strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
+  pages: {
+    signIn: '/admin/login',
+  },
+  callbacks: {
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith('/')) {
+        return `${baseUrl}${url}`;
+      }
+      try {
+        const urlObj = new URL(url);
+        const baseObj = new URL(baseUrl);
+        if (urlObj.origin === baseObj.origin) {
+          return url;
+        }
+      } catch {
+        // Fallback to relative pathname if possible
+      }
+      return baseUrl;
+    },
+    async jwt({ token, user, trigger, session }) {
+      if (user) {
+        token.id = user.id;
+        token.role = user.role;
+        token.tier = (user as any).tier || 'free';
+        token.adsEnabled = (user as any).adsEnabled ?? true;
+        token.isSubscribed = (user as any).isSubscribed ?? false;
+      }
+
+      if (trigger === 'update' && session) {
+        if (session.tier !== undefined) token.tier = session.tier;
+        if (session.adsEnabled !== undefined) token.adsEnabled = session.adsEnabled;
+        if (session.isSubscribed !== undefined) token.isSubscribed = session.isSubscribed;
+      }
+
+      return token;
+    },
+    async session({ session, token }) {
+      if (token && session.user) {
+        session.user.id = token.id as string;
+        session.user.role = token.role as string;
+        session.user.tier = (token.tier as string) || 'free';
+        session.user.adsEnabled = (token.adsEnabled as boolean) ?? true;
+        session.user.isSubscribed = (token.isSubscribed as boolean) ?? false;
+      }
+      return session;
+    }
+  }
+};
+
+export const { handlers, signIn, signOut, auth } = NextAuth({
+  ...authConfig,
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -99,60 +156,34 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
     })
   ],
-  session: {
-    strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-  },
   callbacks: {
-    async jwt({ token, user, trigger, session }) {
-      if (user) {
-        token.id = user.id;
-        token.role = user.role;
-        token.tier = (user as any).tier || 'free';
-        token.adsEnabled = (user as any).adsEnabled ?? true;
-        token.isSubscribed = (user as any).isSubscribed ?? false;
-      }
-
-      if (trigger === 'update' && session) {
-        if (session.tier !== undefined) token.tier = session.tier;
-        if (session.adsEnabled !== undefined) token.adsEnabled = session.adsEnabled;
-        if (session.isSubscribed !== undefined) token.isSubscribed = session.isSubscribed;
-      }
+    ...authConfig.callbacks,
+    async jwt(params) {
+      const { token, trigger } = params;
+      let updatedToken = await authConfig.callbacks!.jwt!(params);
 
       // Refresh plan from database if needed or on session update
-      if (token?.id && (trigger === 'update' || token.tier === undefined)) {
+      if (updatedToken?.id && (trigger === 'update' || updatedToken.tier === undefined)) {
         try {
           const plans = await sql`
             SELECT tier, ads_enabled 
             FROM user_plans 
-            WHERE user_id = ${token.id as string}::uuid
+            WHERE user_id = ${updatedToken.id as string}::uuid
           `;
           if (plans.length > 0) {
             const planTier = plans[0].tier || 'free';
             const planAdsEnabled = plans[0].ads_enabled ?? true;
-            token.tier = planTier;
-            token.adsEnabled = planAdsEnabled;
-            token.isSubscribed = planTier !== 'free' && planAdsEnabled === false;
+            updatedToken.tier = planTier;
+            updatedToken.adsEnabled = planAdsEnabled;
+            updatedToken.isSubscribed = planTier !== 'free' && planAdsEnabled === false;
           }
         } catch {
           // Non-blocking
         }
       }
 
-      return token;
-    },
-    async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as string;
-        session.user.tier = (token.tier as string) || 'free';
-        session.user.adsEnabled = (token.adsEnabled as boolean) ?? true;
-        session.user.isSubscribed = (token.isSubscribed as boolean) ?? false;
-      }
-      return session;
+      return updatedToken;
     }
-  },
-  pages: {
-    signIn: '/login',
   }
 });
+
