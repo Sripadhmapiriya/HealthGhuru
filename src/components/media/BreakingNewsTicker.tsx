@@ -39,22 +39,25 @@ export function BreakingNewsTicker({ items }: { items: (BreakingItem | any)[] })
 
   return (
     <div
-      className="bg-white border-b border-gray-200/90 py-2 px-4 sm:px-6 lg:px-8 relative z-30 shadow-xs"
+      className="w-full pt-4 pb-2 px-4 sm:px-6 lg:px-8 relative z-30 flex justify-center"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      <div className="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto flex items-center justify-between gap-3">
+      <div className="w-full max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto bg-gradient-to-r from-[#052315] via-[#09321e] to-[#1c1109] rounded-2xl sm:rounded-full border-2 border-emerald-500/30 py-2 sm:py-2.5 px-3.5 sm:px-5 shadow-md shadow-emerald-950/15 flex items-center justify-between gap-3 text-white">
         {/* Left: Breaking News Pill Badge */}
         <div className="flex items-center gap-3 overflow-hidden flex-1 min-w-0">
-          <div className="flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-gradient-to-r from-[#ea580c] to-[#f06d2f] text-white font-heading font-black text-xs shrink-0 uppercase tracking-wider shadow-xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+          <div className="flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-gradient-to-r from-red-600 via-[#ea580c] to-[#f06d2f] text-white font-heading font-black text-xs shrink-0 uppercase tracking-wider shadow-md shadow-orange-500/40">
+            <Flame size={13} className="text-amber-200 fill-amber-200 animate-bounce" style={{ animationDuration: '2s' }} />
             <span>BREAKING NEWS</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+            </span>
           </div>
 
-          <span className="text-gray-400 font-bold text-sm hidden sm:inline select-none">✦</span>
+          <span className="text-amber-400 font-bold text-sm hidden sm:inline select-none">✦</span>
 
-          {/* Animated Headline with Diamond Separators */}
+          {/* Animated Headline with Dynamic Colored Tags */}
           <div className="flex-1 min-w-0 overflow-hidden relative h-6 flex items-center">
             <AnimatePresence mode="wait">
               <motion.div
@@ -63,25 +66,25 @@ export function BreakingNewsTicker({ items }: { items: (BreakingItem | any)[] })
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
-                className="truncate text-xs sm:text-[13px] font-medium flex items-center min-w-0 w-full text-slate-800"
+                className="truncate text-xs sm:text-[13.5px] font-medium flex items-center min-w-0 w-full text-slate-100"
               >
                 {current.category && (
-                  <span className="text-[#ea580c] font-bold mr-2 shrink-0 font-heading text-[11px] sm:text-xs">
-                    [{current.category.toUpperCase()}]
+                  <span className="bg-emerald-500/25 text-emerald-300 border border-emerald-400/40 font-bold px-2 py-0.5 rounded text-[10.5px] mr-2 shrink-0 font-heading uppercase tracking-wider">
+                    {current.category}
                   </span>
                 )}
 
                 <Link
                   href={targetHref}
                   target={current.is_external ? '_blank' : '_self'}
-                  className="hover:underline text-slate-900 hover:text-[#f06d2f] font-bold truncate transition-colors flex-1 min-w-0"
+                  className="hover:underline text-white hover:text-amber-300 font-bold truncate transition-colors flex-1 min-w-0"
                   title={current.title}
                 >
                   {current.title}
                 </Link>
 
                 {current.source_name && (
-                  <span className="text-slate-400 text-xs ml-2 shrink-0 hidden md:inline font-mono">
+                  <span className="text-emerald-400/70 text-xs ml-2 shrink-0 hidden md:inline font-mono">
                     ✦ via {current.source_name}
                   </span>
                 )}
@@ -95,19 +98,19 @@ export function BreakingNewsTicker({ items }: { items: (BreakingItem | any)[] })
           <div className="flex items-center gap-1 shrink-0">
             <button
               onClick={() => setCurrentIndex((prev) => (prev - 1 + items.length) % items.length)}
-              className="p-1 rounded-md hover:bg-slate-100 text-slate-600 hover:text-[#f06d2f] transition-colors flex items-center justify-center active:scale-90"
+              className="p-1 rounded-md hover:bg-white/15 text-emerald-300 hover:text-white transition-colors flex items-center justify-center active:scale-90"
               aria-label="Previous breaking news"
             >
               <ChevronLeft size={16} />
             </button>
 
-            <span className="text-xs font-mono font-bold text-slate-500 px-1 select-none">
+            <span className="text-xs font-mono font-bold text-emerald-200/90 px-1 select-none">
               {currentIndex + 1}/{items.length}
             </span>
 
             <button
               onClick={() => setCurrentIndex((prev) => (prev + 1) % items.length)}
-              className="p-1 rounded-md hover:bg-slate-100 text-slate-600 hover:text-[#f06d2f] transition-colors flex items-center justify-center active:scale-90"
+              className="p-1 rounded-md hover:bg-white/15 text-emerald-300 hover:text-white transition-colors flex items-center justify-center active:scale-90"
               aria-label="Next breaking news"
             >
               <ChevronRight size={16} />
