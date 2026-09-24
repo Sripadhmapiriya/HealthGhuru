@@ -4,9 +4,9 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Clock, Flame, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Clock, Flame, ArrowRight, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { useSubscription } from '@/lib/hooks/useSubscription';
-import { getSafeImageUrl, formatTimeAgo } from '@/lib/utils';
+import { getSafeImageUrl, formatTimeAgo, formatDate } from '@/lib/utils';
 
 interface TopStoriesGridProps {
   featuredStory: any;
@@ -32,20 +32,38 @@ export function TopStoriesGrid({
     return () => clearInterval(timer);
   }, []);
 
-  // Fallbacks if data is still loading or empty
+  // Fallbacks if data is still loading or empty matching Image 1
   const fallbackFeatured = {
-    title: "New Research Offers Fresh Insights Into Early Cancer Detection via MicroRNA Blood Panels",
-    slug: "new-research-early-cancer-detection-microrna",
-    category: "CANCER",
-    excerpt: "A landmark multi-centre clinical trial spanning 12,000 participants validates 89% sensitivity in pinpointing stage-1 malignancies through specialized circulating microRNA signatures.",
-    image_url: "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=1200&q=80",
+    title: "Eat Well, Live Better",
+    subtitle: "Simple nutrition changes that make a big difference in your health",
+    slug: "eat-well-live-better-simple-nutrition-changes",
+    category: "Nutrition",
+    excerpt: "Discover easy, practical food choices to boost your energy, strengthen your immune system and support long-term wellness.",
+    description: "Discover easy, practical food choices to boost your energy, strengthen your immune system and support long-term wellness.",
+    image_url: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1400&q=85",
     published_at: new Date().toISOString(),
-    source_name: "National Cancer Institute Journal",
-    author_name: "Dr. Rohini Ramanathan",
+    source_name: "HealthGhuru Bureau",
+    author_name: "Medically Reviewed",
   };
 
   const primary = featuredStory || fallbackFeatured;
-  const targetSlug = primary.slug || "new-research-early-cancer-detection-microrna";
+  const targetSlug = primary.slug || "eat-well-live-better-simple-nutrition-changes";
+
+  // Sanitize image URL: replace screenshots or localhost URLs with healthy salad bowl image from Image 1
+  const rawImageUrl = primary.image_url || "";
+  const isScreenshotOrBad =
+    !rawImageUrl ||
+    rawImageUrl.toLowerCase().includes("screenshot") ||
+    rawImageUrl.includes("localhost") ||
+    rawImageUrl.includes("127.0.0.1");
+
+  const heroImageUrl = isScreenshotOrBad
+    ? "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1400&q=85"
+    : getSafeImageUrl(
+        primary.image_url,
+        primary.category,
+        "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1400&q=85"
+      );
 
   return (
     <section className="w-full pt-3 sm:pt-4 pb-8 sm:pb-10">
@@ -69,82 +87,73 @@ export function TopStoriesGrid({
         {/* 3-Column Desktop News Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
           
-          {/* LEFT COLUMN (Cols 1-5): Large Featured Hero Story + 2 Sub-Story Briefs */}
-          <div className="lg:col-span-5 flex flex-col">
+          {/* LEFT COLUMN (Cols 1-6): Large Featured Hero Story + 2 Sub-Story Briefs */}
+          <div className="lg:col-span-6 flex flex-col">
+            {/* HERO BREAKING / TOP STORY CARD (Format matched to Image 1) */}
             <Link
               href={`/article/${targetSlug}`}
-              className="group block bg-white rounded-2xl overflow-hidden border-2 border-emerald-500/30 shadow-md shadow-emerald-950/5 hover:shadow-xl hover:border-emerald-500 transition-all duration-300"
+              className="group relative block w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-900 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100/80"
             >
-              {/* Hero Image with Top Story badge overlay */}
-              <div className="relative aspect-[16/9] w-full min-h-[220px] sm:min-h-[260px] overflow-hidden bg-slate-950">
+              {/* Full Bleed Image with Clear, Vivid Lighting */}
+              <div className="relative min-h-[400px] sm:min-h-[460px] lg:min-h-[500px] w-full overflow-hidden">
                 <Image
-                  src={getSafeImageUrl(
-                    primary.image_url,
-                    primary.category,
-                    "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=1200&q=80"
-                  )}
-                  alt={primary.title}
+                  src={heroImageUrl}
+                  alt={primary.title || "Health and Wellness"}
                   fill
-                  sizes="(max-width: 1024px) 100vw, 42vw"
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                   priority
                   unoptimized
                 />
-                {/* Gradient vignette */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-90" />
+                {/* Lighter, bottom-focused gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/55 via-50% to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent" />
 
-                {/* Badges */}
-                <div className="absolute top-3.5 left-3.5 flex items-center gap-2">
-                  {primary.is_breaking ? (
-                    <span className="bg-red-600 text-white text-[10px] font-heading font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-md flex items-center gap-1.5 animate-pulse">
-                      <span className="w-2 h-2 rounded-full bg-white" />
-                      BREAKING NEWS
-                    </span>
-                  ) : (
-                    <span className="bg-gradient-to-r from-[#f06d2f] to-[#ea580c] text-white text-[10px] font-heading font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-md shadow-orange-600/30">
-                      TOP STORY
-                    </span>
-                  )}
-                  {primary.category && (
-                    <span className="bg-emerald-900/80 backdrop-blur-xs text-emerald-200 text-[10px] font-heading font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-emerald-400/40">
-                      {primary.category}
-                    </span>
-                  )}
-                </div>
-
-                <div className="absolute bottom-3.5 left-3.5 right-3.5 flex items-center justify-between text-white text-[11px] font-mono">
-                  <span className="font-semibold text-emerald-200">{primary.source_name || "HealthGhuru Bureau"}</span>
-                  <span className="flex items-center gap-1 text-slate-200">
-                    <Clock size={12} className="text-amber-400" />
-                    <span>{formatTimeAgo(primary.published_at)}</span>
-                  </span>
-                </div>
-              </div>
-
-              {/* Story Content */}
-              <div className="p-4 sm:p-5 flex flex-col justify-between">
-                <div>
-                  <h3 className="font-heading font-extrabold text-base sm:text-lg md:text-xl text-slate-900 group-hover:text-[#16A34A] transition-colors leading-tight mb-2">
-                    {primary.title}
-                  </h3>
-                  {(primary.excerpt || primary.description || primary.summary) && (
-                    <p className="text-slate-600 text-xs sm:text-sm line-clamp-2 leading-relaxed mb-3">
-                      {primary.excerpt || primary.description || primary.summary}
-                    </p>
-                  )}
-                </div>
-
-                <div className="pt-2.5 border-t border-gray-100 flex items-center justify-between">
-                  <div className="flex items-center gap-1.5">
-                    <CheckCircle2 size={14} className="text-[#16A34A]" />
-                    <span className="text-xs font-semibold text-slate-600">
-                      {primary.author_name || "Medical Editorial Board"}
+                {/* Card Content Anchored to Bottom */}
+                <div className="absolute inset-0 z-10 flex flex-col justify-end p-4 sm:p-7 md:p-9">
+                  {/* Badge: Orange rounded-full pill */}
+                  <div className="mb-2 sm:mb-3">
+                    <span className="inline-block bg-[#f06d2f] text-white text-[11px] sm:text-sm font-heading font-extrabold px-3 sm:px-4 py-1 sm:py-1.5 rounded-full shadow-md shadow-orange-950/40">
+                      {primary.category || "Nutrition"}
                     </span>
                   </div>
-                  <span className="inline-flex items-center gap-1 text-xs font-bold text-[#f06d2f] group-hover:translate-x-1 transition-transform">
-                    <span>Full Coverage</span>
-                    <ArrowRight size={12} />
-                  </span>
+
+                  {/* Headline & Description Content */}
+                  <div className="mb-3 sm:mb-4 max-w-2xl">
+                    <h3 className="font-heading font-black text-xl sm:text-2xl md:text-3xl lg:text-[40px] text-white tracking-tight leading-[1.15] drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] group-hover:text-emerald-300 transition-colors">
+                      {primary.title}
+                    </h3>
+                    {(primary.subtitle || primary.excerpt) && (
+                      <p className="font-heading font-bold text-xs sm:text-base md:text-lg text-white/95 mt-1.5 sm:mt-2.5 line-clamp-2 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                        {primary.subtitle || primary.excerpt}
+                      </p>
+                    )}
+                    {(primary.description || primary.summary) && (
+                      <p className="text-xs sm:text-sm text-slate-100 font-medium mt-1 sm:mt-2 leading-relaxed line-clamp-2 drop-shadow-[0_1px_6px_rgba(0,0,0,0.9)] hidden xs:block">
+                        {primary.description || primary.summary}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Bottom Row */}
+                  <div className="pt-3 sm:pt-4 border-t border-white/25 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
+                    <div className="flex items-center gap-2 text-[11px] sm:text-xs font-semibold text-slate-100 flex-wrap drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+                      <span className="flex items-center gap-1.5">
+                        <ShieldCheck size={14} className="text-emerald-400 shrink-0" />
+                        <span>Medically Reviewed</span>
+                      </span>
+                      <span className="text-white/60">|</span>
+                      <span className="flex items-center gap-1 text-slate-200">
+                        <Clock size={12} className="text-amber-400 shrink-0" />
+                        <span>Updated: {formatDate(primary.published_at || new Date())}</span>
+                      </span>
+                    </div>
+
+                    <span className="inline-flex items-center gap-1.5 self-start sm:self-auto bg-[#f06d2f] hover:bg-[#ea580c] text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-full font-heading font-bold text-xs sm:text-sm shadow-lg shadow-orange-950/30 group-hover:shadow-orange-600/50 transition-all duration-300 group-hover:translate-x-0.5">
+                      <span>Read More</span>
+                      <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
+                    </span>
+                  </div>
                 </div>
               </div>
             </Link>
@@ -154,33 +163,53 @@ export function TopStoriesGrid({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
                 {heroSubStories.slice(0, 2).map((sub: any, idx: number) => {
                   const subSlug = sub.slug || `brief-${idx}`;
+                  const defaultSubImages = [
+                    "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?auto=format&fit=crop&w=400&q=80",
+                    "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=400&q=80",
+                  ];
+                  const rawSubImg = sub.image_url || "";
+                  const subImage = (!rawSubImg || rawSubImg.toLowerCase().includes("screenshot") || rawSubImg.includes("localhost"))
+                    ? defaultSubImages[idx % defaultSubImages.length]
+                    : getSafeImageUrl(sub.image_url, sub.category, defaultSubImages[idx % defaultSubImages.length]);
+
                   return (
                     <Link
                       key={sub.id || idx}
                       href={`/article/${subSlug}`}
-                      className="group bg-gradient-to-br from-white via-emerald-50/50 to-orange-50/40 p-4 rounded-xl border-2 border-emerald-200/80 shadow-xs hover:shadow-md hover:border-[#f06d2f] hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between"
+                      className="group bg-white p-3 rounded-2xl border border-gray-200/90 shadow-xs hover:border-emerald-500 hover:shadow-md transition-all duration-300 flex items-center gap-3"
                     >
-                      <div>
-                        <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
-                          {sub.is_breaking ? (
-                            <span className="bg-red-600 text-white text-[9px] font-heading font-black px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse">
-                              BREAKING
-                            </span>
-                          ) : (
-                            <span className="text-[10px] font-heading font-black text-[#ea580c] bg-orange-100/90 border border-orange-200/80 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                              {sub.category || "Health"}
-                            </span>
-                          )}
-                          <span className="text-[10px] text-gray-500 font-mono">• {formatTimeAgo(sub.published_at)}</span>
+                      <div className="relative w-20 h-20 sm:w-24 sm:h-20 rounded-xl overflow-hidden shrink-0 bg-slate-100">
+                        <Image
+                          src={subImage}
+                          alt={sub.title}
+                          fill
+                          sizes="96px"
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          unoptimized
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="mb-1">
+                          <span className={`text-[10px] font-heading font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
+                            sub.category?.toLowerCase() === 'sleep'
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : sub.category?.toLowerCase() === 'mental health' || sub.category?.toLowerCase() === 'mental'
+                              ? 'bg-purple-100 text-purple-800'
+                              : 'bg-orange-100 text-[#ea580c]'
+                          }`}>
+                            {sub.category || (idx === 0 ? "Sleep" : "Mental Health")}
+                          </span>
                         </div>
-                        <h4 className="font-heading font-bold text-xs sm:text-sm text-slate-900 group-hover:text-[#16A34A] transition-colors line-clamp-2 leading-snug">
+                        <h4 className="font-heading font-bold text-xs sm:text-sm text-slate-900 group-hover:text-[#16A34A] transition-colors line-clamp-1 leading-snug">
                           {sub.title}
                         </h4>
+                        <p className="text-[11px] text-slate-500 line-clamp-1 mt-0.5">
+                          {sub.excerpt || sub.description || "Evidence-based clinical health guidance."}
+                        </p>
+                        <span className="text-[10px] text-slate-400 font-medium mt-1 block">
+                          {formatDate(sub.published_at || new Date())}
+                        </span>
                       </div>
-                      <span className="text-[11px] font-bold text-[#16A34A] group-hover:text-emerald-700 flex items-center gap-1 mt-2.5 transition-colors">
-                        <span>Read brief</span>
-                        <ArrowRight size={11} className="group-hover:translate-x-0.5 transition-transform" />
-                      </span>
                     </Link>
                   );
                 })}
@@ -188,8 +217,8 @@ export function TopStoriesGrid({
             )}
           </div>
 
-          {/* MIDDLE COLUMN (Cols 6-8): Top Stories List with Lush Emerald Gradient Header */}
-          <div className="lg:col-span-4 flex flex-col bg-white rounded-2xl overflow-hidden border-2 border-emerald-500/30 shadow-md shadow-emerald-950/5 hover:shadow-lg transition-shadow">
+          {/* MIDDLE COLUMN (Cols 7-9): Top Stories List with Lush Emerald Gradient Header */}
+          <div className="lg:col-span-3 flex flex-col bg-white rounded-2xl overflow-hidden border-2 border-emerald-500/30 shadow-md shadow-emerald-950/5 hover:shadow-lg transition-shadow">
             {/* Lush Emerald Header Banner */}
             <div className="bg-gradient-to-r from-[#16A34A] via-[#15803D] to-[#0D5C3A] text-white px-4 py-3 flex items-center justify-between shadow-xs">
               <div className="flex items-center gap-2">

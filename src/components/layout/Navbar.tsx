@@ -168,9 +168,6 @@ export default function Navbar() {
 
   return (
     <header className="w-full bg-white text-slate-900 shadow-xs sticky top-0 z-40">
-      {/* Animated Brand Dual-Gradient Accent Stripe (Emerald to Coral) */}
-      <div className="w-full h-1 bg-gradient-to-r from-[#16A34A] via-[#22C55E] to-[#f06d2f] bg-[length:200%_100%] animate-gradient-x" />
-
       {/* 1. Main Portal Header Row */}
       <div className="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex items-center justify-between gap-4">
@@ -198,7 +195,7 @@ export default function Navbar() {
                     priority
                   />
                 </div>
-                <span className="font-display text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-[#16A34A] group-hover:text-[#15803D] transition-colors leading-none">
+                <span className="font-display text-xl sm:text-3xl lg:text-4xl font-black tracking-tight text-[#16A34A] group-hover:text-[#15803D] transition-colors leading-none">
                   HEALTH<span className="text-[#f06d2f]">GHURU</span>
                 </span>
               </div>
@@ -316,10 +313,11 @@ export default function Navbar() {
                     'Sign in or register your medical organization to launch, book, and manage ad campaigns on HealthGhuru.',
                 });
               }}
-              className="bg-gradient-to-r from-[#f06d2f] to-[#ea580c] hover:from-[#e05a1b] hover:to-[#c2410c] text-white text-xs sm:text-sm font-heading font-bold px-3.5 sm:px-4 py-2 rounded-lg shadow-sm hover:shadow-md hover:scale-[1.03] active:scale-[0.97] transition-all inline-flex items-center gap-1.5 cursor-pointer"
+              className="bg-gradient-to-r from-[#f06d2f] to-[#ea580c] hover:from-[#e05a1b] hover:to-[#c2410c] text-white text-xs sm:text-sm font-heading font-bold px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg shadow-sm hover:shadow-md hover:scale-[1.03] active:scale-[0.97] transition-all inline-flex items-center gap-1.5 cursor-pointer"
             >
               <Megaphone size={14} className="hidden sm:inline text-orange-200" />
-              <span>Advertise With Us</span>
+              <span className="sm:hidden">Advertise</span>
+              <span className="hidden sm:inline">Advertise With Us</span>
             </button>
 
             {/* Subscribe / VIP Member Button */}
@@ -345,7 +343,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => openLoginModal({ initialMode: "signin" })}
-                className="bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-heading font-bold px-3.5 sm:px-4 py-2 rounded-lg shadow-xs hover:shadow transition-all inline-flex items-center gap-1.5 cursor-pointer"
+                className="bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-heading font-bold px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg shadow-xs hover:shadow transition-all inline-flex items-center gap-1.5 cursor-pointer"
               >
                 <LogIn size={14} />
                 <span>Login</span>
