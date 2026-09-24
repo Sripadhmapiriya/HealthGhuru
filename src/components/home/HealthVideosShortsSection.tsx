@@ -92,7 +92,7 @@ export function HealthVideosShortsSection({ videos, shorts }: HealthVideosShorts
             )}
 
             {/* Smaller video row underneath */}
-            <div className="grid grid-cols-2 gap-3 mt-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
               {videos.slice(1, 3).map((vid, i) => (
                 <Link
                   key={vid.id || i}
@@ -139,8 +139,8 @@ export function HealthVideosShortsSection({ videos, shorts }: HealthVideosShorts
               <span className="text-[10px] font-mono text-emerald-400">SWIPEABLE</span>
             </div>
 
-            {/* Horizontal scroll container for 9:16 cards */}
-            <div className="flex items-center gap-3.5 overflow-x-auto pb-3 scrollbar-none">
+            {/* Horizontal scroll container for 9:16 cards with edge-to-edge mobile swipe */}
+            <div className="flex items-center gap-3.5 overflow-x-auto pb-3 scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
               {shorts && shorts.slice(0, 4).map((short, i) => {
                 const slug = short.slug || `short-${i}`;
                 return (
