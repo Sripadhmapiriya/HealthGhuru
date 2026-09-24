@@ -3,12 +3,12 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { auth } from '@/lib/auth/auth.config';
 
-export default auth((req: NextRequest & { auth: any }) => {
+export default async function middleware(req: NextRequest) {
   const { nextUrl } = req;
   const isAdminRoute = (nextUrl.pathname === '/admin' || nextUrl.pathname.startsWith('/admin/')) && nextUrl.pathname !== '/admin/login';
-  const session = (req as any).auth;
 
   if (isAdminRoute) {
+    const session = await auth();
     if (!session?.user || session.user.role !== 'admin') {
       const loginUrl = new URL('/admin/login', nextUrl.origin);
       loginUrl.searchParams.set('callbackUrl', nextUrl.pathname + nextUrl.search);
@@ -16,9 +16,10 @@ export default auth((req: NextRequest & { auth: any }) => {
     }
   }
   return NextResponse.next();
-});
+}
 
 export const config = {
   matcher: ['/admin', '/admin/:path*'],
 };
+
 
