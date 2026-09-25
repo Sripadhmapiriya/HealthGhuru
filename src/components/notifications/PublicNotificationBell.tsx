@@ -153,20 +153,21 @@ export function PublicNotificationBell({ className = '', isMobile = false }: Pub
 
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
-      {/* Navbar Bell Button */}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Health Notifications"
         title="Health Alerts & Notifications"
-        className={`group relative p-1.5 sm:p-2 text-slate-700 hover:text-[#16A34A] hover:bg-emerald-50/80 rounded-full transition-all cursor-pointer ${
-          isMobile ? 'flex items-center gap-3 w-full p-3 rounded-2xl bg-white hover:bg-slate-50 border border-slate-100' : ''
+        className={`group relative !min-w-0 !min-h-0 transition-all cursor-pointer ${
+          isMobile
+            ? 'flex items-center gap-3 w-full p-3 rounded-2xl bg-white hover:bg-slate-50 border border-slate-100 min-h-[48px]'
+            : 'w-7.5 h-7.5 sm:w-8 sm:h-8 flex items-center justify-center rounded-full text-slate-700 hover:text-[#16A34A] hover:bg-emerald-50/80 p-0'
         }`}
       >
         <div className="relative flex items-center justify-center">
-          <Bell className="w-[18px] h-[18px] sm:w-5 sm:h-5 transition-transform group-hover:scale-110 text-slate-700 group-hover:text-[#16A34A]" />
+          <Bell className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:scale-110 text-slate-700 group-hover:text-[#16A34A]" />
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 sm:-top-1.5 sm:-right-1.5 min-w-[15px] h-[15px] sm:min-w-[18px] sm:h-[18px] px-0.5 sm:px-1 rounded-full bg-[#f06d2f] text-white font-mono font-bold text-[8px] sm:text-[10px] flex items-center justify-center shadow-xs border-2 border-white ring-1 ring-orange-500/30">
+            <span className="absolute -top-1 -right-1 sm:-top-1.5 sm:-right-1.5 min-w-[14px] h-[14px] sm:min-w-[18px] sm:h-[18px] px-0.5 sm:px-1 rounded-full bg-[#f06d2f] text-white font-mono font-bold text-[7.5px] sm:text-[10px] flex items-center justify-center shadow-xs border-2 border-white ring-1 ring-orange-500/30 pointer-events-none">
               {unreadCount > 9 ? '9+' : unreadCount}
             </span>
           )}
