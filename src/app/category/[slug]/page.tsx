@@ -16,11 +16,94 @@ import {
   Sparkles,
   HeartPulse,
   Share2,
+  CheckCircle2,
+  Activity,
 } from 'lucide-react';
 import { getSafeImageUrl, formatDate } from '@/lib/utils';
 import { CategoryClientView } from './CategoryClientView';
 
 export const dynamic = 'force-dynamic';
+
+interface CategoryVisualConfig {
+  image: string;
+  orb1: string;
+  orb2: string;
+  accentBar: string;
+  badgeBorder: string;
+}
+
+const CATEGORY_VISUALS: Record<string, CategoryVisualConfig> = {
+  fitness: {
+    image: '/images/glass_fitness.png',
+    orb1: 'from-emerald-200/50 via-teal-100/35 to-transparent',
+    orb2: 'from-amber-100/40 via-orange-100/25 to-transparent',
+    accentBar: 'from-emerald-500 to-[#f06d2f]',
+    badgeBorder: 'from-emerald-400/35 via-emerald-200/40 to-orange-300/30',
+  },
+  nutrition: {
+    image: '/images/glass_nutrition.png',
+    orb1: 'from-lime-200/50 via-emerald-100/35 to-transparent',
+    orb2: 'from-amber-100/40 via-yellow-100/25 to-transparent',
+    accentBar: 'from-lime-500 to-amber-500',
+    badgeBorder: 'from-lime-400/35 via-emerald-200/40 to-amber-300/30',
+  },
+  heart: {
+    image: '/images/glass_heart.png',
+    orb1: 'from-rose-200/50 via-red-100/35 to-transparent',
+    orb2: 'from-emerald-100/40 via-teal-100/25 to-transparent',
+    accentBar: 'from-rose-500 to-emerald-500',
+    badgeBorder: 'from-rose-400/35 via-pink-200/40 to-emerald-300/30',
+  },
+  'mental-health': {
+    image: '/images/glass_mental_health.png',
+    orb1: 'from-indigo-200/50 via-purple-100/35 to-transparent',
+    orb2: 'from-emerald-100/40 via-sky-100/25 to-transparent',
+    accentBar: 'from-indigo-500 to-emerald-500',
+    badgeBorder: 'from-indigo-400/35 via-purple-200/40 to-emerald-300/30',
+  },
+  sleep: {
+    image: '/images/glass_mental_health.png',
+    orb1: 'from-blue-200/50 via-indigo-100/35 to-transparent',
+    orb2: 'from-teal-100/40 via-emerald-100/25 to-transparent',
+    accentBar: 'from-blue-500 to-teal-500',
+    badgeBorder: 'from-blue-400/35 via-indigo-200/40 to-teal-300/30',
+  },
+  cancer: {
+    image: '/images/glass_research_dna.png',
+    orb1: 'from-teal-200/50 via-cyan-100/35 to-transparent',
+    orb2: 'from-emerald-100/40 via-indigo-100/25 to-transparent',
+    accentBar: 'from-teal-500 to-emerald-600',
+    badgeBorder: 'from-teal-400/35 via-cyan-200/40 to-emerald-300/30',
+  },
+  diabetes: {
+    image: '/images/glass_nutrition.png',
+    orb1: 'from-sky-200/50 via-teal-100/35 to-transparent',
+    orb2: 'from-emerald-100/40 via-blue-100/25 to-transparent',
+    accentBar: 'from-sky-500 to-emerald-500',
+    badgeBorder: 'from-sky-400/35 via-teal-200/40 to-emerald-300/30',
+  },
+  'womens-health': {
+    image: '/images/glass_health_emblem.png',
+    orb1: 'from-pink-200/50 via-rose-100/35 to-transparent',
+    orb2: 'from-emerald-100/40 via-amber-100/25 to-transparent',
+    accentBar: 'from-pink-500 to-emerald-500',
+    badgeBorder: 'from-pink-400/35 via-rose-200/40 to-emerald-300/30',
+  },
+  pediatrics: {
+    image: '/images/glass_health_emblem.png',
+    orb1: 'from-emerald-200/50 via-cyan-100/35 to-transparent',
+    orb2: 'from-amber-100/40 via-orange-100/25 to-transparent',
+    accentBar: 'from-emerald-500 to-amber-500',
+    badgeBorder: 'from-emerald-400/35 via-cyan-200/40 to-amber-300/30',
+  },
+  research: {
+    image: '/images/glass_research_dna.png',
+    orb1: 'from-cyan-200/50 via-emerald-100/35 to-transparent',
+    orb2: 'from-blue-100/40 via-indigo-100/25 to-transparent',
+    accentBar: 'from-cyan-500 to-emerald-500',
+    badgeBorder: 'from-cyan-400/35 via-emerald-200/40 to-teal-300/30',
+  },
+};
 
 export async function generateMetadata({
   params,
@@ -82,6 +165,14 @@ export default async function CategoryPage({
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ');
 
+  const visualConfig = CATEGORY_VISUALS[params.slug.toLowerCase()] || {
+    image: '/images/glass_health_emblem.png',
+    orb1: 'from-emerald-200/50 via-teal-100/35 to-transparent',
+    orb2: 'from-amber-100/40 via-orange-100/25 to-transparent',
+    accentBar: 'from-emerald-500 to-[#f06d2f]',
+    badgeBorder: 'from-emerald-400/35 via-emerald-200/40 to-orange-300/30',
+  };
+
   const featuredStory = items[0];
   const listStories = items.slice(1);
 
@@ -102,59 +193,119 @@ export default async function CategoryPage({
           <span className="text-[#16A34A] font-bold">{categoryName}</span>
         </nav>
 
-        {/* Category Header Banner */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-emerald-500/20 shadow-xs mb-8 relative overflow-hidden">
-          {/* Ambient Background Accent */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-50/70 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+        {/* Category Header Banner with Glassmorphism, 3D Glass Transparent Image & Hover Animations */}
+        <div className="group relative bg-white/70 backdrop-blur-2xl rounded-3xl p-6 sm:p-8 lg:p-10 border border-white/80 ring-1 ring-emerald-500/20 shadow-[0_12px_40px_rgba(22,163,74,0.08)] hover:shadow-[0_25px_65px_-10px_rgba(22,163,74,0.2)] hover:border-emerald-400/50 transition-all duration-500 mb-8 overflow-hidden">
+          
+          {/* Top Glass Specular Reflection Lines */}
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-white to-transparent opacity-80 pointer-events-none" />
+          <div className="absolute top-0 left-12 right-12 h-[1.5px] bg-gradient-to-r from-transparent via-emerald-400/70 to-transparent pointer-events-none group-hover:via-emerald-400 transition-colors duration-500" />
 
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          {/* Ambient Glowing Glass Orbs shining from behind with bespoke category colors */}
+          <div className={`absolute top-0 right-1/4 w-[480px] h-[480px] bg-gradient-to-br ${visualConfig.orb1} rounded-full blur-3xl pointer-events-none -mr-24 -mt-24 group-hover:scale-120 group-hover:opacity-90 transition-all duration-700`} />
+          <div className={`absolute bottom-0 left-10 w-80 h-80 bg-gradient-to-tr ${visualConfig.orb2} rounded-full blur-3xl pointer-events-none -mb-20 group-hover:scale-110 transition-transform duration-700`} />
+
+          {/* Subtle Glass Frost Texture / Watermark */}
+          <div 
+            className="absolute inset-0 opacity-[0.035] group-hover:opacity-[0.06] transition-opacity duration-500 pointer-events-none"
+            style={{
+              backgroundImage: `radial-gradient(#16a34a 1.2px, transparent 1.2px)`,
+              backgroundSize: '24px 24px'
+            }}
+          />
+
+          {/* 3D Glass Transparent Image Floating Inside Section (Unique Per Category) */}
+          <div className="flex absolute -right-6 sm:right-6 md:right-12 lg:right-72 xl:right-80 top-1/2 -translate-y-1/2 w-36 h-36 sm:w-44 sm:h-44 lg:w-56 lg:h-56 pointer-events-none z-0 items-center justify-center opacity-35 sm:opacity-85 lg:opacity-95 group-hover:opacity-100 transition-all duration-700">
+            <div className="relative w-full h-full animate-float transition-transform duration-700 group-hover:scale-110 group-hover:rotate-6">
+              {/* Soft Refractive Light Ring around Glass Emblem */}
+              <div className="absolute inset-4 bg-gradient-to-br from-emerald-400/25 via-teal-300/20 to-amber-300/15 rounded-full blur-2xl pointer-events-none" />
+              <Image
+                src={visualConfig.image}
+                alt={`${categoryName} 3D Glass Emblem`}
+                fill
+                className="object-contain drop-shadow-[0_20px_35px_rgba(22,163,74,0.22)]"
+                priority
+              />
+            </div>
+          </div>
+
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 sm:gap-8">
             <div className="max-w-3xl">
-              <div className="flex items-center gap-2.5 mb-2.5">
-                <span className="w-2.5 h-6 rounded-full bg-gradient-to-b from-[#f06d2f] to-[#ea580c]" />
+              {/* Frosted Glass Header Pill */}
+              <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/80 backdrop-blur-md border border-emerald-500/25 mb-3.5 shadow-2xs group-hover:bg-white/95 group-hover:border-emerald-500/40 transition-all duration-300">
+                <span className="w-2 h-4 rounded-full bg-gradient-to-b from-[#f06d2f] to-[#ea580c] shadow-[0_0_8px_rgba(240,109,47,0.5)]" />
                 <span className="text-xs font-mono uppercase tracking-widest text-[#16A34A] font-extrabold flex items-center gap-2">
                   <span>HEALTHGHURU EDITORIAL TOPIC HUB</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                  </span>
                 </span>
               </div>
 
-              <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
-                {categoryName.toUpperCase()}
-              </h1>
+              {/* Title with accent bar */}
+              <div className="space-y-2">
+                <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.05] group-hover:text-emerald-950 transition-colors duration-300">
+                  {categoryName.toUpperCase()}
+                </h1>
+                <div className={`w-14 h-1 bg-gradient-to-r ${visualConfig.accentBar} rounded-full group-hover:w-24 transition-all duration-500`} />
+              </div>
 
-              <p className="mt-2.5 text-sm sm:text-base text-slate-600 max-w-2xl leading-relaxed">
+              <p className="mt-3.5 text-sm sm:text-base text-slate-600 max-w-2xl leading-relaxed">
                 Evidence-based reporting, clinical research breakthroughs, doctor interviews,
                 and validated wellness guides in {categoryName}.
               </p>
 
-              <div className="mt-4 flex flex-wrap items-center gap-2 sm:gap-3 text-xs font-mono">
-                <span className="px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold flex items-center gap-1.5">
-                  <Sparkles size={12} className="text-[#16A34A]" />
-                  {items.length}+ Articles Available
-                </span>
-                <span className="px-3 py-1 rounded-full bg-slate-50 border border-slate-200 text-slate-600 font-medium">
-                  Updated Daily
-                </span>
-                <span className="px-3 py-1 rounded-full bg-orange-50 border border-orange-200 text-[#f06d2f] font-medium">
-                  Clinically Sourced
-                </span>
+              {/* Frosted Glass Interactive Pills with Micro-Animations */}
+              <div className="mt-5 flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs font-mono">
+                <div className="group/chip inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/80 hover:bg-emerald-50/90 backdrop-blur-md border border-emerald-200/90 hover:border-emerald-400 text-emerald-800 font-bold transition-all duration-200 hover:scale-105 hover:shadow-xs cursor-default">
+                  <Sparkles size={13} className="text-[#16A34A] group-hover/chip:rotate-12 transition-transform duration-300" />
+                  <span>{items.length}+ Articles Available</span>
+                </div>
+                <div className="group/chip inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/80 hover:bg-slate-100/90 backdrop-blur-md border border-slate-200 hover:border-slate-300 text-slate-700 font-medium transition-all duration-200 hover:scale-105 hover:shadow-xs cursor-default">
+                  <Clock size={13} className="text-slate-500 group-hover/chip:rotate-45 transition-transform duration-300" />
+                  <span>Updated Daily</span>
+                </div>
+                <div className="group/chip inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/80 hover:bg-orange-50/90 backdrop-blur-md border border-orange-200 hover:border-orange-300 text-[#ea580c] font-semibold transition-all duration-200 hover:scale-105 hover:shadow-xs cursor-default">
+                  <Activity size={13} className="text-[#f06d2f] group-hover/chip:scale-110 transition-transform duration-300" />
+                  <span>Clinically Sourced</span>
+                </div>
               </div>
             </div>
 
-            {/* Medically Verified Badge Card */}
-            <div className="flex items-center gap-3.5 bg-gradient-to-br from-[#F5FAF5] to-emerald-50/60 p-4 rounded-2xl border border-emerald-500/25 shrink-0 shadow-xs">
-              <div className="p-2.5 rounded-xl bg-white shadow-xs text-[#16A34A] border border-emerald-100">
-                <ShieldCheck size={26} />
-              </div>
-              <div className="text-xs">
-                <p className="font-heading font-extrabold text-slate-900 text-sm">
-                  Medically Verified Hub
-                </p>
-                <p className="text-slate-500 text-[11px] mt-0.5">
-                  Reviewed by board-certified physicians
-                </p>
-                <span className="inline-block mt-1 text-[10px] font-mono text-emerald-700 bg-emerald-100/60 px-2 py-0.5 rounded">
-                  ISO / Peer-Review Standards
-                </span>
+            {/* Medically Verified Badge Card with Pure Glassmorphic Styling */}
+            <div className={`relative group/badge p-[1.5px] rounded-2xl bg-gradient-to-br ${visualConfig.badgeBorder} hover:from-emerald-500 hover:via-emerald-400 hover:to-orange-400 transition-all duration-500 shadow-sm hover:shadow-xl hover:-translate-y-1.5 shrink-0 cursor-default`}>
+              <div className="relative flex items-center gap-4 bg-white/75 hover:bg-white/90 backdrop-blur-xl p-4 sm:p-5 rounded-[15px] border border-white/80 shadow-[0_8px_30px_rgba(22,163,74,0.06)] overflow-hidden transition-all duration-300">
+                {/* Light Sweep Sheen Animation across Card on Hover */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/90 to-transparent -translate-x-full group-hover/badge:translate-x-full transition-transform duration-1000 ease-out pointer-events-none" />
+
+                {/* Shield Icon with Ambient Glow */}
+                <div className="relative">
+                  <div className="absolute -inset-1 bg-emerald-400/25 rounded-2xl blur-md group-hover/badge:bg-emerald-500/40 transition-all duration-300" />
+                  <div className="relative p-3 rounded-xl bg-white/90 backdrop-blur-md text-[#16A34A] border border-white shadow-xs group-hover/badge:scale-110 group-hover/badge:rotate-3 transition-all duration-300">
+                    <ShieldCheck size={28} className="stroke-[2.2]" />
+                  </div>
+                </div>
+
+                <div className="text-xs">
+                  <div className="flex items-center gap-2">
+                    <p className="font-heading font-extrabold text-slate-900 text-sm tracking-tight group-hover/badge:text-[#16A34A] transition-colors">
+                      Medically Verified Hub
+                    </p>
+                    <span className="flex h-2 w-2 relative">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                    </span>
+                  </div>
+                  <p className="text-slate-500 text-[11px] mt-0.5 font-normal">
+                    Reviewed by board-certified physicians
+                  </p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="inline-flex items-center gap-1.5 text-[10px] font-mono font-bold text-emerald-800 bg-emerald-100/70 border border-emerald-300/70 px-2.5 py-0.5 rounded-full shadow-2xs group-hover/badge:bg-emerald-200/90 transition-colors">
+                      <CheckCircle2 size={11} className="text-emerald-700" />
+                      ISO / Peer-Review Standards
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

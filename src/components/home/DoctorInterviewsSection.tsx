@@ -14,8 +14,19 @@ export function DoctorInterviewsSection({ interviews }: DoctorInterviewsSectionP
   if (!interviews || interviews.length === 0) return null;
 
   return (
-    <section className="w-full py-8 sm:py-12 bg-white">
-      <div className="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="group/interviews w-full py-8 sm:py-12 bg-gradient-to-br from-white via-emerald-50/20 to-teal-50/25 border-y border-emerald-500/15 relative overflow-hidden">
+      {/* Ambient Clinical Consultation Graphic */}
+      <div className="hidden lg:flex absolute right-16 top-4 w-44 h-44 xl:w-52 xl:h-52 pointer-events-none z-0 items-center justify-center opacity-25 group-hover/interviews:opacity-65 group-hover/interviews:scale-105 transition-all duration-700">
+        <Image
+          src="/images/glass_heart.png"
+          alt="Doctor Interviews"
+          fill
+          className="object-contain drop-shadow-[0_15px_30px_rgba(22,163,74,0.18)]"
+        />
+      </div>
+      <div className="absolute top-0 right-1/4 w-96 h-96 bg-gradient-to-br from-rose-100/35 via-emerald-50/20 to-transparent rounded-full blur-3xl pointer-events-none" />
+
+      <div className="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header with Logo Dual-Gradient Underline */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-3.5 mb-7 relative">

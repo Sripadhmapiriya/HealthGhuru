@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <div className="w-full bg-[#f8fafc] min-h-screen py-10 sm:py-16">
-      <div className="site-container px-4 sm:px-6 lg:px-8 space-y-12">
-        <ContactClient />
+    <div className="w-full bg-[#f8fafc] min-h-screen">
+      <ContactClient />
+      <div className="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pb-12 sm:pb-16">
         <HealthDisclaimer />
       </div>
     </div>

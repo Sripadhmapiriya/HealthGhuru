@@ -59,10 +59,12 @@ const config: Config = {
         8.5: "2.125rem",
       },
       fontFamily: {
-        display: ["var(--font-display)"],
-        heading: ["var(--font-heading)"],
-        body: ["var(--font-body)"],
-        mono: ["var(--font-mono)"],
+        display: ["var(--font-display)", "var(--font-heading)", "Inter", "system-ui", "-apple-system", "sans-serif"],
+        heading: ["var(--font-heading)", "Inter", "system-ui", "-apple-system", "sans-serif"],
+        body: ["var(--font-body)", "Inter", "system-ui", "-apple-system", "sans-serif"],
+        sans: ["var(--font-body)", "Inter", "system-ui", "-apple-system", "sans-serif"],
+        serif: ["var(--font-heading)", "var(--font-body)", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"],
       },
       backgroundImage: {
         "gradient-primary": "linear-gradient(135deg, #16A34A 0%, #22C55E 100%)",

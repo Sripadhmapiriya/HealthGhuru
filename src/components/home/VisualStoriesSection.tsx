@@ -357,7 +357,7 @@ export function VisualStoriesSection() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                <h2 className="font-heading text-2xl sm:text-3xl font-black tracking-tight text-white">
                   Visual Health Stories
                 </h2>
                 <span className="px-2 py-0.5 bg-accent/20 text-accent border border-accent/30 text-xs font-semibold uppercase tracking-wider rounded-full">
@@ -490,7 +490,7 @@ export function VisualStoriesSection() {
                     {activeStory.slides[activeSlideIndex].subtitle}
                   </div>
 
-                  <h3 className="text-xl sm:text-2xl font-bold font-serif text-white mb-2 leading-tight">
+                  <h3 className="text-xl sm:text-2xl font-extrabold font-heading text-white mb-2 leading-tight">
                     {activeStory.slides[activeSlideIndex].title}
                   </h3>
 

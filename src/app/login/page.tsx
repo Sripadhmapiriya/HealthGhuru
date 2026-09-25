@@ -314,7 +314,7 @@ function LoginForm() {
             {/* Trust Quote */}
             <div className="p-4 rounded-2xl bg-primary text-white relative overflow-hidden shadow-md">
               <div className="relative z-10">
-                <p className="text-xs font-serif italic leading-relaxed text-white/95">
+                <p className="text-xs font-body italic leading-relaxed text-white/95">
                   &ldquo;Health is not about perfection, but daily consistent choices grounded in science.&rdquo;
                 </p>
                 <div className="mt-2 flex items-center gap-2 text-[11px] font-heading font-semibold text-white/80">

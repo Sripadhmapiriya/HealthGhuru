@@ -12,7 +12,6 @@ import {
   ArrowRight,
   Mail,
   MapPin,
-  Lock,
 } from "lucide-react";
 
 export default function Footer() {
@@ -259,13 +258,6 @@ export default function Footer() {
             </Link>
             <Link href="/contact" className="hover:text-slate-300 transition-colors">
               Contact
-            </Link>
-            <Link 
-              href="/admin" 
-              className="text-[#f06d2f] hover:text-[#22C55E] font-heading font-black transition-colors flex items-center gap-1"
-            >
-              <Lock size={10} />
-              <span>Admin Portal</span>
             </Link>
           </div>
         </div>
