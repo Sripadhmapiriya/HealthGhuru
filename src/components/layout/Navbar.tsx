@@ -170,33 +170,33 @@ export default function Navbar() {
   return (
     <header className="w-full bg-white text-slate-900 shadow-xs sticky top-0 z-40">
       {/* 1. Main Portal Header Row */}
-      <div className="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-2 sm:px-6 lg:px-8 py-1.5 sm:py-3">
+      <div className="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-2 sm:px-6 lg:px-8 py-2.5 sm:py-3.5">
         <div className="flex items-center justify-between gap-1 sm:gap-4">
           {/* Left: Hamburger + Logo */}
-          <div className="flex items-center gap-1 sm:gap-2.5 min-w-0">
+          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
             {/* Hamburger Button */}
             <button
               onClick={() => setMobileDrawerOpen(!mobileDrawerOpen)}
-              className="p-1 sm:p-2 -ml-0.5 sm:-ml-1 text-slate-800 hover:text-[#16A34A] hover:bg-emerald-50 rounded-lg transition-all active:scale-95 focus:outline-none shrink-0"
+              className="!min-w-0 !min-h-0 w-7.5 h-7.5 sm:w-8 sm:h-8 flex items-center justify-center p-0 text-slate-800 hover:text-[#16A34A] hover:bg-emerald-50 rounded-lg transition-all active:scale-95 focus:outline-none shrink-0"
               aria-label="Toggle Navigation Menu"
             >
-              <Menu size={21} className="sm:w-[26px] sm:h-[26px]" />
+              <Menu size={20} className="sm:w-[26px] sm:h-[26px]" />
             </button>
 
             {/* HealthGhuru Logo + Tagline */}
-            <Link href="/" className="flex flex-col group min-w-0">
-              <div className="flex items-center gap-1 sm:gap-2">
-                <div className="relative w-6 h-6 sm:w-10 sm:h-10 lg:w-12 lg:h-12 shrink-0 transition-transform group-hover:scale-105 duration-300">
+            <Link href="/" className="flex flex-col group shrink-0">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <div className="relative w-7 h-7 sm:w-10 sm:h-10 lg:w-12 lg:h-12 shrink-0 transition-transform group-hover:scale-105 duration-300">
                   <Image
                     src="/images/logo_transparent.png"
                     alt="HealthGhuru Logo"
                     fill
-                    sizes="(max-width: 640px) 24px, 48px"
+                    sizes="(max-width: 640px) 28px, (max-width: 1024px) 40px, 48px"
                     className="object-contain"
                     priority
                   />
                 </div>
-                <span className="font-display text-[17px] sm:text-2xl lg:text-3xl font-black tracking-tight text-[#16A34A] group-hover:text-[#15803D] transition-colors leading-none truncate">
+                <span className="font-display text-[13.5px] sm:text-2xl lg:text-3xl font-black tracking-tight text-[#16A34A] group-hover:text-[#15803D] transition-colors leading-none whitespace-nowrap">
                   HEALTH<span className="text-[#f06d2f]">GHURU</span>
                 </span>
               </div>
@@ -207,17 +207,19 @@ export default function Navbar() {
           </div>
 
           {/* Center: Dynamic High-Impact Leaderboard Sponsor Banner (Desktop only) */}
-          <NavbarHeaderAd />
+          <div className="hidden lg:contents">
+            <NavbarHeaderAd />
+          </div>
 
-          {/* Right: Search, Notification Bell, User Avatar, Login & Desktop Advertise */}
-          <div className="flex items-center gap-0.5 sm:gap-2 shrink-0">
+          {/* Right: Search, Notification Bell, User Avatar, Login & Subscribe */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             {/* Search Trigger */}
             <button
               onClick={() => setSearchOpen(!searchOpen)}
-              className="p-1.5 sm:p-2 text-slate-700 hover:text-[#f06d2f] hover:bg-orange-50/80 rounded-full transition-all active:scale-95 shrink-0"
+              className="!min-w-0 !min-h-0 w-7.5 h-7.5 sm:w-8 sm:h-8 flex items-center justify-center p-0 text-slate-700 hover:text-[#f06d2f] hover:bg-orange-50/80 rounded-full transition-all active:scale-95 shrink-0"
               aria-label="Search Health News"
             >
-              <Search size={18} className="sm:w-5 sm:h-5" />
+              <Search size={16} className="sm:w-5 sm:h-5" />
             </button>
 
             {/* Health Alerts & Notifications Bell */}
@@ -225,7 +227,7 @@ export default function Navbar() {
 
             {/* User Profile Avatar / Dropdown */}
             {status === "loading" ? (
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gray-200 animate-pulse shrink-0" />
+              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gray-200 animate-pulse shrink-0" />
             ) : user ? (
               <div className="relative shrink-0" ref={userMenuRef}>
                 <button
@@ -233,7 +235,7 @@ export default function Navbar() {
                   className="flex items-center p-0.5 rounded-full hover:ring-2 hover:ring-[#f06d2f]/40 transition-all"
                   aria-label="User profile menu"
                 >
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-[#f06d2f] to-[#ea580c] text-white flex items-center justify-center text-[11px] sm:text-xs font-bold font-heading shadow-xs">
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-[#f06d2f] to-[#ea580c] text-white flex items-center justify-center text-[10px] sm:text-xs font-bold font-heading shadow-xs">
                     {userInitials}
                   </div>
                 </button>
@@ -304,17 +306,17 @@ export default function Navbar() {
               </div>
             ) : null}
 
-            {/* Login Button (When not logged in) - Compact Icon on mobile, labeled on sm+ */}
+            {/* Sign In Button (When not logged in) - Compact Icon button on mobile, labeled on sm+ */}
             {!user && status !== "loading" && (
               <button
                 type="button"
                 onClick={() => openLoginModal({ initialMode: "signin" })}
-                className="bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-heading font-bold p-1.5 sm:px-3.5 sm:py-2 rounded-lg shadow-xs hover:shadow transition-all inline-flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+                className="!min-w-0 !min-h-0 w-7.5 h-7.5 sm:w-auto sm:h-8.5 sm:px-3 text-slate-800 hover:text-slate-950 bg-slate-100 hover:bg-slate-200 border border-slate-300/80 rounded-full transition-all inline-flex items-center justify-center gap-1.5 cursor-pointer shrink-0 shadow-2xs whitespace-nowrap active:scale-95"
                 aria-label="Sign in"
                 title="Sign in"
               >
-                <LogIn size={15} className="sm:w-3.5 sm:h-3.5" />
-                <span className="hidden sm:inline">Login</span>
+                <LogIn size={13.5} className="text-slate-700 sm:w-3.5 sm:h-3.5 shrink-0" />
+                <span className="hidden sm:inline text-xs font-heading font-bold">Sign In</span>
               </button>
             )}
 
@@ -334,21 +336,39 @@ export default function Navbar() {
               <span>Advertise With Us</span>
             </button>
 
-            {/* Subscribe / VIP Member Button (desktop only) */}
+            {/* Deep Dark Green Blinking Subscribe Button - Clearly Viewed on Mobile */}
             {isSubscribed ? (
               <Link
                 href="/account"
-                className="bg-gradient-to-r from-emerald-800 to-teal-900 hover:from-emerald-900 hover:to-teal-950 text-emerald-100 text-xs sm:text-sm font-heading font-bold px-3.5 sm:px-4 py-2 rounded-lg shadow-sm hover:shadow-md hover:scale-[1.03] active:scale-[0.97] transition-all hidden lg:inline-flex items-center gap-1.5"
+                className="!min-w-0 !min-h-0 h-7.5 sm:h-8.5 bg-[#022c22] hover:bg-[#033b2e] text-emerald-100 text-[10px] sm:text-xs md:text-sm font-heading font-bold px-2.5 sm:px-3.5 rounded-full shadow-xs hover:shadow-md hover:scale-[1.03] active:scale-[0.97] transition-all inline-flex items-center gap-1 sm:gap-1.5 shrink-0 whitespace-nowrap cursor-pointer touch-manipulation border border-emerald-600/50"
               >
-                <Sparkles size={13} className="text-amber-300 animate-spin" style={{ animationDuration: '6s' }} />
-                <span>VIP Member</span>
+                <Sparkles size={11} className="text-amber-300 animate-spin sm:w-3.5 sm:h-3.5 pointer-events-none" style={{ animationDuration: '6s' }} />
+                <span className="pointer-events-none">VIP<span className="hidden sm:inline"> Member</span></span>
               </Link>
             ) : (
               <Link
                 href="/subscribe"
-                className="bg-gradient-to-r from-[#16A34A] to-[#15803D] hover:from-[#15803D] hover:to-[#0D5C3A] text-white text-xs sm:text-sm font-heading font-bold px-3.5 sm:px-4 py-2 rounded-lg shadow-sm hover:shadow-md hover:scale-[1.03] active:scale-[0.97] transition-all hidden lg:inline-flex items-center"
+                className="relative group overflow-hidden !min-w-0 !min-h-0 h-7.5 sm:h-8.5 inline-flex items-center gap-1.5 px-3 sm:px-3.5 md:px-4 rounded-full font-heading font-black text-[10.5px] sm:text-xs md:text-sm text-white bg-[#022c22] hover:bg-[#033b2e] shadow-sm shadow-emerald-950/60 hover:scale-[1.03] active:scale-[0.97] transition-all shrink-0 border border-emerald-500/60 whitespace-nowrap cursor-pointer touch-manipulation"
               >
-                Subscribe
+                {/* 1. Subtle Dark Emerald Pulsing Aura Halo */}
+                <span className="absolute -inset-0.5 rounded-full bg-emerald-500/25 blur-xs animate-pulse pointer-events-none" />
+
+                {/* 2. Light Shimmer Sweep */}
+                <span className="absolute inset-0 w-full h-full badge-shimmer pointer-events-none opacity-40" />
+
+                {/* 3. Blinking Live Beacon Radar Dot in Vivid Emerald Green */}
+                <span className="relative flex h-1.5 w-1.5 shrink-0 pointer-events-none">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-90" style={{ animationDuration: '1.2s' }}></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-300 shadow-[0_0_8px_rgba(52,211,153,1)]"></span>
+                </span>
+
+                {/* 4. Text - Clearly visible in crisp white font */}
+                <span className="tracking-wider uppercase font-black text-[10.5px] sm:text-xs md:text-sm whitespace-nowrap pointer-events-none text-white drop-shadow-sm">
+                  Subscribe
+                </span>
+
+                {/* 5. Animated Sparkle (Shown on sm+ to keep mobile perfectly compact) */}
+                <Sparkles size={11} className="text-amber-300 animate-spin hidden sm:inline shrink-0 pointer-events-none" style={{ animationDuration: '4s' }} />
               </Link>
             )}
           </div>
@@ -690,6 +710,16 @@ export default function Navbar() {
                     </div>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
+                    {!isSubscribed && (
+                      <Link
+                        href="/subscribe"
+                        onClick={() => setMobileDrawerOpen(false)}
+                        className="px-2 py-1 text-[10.5px] font-bold text-white bg-gradient-to-r from-[#16A34A] to-[#15803D] rounded-lg shadow-2xs inline-flex items-center gap-1"
+                      >
+                        <Sparkles size={10} className="text-amber-300" />
+                        <span>Subscribe</span>
+                      </Link>
+                    )}
                     <Link
                       href="/profile"
                       onClick={() => setMobileDrawerOpen(false)}
@@ -740,17 +770,25 @@ export default function Navbar() {
                       <LogIn size={11} />
                       <span>Sign In</span>
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setMobileDrawerOpen(false);
-                        openLoginModal({ initialMode: "signup" });
-                      }}
-                      className="px-2.5 py-1 text-[11px] font-bold text-white bg-gradient-to-r from-[#16A34A] to-[#15803D] hover:from-[#15803D] hover:to-[#0D5C3A] rounded-lg transition-all cursor-pointer shadow-xs inline-flex items-center gap-1"
-                    >
-                      <Sparkles size={10} className="text-amber-300" />
-                      <span>Join</span>
-                    </button>
+                    {!isSubscribed ? (
+                      <Link
+                        href="/subscribe"
+                        onClick={() => setMobileDrawerOpen(false)}
+                        className="px-2.5 py-1 text-[11px] font-bold text-white bg-gradient-to-r from-[#16A34A] to-[#15803D] hover:from-[#15803D] hover:to-[#0D5C3A] rounded-lg transition-all cursor-pointer shadow-xs inline-flex items-center gap-1"
+                      >
+                        <Sparkles size={10} className="text-amber-300" />
+                        <span>Subscribe</span>
+                      </Link>
+                    ) : (
+                      <Link
+                        href="/account"
+                        onClick={() => setMobileDrawerOpen(false)}
+                        className="px-2.5 py-1 text-[11px] font-bold text-emerald-100 bg-gradient-to-r from-emerald-800 to-teal-900 rounded-lg transition-all cursor-pointer shadow-xs inline-flex items-center gap-1"
+                      >
+                        <Sparkles size={10} className="text-amber-300" />
+                        <span>VIP Account</span>
+                      </Link>
+                    )}
                   </div>
                 </div>
               )}

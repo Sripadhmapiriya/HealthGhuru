@@ -286,8 +286,12 @@ html.lenis, html.lenis body {
     --tracking-display: -0.01em;
   }
 
-  /* TOUCH TARGETS */
-  button, a[role="button"], .btn, [data-cursor="button"], [data-cursor="tab"] {
+  /* TOUCH TARGETS (excluding compact navigation/header/ticker controls) */
+  button:not(.btn-compact, header button, nav button, [data-compact], [data-ticker], .ticker-btn), 
+  a[role="button"]:not(.btn-compact, header a, nav a, [data-compact], [data-ticker]), 
+  .btn:not(.btn-compact, header button, nav button), 
+  [data-cursor="button"]:not(.btn-compact, header button, nav button), 
+  [data-cursor="tab"] {
     min-height: 48px;
     min-width: 48px;
   }
