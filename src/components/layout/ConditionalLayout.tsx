@@ -1,7 +1,6 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { TopAdBar } from "@/components/layout/TopAdBar";
 import { FloatingFooterAd } from "@/components/ads/FloatingFooterAd";
 import { PopupAdModal } from "@/components/ads/PopupAdModal";
 import { AuthModal } from "@/components/auth/AuthModal";

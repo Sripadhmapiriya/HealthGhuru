@@ -14,18 +14,9 @@ import {
   MapPin,
   Lock,
 } from "lucide-react";
-import { useAuthModal } from "@/context/AuthModalContext";
 
 export default function Footer() {
   const pathname = usePathname();
-  // Safe hook usage
-  let requireAuth: any = null;
-  try {
-    const auth = useAuthModal();
-    requireAuth = auth.requireAuth;
-  } catch {
-    // Graceful fallback
-  }
 
   // Hide on standalone auth/subscription screens
   if (pathname === "/login" || pathname === "/subscribe") {

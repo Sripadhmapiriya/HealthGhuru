@@ -9,9 +9,64 @@ import { trackAdEvent } from '@/components/ads/adTracking';
 import { useSubscription } from '@/lib/hooks/useSubscription';
 import { getSafeImageUrl } from '@/lib/utils';
 
-export function NavbarHeaderAd() {
+const DEFAULT_FALLBACK_ADS: Advertisement[] = [
+  {
+    id: 'd813e939-e5a8-4327-b4fd-e765e10bc04d',
+    title: 'Apex Heart & Vascular Institute',
+    placement: 'top_banner',
+    image_url: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=728&q=80',
+    target_url: '/hospitals/apex-heart-vascular-institute',
+    headline: 'Apex Heart & Vascular — 64-Slice Cardiac CT & Prevention',
+    description: 'Advanced early detection for coronary plaque and cardiac wellness consultations.',
+    cta_text: 'Book Consultation',
+    category: 'Heart',
+    html_code: null,
+    is_active: true,
+    impressions_count: 0,
+    clicks_count: 0,
+    start_date: new Date().toISOString(),
+    end_date: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    advertiser_type: 'hospital',
+    advertiser_name: 'Apex Heart & Vascular Institute',
+    status: 'active',
+    payment_status: 'paid',
+    priority: 'medium',
+  },
+  {
+    id: 'dd664fed-4400-4ad9-8ba0-5ab5d859030c',
+    title: 'National Cancer Research Care Centre',
+    placement: 'top_banner',
+    image_url: 'https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&w=728&q=80',
+    target_url: '/hospitals/national-cancer-research-care-centre',
+    headline: 'National Cancer Institute — Molecular Biomarker Screening',
+    description: 'Accredited oncology panel with leading clinical trial specialists.',
+    cta_text: 'Schedule Evaluation',
+    category: 'Cancer',
+    html_code: null,
+    is_active: true,
+    impressions_count: 0,
+    clicks_count: 0,
+    start_date: new Date().toISOString(),
+    end_date: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    advertiser_type: 'hospital',
+    advertiser_name: 'National Cancer Care Centre',
+    status: 'active',
+    payment_status: 'paid',
+    priority: 'medium',
+  },
+];
+
+interface NavbarHeaderAdProps {
+  isMobile?: boolean;
+}
+
+export function NavbarHeaderAd({ isMobile = false }: NavbarHeaderAdProps) {
   const { isAdFree } = useSubscription();
-  const [ads, setAds] = useState<Advertisement[]>([]);
+  const [ads, setAds] = useState<Advertisement[]>(DEFAULT_FALLBACK_ADS);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fade, setFade] = useState(true);
   const [rotationSeconds, setRotationSeconds] = useState(8);
@@ -31,7 +86,7 @@ export function NavbarHeaderAd() {
           },
         });
         const data = await res.json();
-        if (data.success && Array.isArray(data.ads)) {
+        if (data.success && Array.isArray(data.ads) && data.ads.length > 0) {
           const bannerAds = data.ads.filter(
             (a: Advertisement) =>
               (a.placement === 'hero_banner' ||
@@ -40,20 +95,20 @@ export function NavbarHeaderAd() {
               a.is_active === true &&
               (a.status === 'active' || !a.status)
           );
-          setAds(bannerAds);
+          if (bannerAds.length > 0) {
+            setAds(bannerAds);
+          }
           if (data.rotation_interval && typeof data.rotation_interval === 'number') {
             setRotationSeconds(data.rotation_interval);
           }
-        } else {
-          setAds([]);
         }
       } catch {
-        setAds([]);
+        // keep fallback ads
       }
     };
 
     loadActiveAds();
-  }, []);
+  }, [isAdFree]);
 
   // Auto-rotation timer
   useEffect(() => {
@@ -70,7 +125,7 @@ export function NavbarHeaderAd() {
     return () => clearInterval(interval);
   }, [ads.length, rotationSeconds, isPaused]);
 
-  const currentAd = ads[currentIndex] || null;
+  const currentAd = ads[currentIndex] || DEFAULT_FALLBACK_ADS[0];
 
   useEffect(() => {
     if (currentAd && currentAd.id && !trackedMap.current[currentAd.id]) {
@@ -87,6 +142,67 @@ export function NavbarHeaderAd() {
     }
   };
 
+  // MOBILE VERSION (< lg)
+  if (isMobile) {
+    return (
+      <div
+        className="w-full"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
+        <a
+          href={currentAd.target_url || '#'}
+          target={currentAd.target_url?.startsWith('http') ? '_blank' : '_self'}
+          rel={currentAd.target_url?.startsWith('http') ? 'noopener noreferrer' : undefined}
+          onClick={handleClick}
+          className={`w-full bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950 text-white rounded-xl p-1.5 px-2.5 sm:px-3 flex items-center justify-between gap-2 transition-all duration-300 shadow-xs border border-emerald-500/20 ${
+            fade ? 'opacity-100 scale-100' : 'opacity-0 scale-[0.99]'
+          }`}
+        >
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            <div className="relative w-8 h-8 rounded-lg overflow-hidden shrink-0 border border-emerald-400/30 bg-white/5">
+              {currentAd.image_url ? (
+                <Image
+                  src={getSafeImageUrl(currentAd.image_url, 'advertisement')}
+                  alt={currentAd.title || 'Header Advertisement'}
+                  fill
+                  sizes="32px"
+                  className="object-cover"
+                  unoptimized
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-emerald-900 text-white font-bold text-[9px]">
+                  AD
+                </div>
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5 leading-none">
+                <span className="text-[8px] font-mono uppercase tracking-wider font-bold bg-[#f06d2f] text-white px-1 py-0.5 rounded shrink-0">
+                  SPONSORED
+                </span>
+                <span className="text-[10px] font-bold text-amber-300 truncate">
+                  {currentAd.advertiser_name || currentAd.title}
+                </span>
+              </div>
+              <p className="text-[11px] sm:text-xs font-heading font-semibold text-white truncate mt-0.5">
+                {currentAd.headline || currentAd.title}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1 shrink-0">
+            <span className="bg-gradient-to-r from-[#f06d2f] to-[#ff8a57] text-white text-[9.5px] sm:text-[10px] font-heading font-bold px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg shadow-sm inline-flex items-center gap-1">
+              <span>{currentAd.cta_text || 'Explore'}</span>
+              <ArrowRight size={10} />
+            </span>
+          </div>
+        </a>
+      </div>
+    );
+  }
+
+  // DESKTOP VERSION (lg+)
   return (
     <div
       className="hidden lg:flex flex-1 items-center justify-center max-w-2xl xl:max-w-3xl px-2"
