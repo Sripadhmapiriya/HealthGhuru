@@ -67,7 +67,7 @@ export default function ToolsHubPage() {
               <Activity className="w-3.5 h-3.5" />
               Interactive Health Utilities
             </div>
-            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1A2E1A] tracking-tight">
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-black text-[#1A2E1A] tracking-tight">
               Evidence-Based Health Calculators
             </h1>
             <p className="mt-3 text-base text-text-secondary leading-relaxed">
@@ -109,7 +109,7 @@ export default function ToolsHubPage() {
                 </span>
               </div>
 
-              <h2 className="font-serif text-xl font-bold text-[#1A2E1A] mb-2.5 group-hover:text-primary transition-colors leading-snug">
+              <h2 className="font-heading text-xl font-bold text-[#1A2E1A] mb-2.5 group-hover:text-primary transition-colors leading-snug">
                 {tool.title}
               </h2>
 
@@ -131,7 +131,7 @@ export default function ToolsHubPage() {
             <ShieldAlert className="w-6 h-6" />
           </div>
           <div className="space-y-2">
-            <h3 className="font-serif text-lg font-bold text-amber-900">
+            <h3 className="font-heading text-lg font-bold text-amber-900">
               Mandatory Clinical & Emergency Medical Disclaimer
             </h3>
             <p className="text-sm text-amber-800 leading-relaxed">

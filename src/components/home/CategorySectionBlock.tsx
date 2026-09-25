@@ -26,6 +26,49 @@ interface CategorySectionBlockProps {
   accentColor?: string;
 }
 
+const CATEGORY_SECTION_GRAPHICS: Record<string, { image: string; orb: string; accentColor: string }> = {
+  cancer: {
+    image: '/images/glass_research_dna.png',
+    orb: 'from-teal-100/50 via-cyan-50/30 to-transparent',
+    accentColor: '#0d9488',
+  },
+  heart: {
+    image: '/images/glass_heart.png',
+    orb: 'from-rose-100/50 via-red-50/30 to-transparent',
+    accentColor: '#e11d48',
+  },
+  diabetes: {
+    image: '/images/glass_nutrition.png',
+    orb: 'from-sky-100/50 via-teal-50/30 to-transparent',
+    accentColor: '#0284c7',
+  },
+  'womens-health': {
+    image: '/images/glass_health_emblem.png',
+    orb: 'from-pink-100/50 via-rose-50/30 to-transparent',
+    accentColor: '#db2777',
+  },
+  pediatrics: {
+    image: '/images/glass_health_emblem.png',
+    orb: 'from-amber-100/50 via-orange-50/30 to-transparent',
+    accentColor: '#d97706',
+  },
+  'mental-health': {
+    image: '/images/glass_mental_health.png',
+    orb: 'from-indigo-100/50 via-purple-50/30 to-transparent',
+    accentColor: '#4f46e5',
+  },
+  fitness: {
+    image: '/images/glass_fitness.png',
+    orb: 'from-emerald-100/50 via-teal-50/30 to-transparent',
+    accentColor: '#16a34a',
+  },
+  nutrition: {
+    image: '/images/glass_nutrition.png',
+    orb: 'from-lime-100/50 via-emerald-50/30 to-transparent',
+    accentColor: '#65a30d',
+  },
+};
+
 // Curated high-impact clinical stories to guarantee a full, breathtaking 4-card grid for every category
 const CATEGORY_TOPICS: Record<string, string[]> = {
   cancer: ['All Topics', 'Liquid Biopsies', 'Immunotherapy', 'Genomics', 'CAR-T Cell', 'Clinical Trials'],
@@ -337,12 +380,29 @@ export function CategorySectionBlock({
   const featured = displayItems[0];
   const supporting = displayItems.slice(1, 4);
 
-  if (!featured) return null;
+  const secConfig = CATEGORY_SECTION_GRAPHICS[categorySlug.toLowerCase()] || CATEGORY_SECTION_GRAPHICS.fitness;
 
   return (
-    <section className="w-full py-8 sm:py-10">
-      {/* SECTION HEADER: Trending Indicator, Title, Topic Pills & View All */}
-      <div className="pb-5 mb-7 relative">
+    <section className="group/section w-full py-7 sm:py-9 my-5 relative overflow-hidden rounded-3xl bg-white/60 backdrop-blur-xl border border-white/90 shadow-[0_4px_25px_rgba(22,163,74,0.05)] hover:shadow-[0_15px_35px_rgba(22,163,74,0.1)] hover:border-emerald-500/25 transition-all duration-500 p-4 sm:p-6 lg:p-8">
+      {/* Background ambient orbs and unique section glass image */}
+      <div className={`absolute top-0 right-10 w-96 h-96 bg-gradient-to-br ${secConfig.orb} rounded-full blur-3xl pointer-events-none -mt-20 group-hover/section:scale-110 transition-transform duration-700`} />
+      
+      {/* Top Glass Specular Line */}
+      <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-emerald-400/40 to-transparent pointer-events-none" />
+
+      {/* Unique 3D Glass Transparent Image Floating for this section */}
+      <div className="hidden lg:flex absolute right-10 top-6 w-32 h-32 xl:w-36 xl:h-36 pointer-events-none z-0 items-center justify-center opacity-35 group-hover/section:opacity-75 group-hover/section:scale-105 transition-all duration-700">
+        <Image
+          src={secConfig.image}
+          alt={title}
+          fill
+          className="object-contain drop-shadow-[0_12px_24px_rgba(22,163,74,0.12)]"
+        />
+      </div>
+
+      <div className="relative z-10">
+        {/* SECTION HEADER: Trending Indicator, Title, Topic Pills & View All */}
+        <div className="pb-5 mb-7 relative">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             {/* Live Trending Status Badge */}
@@ -568,6 +628,7 @@ export function CategorySectionBlock({
           ))}
         </div>
       </div>
-    </section>
-  );
+    </div>
+  </section>
+);
 }

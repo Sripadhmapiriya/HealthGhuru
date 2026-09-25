@@ -1,5 +1,5 @@
-     import type { Metadata } from "next";
-import { DM_Serif_Display, Plus_Jakarta_Sans, Inter, JetBrains_Mono } from "next/font/google";
+import type { Metadata } from "next";
+import { Plus_Jakarta_Sans, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -11,28 +11,36 @@ import { DialogProvider } from "@/components/providers/DialogProvider";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { AuthModalProvider } from "@/context/AuthModalContext";
 
-const dmSerif = DM_Serif_Display({
-  weight: "400",
+// Professional Display Font for high-impact headlines and titles
+const plusJakartaDisplay = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-display",
+  weight: ["600", "700", "800"],
+  display: "swap",
 });
 
+// Professional Heading Font for clean section titles, cards, and UI
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-heading",
   weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
 });
 
+// Highly legible, modern Body Font for all reading text and forms
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-body",
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
 });
 
+// High-precision Monospace Font for counters, metrics, and tickers
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
-  weight: ["400", "500"],
+  weight: ["400", "500", "600"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -54,7 +62,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${dmSerif.variable} ${plusJakarta.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${plusJakartaDisplay.variable} ${plusJakarta.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
       <body suppressHydrationWarning className="antialiased min-h-screen flex flex-col font-body">
         <AuthProvider>
           <AuthModalProvider>

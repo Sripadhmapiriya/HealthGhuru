@@ -20,7 +20,6 @@ import {
   Eye,
   Send,
   Wand2,
-  MapPin,
 } from 'lucide-react';
 import { publishNews } from '@/lib/admin/actions/publishNews';
 
@@ -39,14 +38,6 @@ const HEALTH_CATEGORIES = [
   'General Health',
 ];
 
-const LANGUAGES = [
-  { code: 'en', label: 'English' },
-  { code: 'ta', label: 'Tamil (தமிழ்)' },
-  { code: 'hi', label: 'Hindi (हिंदी)' },
-  { code: 'te', label: 'Telugu (తెలుగు)' },
-  { code: 'ml', label: 'Malayalam (മലയാളം)' },
-  { code: 'kn', label: 'Kannada (ಕನ್ನಡ)' },
-];
 
 export function AddNewsClient() {
   const router = useRouter();
@@ -316,60 +307,22 @@ export function AddNewsClient() {
           />
         </div>
 
-        {/* Language & Category Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-heading font-bold uppercase tracking-wider text-text-secondary mb-1.5">
-              Language <span className="text-red-500">*</span>
-            </label>
-            <div className="relative">
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                className="w-full bg-surface border border-gray-200 rounded-xl px-4 py-3 text-sm text-dark focus:bg-white focus:outline-hidden focus:border-primary transition-all cursor-pointer font-medium"
-              >
-                {LANGUAGES.map((lang) => (
-                  <option key={lang.code} value={lang.code}>
-                    {lang.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-heading font-bold uppercase tracking-wider text-text-secondary mb-1.5">
-              Category <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full bg-surface border border-gray-200 rounded-xl px-4 py-3 text-sm text-dark focus:bg-white focus:outline-hidden focus:border-primary transition-all cursor-pointer font-medium"
-            >
-              {HEALTH_CATEGORIES.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Location */}
+        {/* Category */}
         <div>
           <label className="block text-xs font-heading font-bold uppercase tracking-wider text-text-secondary mb-1.5">
-            Location
+            Category <span className="text-red-500">*</span>
           </label>
-          <div className="relative">
-            <MapPin size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
-            <input
-              type="text"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="e.g., Chennai, Tamil Nadu"
-              className="w-full pl-10 pr-4 py-3 bg-surface border border-gray-200 rounded-xl text-sm text-dark placeholder-gray-400 focus:bg-white focus:outline-hidden focus:border-primary transition-all"
-            />
-          </div>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full bg-surface border border-gray-200 rounded-xl px-4 py-3 text-sm text-dark focus:bg-white focus:outline-hidden focus:border-primary transition-all cursor-pointer font-medium"
+          >
+            {HEALTH_CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Short Description (Summary) */}
@@ -646,59 +599,7 @@ export function AddNewsClient() {
 
         </div>
 
-        {/* ── Publishing Options (Checkboxes in Light Green box matching sidebar) ── */}
-        <div className="bg-primary/10 border border-primary/20 rounded-xl p-5 space-y-3.5 shadow-2xs">
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={isBreaking}
-              onChange={(e) => setIsBreaking(e.target.checked)}
-              className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
-            />
-            <div>
-              <span className="text-xs font-heading font-bold text-dark block">
-                Mark as Breaking News (முக்கிய செய்தி)
-              </span>
-              <span className="text-[11px] text-text-secondary block">
-                Feature immediately in the live homepage breaking news ticker &amp; header flash strip.
-              </span>
-            </div>
-          </label>
 
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={showInSidebar}
-              onChange={(e) => setShowInSidebar(e.target.checked)}
-              className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
-            />
-            <div>
-              <span className="text-xs font-heading font-bold text-dark block">
-                Show in Sidebar (விளம்பரங்களுக்கு நடுவே காட்டுக)
-              </span>
-              <span className="text-[11px] text-text-secondary block">
-                Pin in top sidebar widgets across reading and category pages.
-              </span>
-            </div>
-          </label>
-
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={sendPush}
-              onChange={(e) => setSendPush(e.target.checked)}
-              className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
-            />
-            <div>
-              <span className="text-xs font-heading font-bold text-dark block">
-                Send Browser Push Notification
-              </span>
-              <span className="text-[11px] text-text-secondary block">
-                Broadcast instant browser notification to registered subscribers.
-              </span>
-            </div>
-          </label>
-        </div>
 
         {/* Bottom Actions */}
         <div className="pt-4 border-t border-gray-100 flex items-center justify-end gap-3">
