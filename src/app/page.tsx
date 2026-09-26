@@ -14,8 +14,8 @@ import { HealthMagazinesSection } from '@/components/home/HealthMagazinesSection
 import { SponsoredEditorialSection } from '@/components/home/SponsoredEditorialSection';
 import { HomepageBuilderConfig, DEFAULT_HOMEPAGE_SECTIONS } from '@/lib/types/homepage-builder';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Enable ISR caching (30s) so the homepage serves instantaneously without running 22 transatlantic queries on every hit
+export const revalidate = 30;
 
 export default async function Home() {
   // Execute database queries in parallel for instant server-rendering performance

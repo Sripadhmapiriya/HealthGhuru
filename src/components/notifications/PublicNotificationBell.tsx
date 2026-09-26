@@ -70,8 +70,10 @@ export function PublicNotificationBell({ className = '', isMobile = false }: Pub
   useEffect(() => {
     fetchNotifications();
     const interval = setInterval(() => {
-      fetchNotifications(true);
-    }, 45000);
+      if (document.visibilityState === 'visible') {
+        fetchNotifications(true);
+      }
+    }, 60000);
     return () => clearInterval(interval);
   }, []);
 

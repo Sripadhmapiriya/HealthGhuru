@@ -51,12 +51,14 @@ export function AdminNotificationBell() {
     }
   };
 
-  // Initial fetch and 30s polling
+  // Initial fetch and 45s polling (paused when tab is hidden)
   useEffect(() => {
     fetchNotifications();
     const interval = setInterval(() => {
-      fetchNotifications(true);
-    }, 30000);
+      if (document.visibilityState === 'visible') {
+        fetchNotifications(true);
+      }
+    }, 45000);
     return () => clearInterval(interval);
   }, []);
 

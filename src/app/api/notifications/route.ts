@@ -10,9 +10,17 @@ import {
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await auth();
     const { searchParams } = new URL(req.url);
     const scope = searchParams.get('scope'); // 'admin' or 'user' or default auto-detect
+
+    // Fast-path: Check for session cookie before running expensive NextAuth JWT verification
+    const hasSessionCookie =
+      req.cookies.has('authjs.session-token') ||
+      req.cookies.has('__Secure-authjs.session-token') ||
+      req.cookies.has('next-auth.session-token') ||
+      req.cookies.has('__Secure-next-auth.session-token');
+
+    const session = hasSessionCookie ? await auth() : null;
 
     // If scope is explicitly requested as admin or user has admin role and requested admin scope
     if (scope === 'admin' || (session?.user?.role === 'admin' && scope !== 'user')) {

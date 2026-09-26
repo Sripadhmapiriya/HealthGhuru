@@ -131,17 +131,17 @@ export async function getAdminNotifications(limit = 40): Promise<{
   };
 }
 
-/**
- * Fetch notifications for a Public / Authenticated User
- */
-export async function getUserNotifications(
-  userId?: string | null,
-  limit = 30
-): Promise<{
-  notifications: AppNotification[];
-  unreadCount: number;
-}> {
-  // Ensure the latest published articles have broadcast notifications
+// Throttle broadcast notification auto-sync to avoid running expensive joins on every GET poll
+let lastArticleSyncTime = 0;
+const ARTICLE_SYNC_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
+
+export async function syncArticleBroadcasts(): Promise<void> {
+  const now = Date.now();
+  if (now - lastArticleSyncTime < ARTICLE_SYNC_INTERVAL_MS) {
+    return;
+  }
+  lastArticleSyncTime = now;
+
   try {
     await sql`
       INSERT INTO notifications (
@@ -178,6 +178,20 @@ export async function getUserNotifications(
   } catch {
     // Non-blocking
   }
+}
+
+/**
+ * Fetch notifications for a Public / Authenticated User
+ */
+export async function getUserNotifications(
+  userId?: string | null,
+  limit = 30
+): Promise<{
+  notifications: AppNotification[];
+  unreadCount: number;
+}> {
+  // Run broadcast sync only if interval elapsed (zero overhead on frequent client polls)
+  await syncArticleBroadcasts();
 
   if (!userId) {
     // Guest visitor: fetch active public broadcasts
