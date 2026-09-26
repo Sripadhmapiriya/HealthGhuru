@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   Bell,
   Sparkles,
@@ -24,6 +25,7 @@ interface PublicNotificationBellProps {
 }
 
 export function PublicNotificationBell({ className = '', isMobile = false }: PublicNotificationBellProps) {
+  const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -98,15 +100,26 @@ export function PublicNotificationBell({ className = '', isMobile = false }: Pub
         // ignore
       }
 
-      setNotifications((prev) =>
-        prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
-      );
-      setUnreadCount((c) => Math.max(0, c - 1));
+      setNotifications((prev) => {
+        const target = prev.find((n) => n.id === id);
+        if (target && !target.is_read) {
+          setUnreadCount((c) => Math.max(0, c - 1));
+        }
+        return prev.map((n) => (n.id === id ? { ...n, is_read: true } : n));
+      });
 
       // Server update
       await fetch(`/api/notifications/${id}/read`, { method: 'PATCH' });
     } catch (err) {
       console.error('Failed to mark read:', err);
+    }
+  };
+
+  const handleNotificationClick = (notif: AppNotification) => {
+    handleMarkAsRead(notif.id);
+    setIsOpen(false);
+    if (notif.link_url) {
+      router.push(notif.link_url);
     }
   };
 
@@ -269,14 +282,14 @@ export function PublicNotificationBell({ className = '', isMobile = false }: Pub
                   return (
                     <div
                       key={notif.id}
-                      onClick={() => handleMarkAsRead(notif.id)}
-                      className={`p-3.5 hover:bg-slate-50 transition-colors flex items-start gap-3 cursor-pointer ${
-                        isUnread ? 'bg-emerald-50/20' : ''
+                      onClick={() => handleNotificationClick(notif)}
+                      className={`p-3.5 hover:bg-emerald-50/40 transition-colors flex items-start gap-3 cursor-pointer group ${
+                        isUnread ? 'bg-emerald-50/25' : ''
                       }`}
                     >
                       {/* Icon */}
                       <div
-                        className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${
+                        className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 shadow-2xs ${
                           notif.type === 'breaking' || notif.type === 'alert'
                             ? 'bg-red-50 text-red-600 border border-red-100'
                             : notif.type === 'health_tip'
@@ -289,16 +302,16 @@ export function PublicNotificationBell({ className = '', isMobile = false }: Pub
 
                       {/* Content */}
                       <div className="flex-1 min-w-0 space-y-1">
-                        <div className="flex items-center justify-between gap-1.5">
-                          <p className="font-heading font-bold text-xs text-slate-900 leading-tight truncate">
+                        <div className="flex items-start justify-between gap-1.5">
+                          <p className="font-heading font-bold text-xs text-slate-900 group-hover:text-[#16A34A] transition-colors leading-snug line-clamp-2">
                             {notif.title}
                           </p>
                           {isUnread && (
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#f06d2f] shrink-0" />
+                            <span className="w-2 h-2 rounded-full bg-[#f06d2f] shrink-0 mt-0.5" />
                           )}
                         </div>
 
-                        <p className="text-xs text-slate-600 line-clamp-2 leading-snug font-body">
+                        <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed font-body">
                           {notif.message}
                         </p>
 
@@ -308,14 +321,10 @@ export function PublicNotificationBell({ className = '', isMobile = false }: Pub
                           </span>
 
                           {notif.link_url && (
-                            <Link
-                              href={notif.link_url}
-                              onClick={() => setIsOpen(false)}
-                              className="inline-flex items-center gap-1 text-[11px] font-heading font-bold text-[#16A34A] hover:underline"
-                            >
+                            <span className="inline-flex items-center gap-1 text-[11px] font-heading font-bold text-[#16A34A] group-hover:underline">
                               <span>Explore</span>
                               <ExternalLink size={10} />
-                            </Link>
+                            </span>
                           )}
                         </div>
                       </div>

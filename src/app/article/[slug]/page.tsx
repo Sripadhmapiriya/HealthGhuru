@@ -293,7 +293,7 @@ export default async function ArticlePage({
                 <div className="flex items-center gap-1.5 mb-0.5">
                   <ShieldCheck size={15} className="text-[#2E7D32]" />
                   <h4 className="font-heading font-bold text-xs sm:text-sm text-[#1B5E20]">
-                    MEDICALLY REVIEWED BY {reviewingDoctor.name.toUpperCase()}
+                    MEDICALLY REVIEWED BY {(reviewingDoctor.name || "Dr. Arvind Deshmukh").toUpperCase()}
                   </h4>
                 </div>
                 <p className="text-xs text-[#4A6741] font-medium">

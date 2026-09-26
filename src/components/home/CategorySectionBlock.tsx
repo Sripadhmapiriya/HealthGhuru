@@ -391,12 +391,12 @@ export function CategorySectionBlock({
       <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-emerald-400/40 to-transparent pointer-events-none" />
 
       {/* Unique 3D Glass Transparent Image Floating for this section */}
-      <div className="hidden lg:flex absolute right-10 top-6 w-32 h-32 xl:w-36 xl:h-36 pointer-events-none z-0 items-center justify-center opacity-35 group-hover/section:opacity-75 group-hover/section:scale-105 transition-all duration-700">
+      <div className="hidden lg:flex absolute right-6 top-5 w-28 h-28 xl:w-32 xl:h-32 pointer-events-none z-0 items-center justify-center opacity-25 group-hover/section:opacity-50 group-hover/section:scale-105 transition-all duration-700">
         <Image
           src={secConfig.image}
           alt={title}
           fill
-          className="object-contain drop-shadow-[0_12px_24px_rgba(22,163,74,0.12)]"
+          className="object-contain drop-shadow-[0_10px_20px_rgba(22,163,74,0.1)]"
         />
       </div>
 
@@ -436,7 +436,7 @@ export function CategorySectionBlock({
           {/* View All Button */}
           <Link
             href={`/category/${categorySlug}`}
-            className="group inline-flex items-center gap-2 text-xs font-heading font-bold text-[#16A34A] hover:text-white transition-all duration-300 py-2.5 px-5 rounded-full bg-white hover:bg-gradient-to-r hover:from-[#16A34A] hover:to-[#22C55E] border border-emerald-500/30 hover:border-transparent hover:shadow-md hover:shadow-emerald-500/20 shrink-0 self-start md:self-end"
+            className="group relative z-10 inline-flex items-center gap-2 text-xs font-heading font-bold text-[#16A34A] hover:text-white transition-all duration-300 py-2.5 px-5 rounded-full bg-white hover:bg-gradient-to-r hover:from-[#16A34A] hover:to-[#22C55E] border border-emerald-500/30 hover:border-transparent hover:shadow-md hover:shadow-emerald-500/20 shrink-0 self-start md:self-end"
           >
             <span>Explore All {title}</span>
             <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform duration-300" />

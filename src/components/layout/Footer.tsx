@@ -35,21 +35,21 @@ export default function Footer() {
           {/* ── Col 1: Brand Logo & Socials (4 cols on lg) ── */}
           <div className="lg:col-span-4 space-y-3">
             <Link href="/" className="inline-block group">
-              <div className="flex items-center gap-2.5">
-                <div className="relative w-8 h-8 sm:w-9 sm:h-9 transition-transform group-hover:scale-105 duration-200">
+              <div className="flex items-center gap-3">
+                <div className="relative w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 transition-transform group-hover:scale-105 duration-200 shrink-0">
                   <Image
                     src="/images/logo_transparent.png"
                     alt="HealthGhuru Logo"
                     fill
-                    sizes="36px"
+                    sizes="(max-width: 640px) 48px, (max-width: 1024px) 56px, 64px"
                     className="object-contain"
                   />
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-display font-black text-xl sm:text-2xl tracking-tight leading-none text-[#22C55E]">
+                  <span className="font-display font-black text-2xl sm:text-3xl lg:text-4xl tracking-tight leading-none text-[#22C55E]">
                     HEALTH<span className="text-[#f06d2f]">GHURU</span>
                   </span>
-                  <span className="text-[9.5px] font-heading font-semibold text-emerald-400/90 tracking-wide mt-0.5">
+                  <span className="text-[10px] sm:text-xs font-heading font-semibold text-emerald-400/90 tracking-wide mt-1">
                     Live Better. Feel Stronger. Every Day.
                   </span>
                 </div>

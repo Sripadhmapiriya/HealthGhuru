@@ -221,7 +221,7 @@ export default async function AboutPage() {
                   <div>
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-[10px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-surface text-text-muted border border-border">
-                        {source.type.toUpperCase()}
+                        {source.type ? source.type.toUpperCase() : 'JOURNAL'}
                       </span>
                       <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
                         <ShieldCheck size={11} /> {source.trust_score || 'High'} Trust

@@ -106,8 +106,31 @@ export async function manageArticle(input: z.infer<typeof articleSchema>) {
           }
         }
       }
+
+      // Create broadcast notification for published article
+      if (validated.status === 'published') {
+        const notifType = validated.isBreaking ? 'breaking' : 'article';
+        const notifIcon = validated.isBreaking ? 'AlertTriangle' : 'Heart';
+        await sql`
+          INSERT INTO notifications (
+            title, message, type, audience, link_url, icon, priority, is_broadcast, is_read, created_at
+          ) VALUES (
+            ${validated.title.trim()},
+            ${validated.excerpt.trim()},
+            ${notifType},
+            'all',
+            ${'/article/' + validated.slug},
+            ${notifIcon},
+            ${validated.isBreaking ? 'high' : 'normal'},
+            TRUE,
+            FALSE,
+            CURRENT_TIMESTAMP
+          )
+          ON CONFLICT DO NOTHING
+        `;
+      }
     } catch (syncErr) {
-      console.warn('Failed to sync article to content_items:', syncErr);
+      console.warn('Failed to sync article to content_items or notifications:', syncErr);
     }
 
     await writeAuditLog({

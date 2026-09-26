@@ -547,11 +547,19 @@ export default async function Home() {
         return <VisualStoriesSection key={section.id} />;
 
       case 'research':
-        return <MedicalResearchSection key={section.id} researchItems={researchNews} />;
+        return (
+          <div key={section.id} className="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <MedicalResearchSection researchItems={researchNews} />
+          </div>
+        );
 
       case 'doctor-interviews':
       case 'interviews':
-        return <DoctorInterviewsSection key={section.id} interviews={doctorInterviews} />;
+        return (
+          <div key={section.id} className="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <DoctorInterviewsSection interviews={doctorInterviews} />
+          </div>
+        );
 
       case 'shorts':
         return <HealthVideosShortsSection key={section.id} videos={videoItems} shorts={finalShorts} />;

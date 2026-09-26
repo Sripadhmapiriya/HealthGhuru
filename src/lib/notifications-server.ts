@@ -141,6 +141,44 @@ export async function getUserNotifications(
   notifications: AppNotification[];
   unreadCount: number;
 }> {
+  // Ensure the latest published articles have broadcast notifications
+  try {
+    await sql`
+      INSERT INTO notifications (
+        title, message, type, audience, link_url, icon, priority, is_broadcast, is_read, created_at
+      )
+      SELECT 
+        c.title,
+        COALESCE(NULLIF(TRIM(c.excerpt), ''), 'Latest clinical insights and expert-reviewed findings in Health & Wellness.'),
+        CASE 
+          WHEN c.is_breaking THEN 'breaking'
+          WHEN LOWER(c.category) LIKE '%nutrition%' OR LOWER(c.category) LIKE '%sleep%' OR LOWER(c.category) LIKE '%fitness%' THEN 'health_tip'
+          WHEN LOWER(c.category) LIKE '%cancer%' OR LOWER(c.category) LIKE '%heart%' OR LOWER(c.category) LIKE '%research%' THEN 'alert'
+          ELSE 'article'
+        END,
+        'all',
+        '/article/' || c.slug,
+        CASE 
+          WHEN c.is_breaking THEN 'AlertTriangle'
+          WHEN LOWER(c.category) LIKE '%nutrition%' OR LOWER(c.category) LIKE '%sleep%' THEN 'Sparkles'
+          WHEN LOWER(c.category) LIKE '%cancer%' OR LOWER(c.category) LIKE '%heart%' THEN 'Flame'
+          ELSE 'Heart'
+        END,
+        CASE WHEN c.is_breaking THEN 'high' ELSE 'normal' END,
+        TRUE,
+        FALSE,
+        COALESCE(c.published_at, CURRENT_TIMESTAMP)
+      FROM content_items c
+      LEFT JOIN notifications n ON n.link_url = '/article/' || c.slug
+      WHERE c.status = 'published' AND c.deleted_at IS NULL AND n.id IS NULL
+      ORDER BY c.published_at DESC
+      LIMIT 10
+      ON CONFLICT DO NOTHING
+    `;
+  } catch {
+    // Non-blocking
+  }
+
   if (!userId) {
     // Guest visitor: fetch active public broadcasts
     const items = await sql`

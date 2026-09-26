@@ -184,25 +184,25 @@ export default function Navbar() {
             </button>
 
             {/* HealthGhuru Logo + Tagline */}
-            <Link href="/" className="flex flex-col group shrink-0">
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <div className="relative w-7 h-7 sm:w-10 sm:h-10 lg:w-12 lg:h-12 shrink-0 transition-transform group-hover:scale-105 duration-300">
-                  <Image
-                    src="/images/logo_transparent.png"
-                    alt="HealthGhuru Logo"
-                    fill
-                    sizes="(max-width: 640px) 28px, (max-width: 1024px) 40px, 48px"
-                    className="object-contain"
-                    priority
-                  />
-                </div>
-                <span className="font-display text-[13.5px] sm:text-2xl lg:text-3xl font-black tracking-tight text-[#16A34A] group-hover:text-[#15803D] transition-colors leading-none whitespace-nowrap">
+            <Link href="/" className="flex items-center gap-2 sm:gap-3 group shrink-0">
+              <div className="relative w-11 h-11 sm:w-14 sm:h-14 lg:w-16 lg:h-16 xl:w-[70px] xl:h-[70px] shrink-0 transition-transform group-hover:scale-105 duration-300">
+                <Image
+                  src="/images/logo_transparent.png"
+                  alt="HealthGhuru Logo"
+                  fill
+                  sizes="(max-width: 640px) 44px, (max-width: 768px) 56px, (max-width: 1024px) 64px, 70px"
+                  className="object-contain"
+                  priority
+                />
+              </div>
+              <div className="flex flex-col justify-center">
+                <span className="font-display text-lg sm:text-2xl md:text-3xl lg:text-[34px] font-black tracking-tight text-[#16A34A] group-hover:text-[#15803D] transition-colors leading-none whitespace-nowrap">
                   HEALTH<span className="text-[#f06d2f]">GHURU</span>
                 </span>
+                <span className="text-[10px] sm:text-xs lg:text-[12.5px] font-heading font-bold text-emerald-800 tracking-wide mt-1 hidden xs:block whitespace-nowrap">
+                  Live Better. Feel Stronger. Every Day.
+                </span>
               </div>
-              <span className="text-[10px] sm:text-xs font-heading font-semibold text-emerald-800 tracking-wide mt-0.5 hidden md:block">
-                Live Better. Feel Stronger. Every Day.
-              </span>
             </Link>
           </div>
 
@@ -649,19 +649,24 @@ export default function Navbar() {
           <div className="relative w-full max-w-[325px] xs:max-w-sm bg-white h-full overflow-y-auto z-10 shadow-2xl flex flex-col animate-in slide-in-from-left duration-300">
             {/* Sticky Compact Drawer Header */}
             <div className="sticky top-0 bg-white/95 backdrop-blur-md px-3.5 py-2.5 border-b border-gray-100 z-20 flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-2">
-                <div className="relative w-6 h-6 shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="relative w-9 h-9 sm:w-10 sm:h-10 shrink-0">
                   <Image
                     src="/images/logo_transparent.png"
                     alt="HealthGhuru"
                     fill
-                    sizes="24px"
+                    sizes="40px"
                     className="object-contain"
                   />
                 </div>
-                <span className="font-display font-black text-lg text-[#16A34A] leading-none">
-                  HEALTH<span className="text-[#f06d2f]">GHURU</span>
-                </span>
+                <div className="flex flex-col">
+                  <span className="font-display font-black text-xl text-[#16A34A] leading-none">
+                    HEALTH<span className="text-[#f06d2f]">GHURU</span>
+                  </span>
+                  <span className="text-[9.5px] font-heading font-bold text-emerald-800 tracking-wide mt-0.5">
+                    Live Better. Feel Stronger.
+                  </span>
+                </div>
               </div>
               <button
                 onClick={() => setMobileDrawerOpen(false)}

@@ -203,6 +203,33 @@ export async function publishNews(payload: NewsPublishPayload) {
         }
       }
     }
+
+    // Create broadcast notification for published news
+    if (status === 'published') {
+      try {
+        const notifType = isBreaking ? 'breaking' : 'article';
+        const notifIcon = isBreaking ? 'AlertTriangle' : 'Heart';
+        await sql`
+          INSERT INTO notifications (
+            title, message, type, audience, link_url, icon, priority, is_broadcast, is_read, created_at
+          ) VALUES (
+            ${title.trim()},
+            ${excerpt.trim()},
+            ${notifType},
+            'all',
+            ${'/article/' + slug},
+            ${notifIcon},
+            ${isBreaking ? 'high' : 'normal'},
+            TRUE,
+            FALSE,
+            CURRENT_TIMESTAMP
+          )
+          ON CONFLICT DO NOTHING
+        `;
+      } catch (notifErr) {
+        console.warn('Failed to insert broadcast notification for article:', notifErr);
+      }
+    }
   } catch (contentSyncErr) {
     console.error('Warning: Failed to sync news article to content_items:', contentSyncErr);
   }
