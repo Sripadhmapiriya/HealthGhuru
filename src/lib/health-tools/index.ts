@@ -14,6 +14,30 @@ export interface HealthToolItem {
   tags: string[];
 }
 
+export interface RelatedToolArticle {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  image_url: string | null;
+  category: string;
+  reading_time?: number;
+  published_at: string;
+}
+
+export interface RelatedToolVideo {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  image_url: string | null;
+  category: string;
+  subcategory: string | null;
+  duration_seconds: number | null;
+  canonical_url: string | null;
+  is_short?: boolean;
+}
+
 export const HEALTH_TOOLS: HealthToolItem[] = [
   {
     id: 'bmi-calculator',

@@ -23,8 +23,7 @@ import {
   Baby,
   Utensils,
 } from 'lucide-react';
-import { HealthToolItem } from '@/lib/health-tools';
-import { RelatedToolArticle, RelatedToolVideo } from '@/lib/health-tools/server';
+import { HealthToolItem, RelatedToolArticle, RelatedToolVideo } from '@/lib/health-tools';
 import { SubscriberHealthToolGate } from './SubscriberHealthToolGate';
 
 const TOOL_ICON_MAP: Record<string, any> = {

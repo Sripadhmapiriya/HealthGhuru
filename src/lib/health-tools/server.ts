@@ -1,16 +1,8 @@
 import 'server-only';
 import { sql } from '@/lib/db';
+import type { RelatedToolArticle, RelatedToolVideo } from './index';
 
-export interface RelatedToolArticle {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string | null;
-  image_url: string | null;
-  category: string;
-  reading_time?: number;
-  published_at: string;
-}
+export type { RelatedToolArticle, RelatedToolVideo };
 
 export async function getRelatedArticlesForTool(
   category = 'nutrition',
@@ -53,19 +45,6 @@ export async function getRelatedArticlesForTool(
     console.error('Failed to get related articles for health tool:', error);
     return [];
   }
-}
-
-export interface RelatedToolVideo {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string | null;
-  image_url: string | null;
-  category: string;
-  subcategory: string | null;
-  duration_seconds: number | null;
-  canonical_url: string | null;
-  is_short?: boolean;
 }
 
 export async function getRelatedVideosForTool(
