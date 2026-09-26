@@ -34,6 +34,10 @@ import {
   LogIn,
   CreditCard,
   TrendingUp,
+  Scale,
+  Droplet,
+  Moon,
+  Calculator,
 } from "lucide-react";
 import { DateUtilityBar } from "./DateUtilityBar";
 import { MegaMenu } from "./MegaMenu";
@@ -42,6 +46,18 @@ import { useAuthModal } from "@/context/AuthModalContext";
 import { useSubscription } from "@/lib/hooks/useSubscription";
 import { PublicNotificationBell } from "@/components/notifications/PublicNotificationBell";
 import { formatTimeAgo } from "@/lib/utils";
+
+const HEALTH_TOOLS_NAV = [
+  { label: "BMI Calculator", href: "/health-tools/bmi-calculator", icon: Scale, desc: "Body Mass Index assessment" },
+  { label: "BMR Calculator", href: "/health-tools/bmr-calculator", icon: Flame, desc: "Basal Metabolic Rate" },
+  { label: "Calorie Calculator", href: "/health-tools/calorie-calculator", icon: Calculator, desc: "TDEE & daily calorie goals" },
+  { label: "Water Intake Calculator", href: "/health-tools/water-intake-calculator", icon: Droplet, desc: "Daily hydration guideline" },
+  { label: "Ideal Weight Calculator", href: "/health-tools/ideal-weight-calculator", icon: Heart, desc: "Clinical healthy weight range" },
+  { label: "Heart Rate Calculator", href: "/health-tools/heart-rate-calculator", icon: Activity, desc: "Target cardio training zones" },
+  { label: "Sleep Calculator", href: "/health-tools/sleep-calculator", icon: Moon, desc: "90-minute REM cycles" },
+  { label: "Pregnancy Due Date", href: "/health-tools/pregnancy-due-date", icon: Baby, desc: "Gestational age & due date" },
+  { label: "Nutrition Calculator", href: "/health-tools/nutrition-calculator", icon: Utensils, desc: "Macros & dietary targets" },
+];
 
 const PRIMARY_CATEGORIES = [
   { label: "Home", href: "/", icon: Home, color: "#16A34A", hoverBg: "hover:bg-emerald-50 hover:text-emerald-700" },
@@ -64,12 +80,14 @@ export default function Navbar() {
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [healthToolsOpen, setHealthToolsOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [liveSearchResults, setLiveSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const pathname = usePathname();
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const healthToolsRef = useRef<HTMLDivElement>(null);
 
   // Debounced live search
   useEffect(() => {
@@ -120,6 +138,7 @@ export default function Navbar() {
     setMobileDrawerOpen(false);
     setUserDropdownOpen(false);
     setSearchOpen(false);
+    setHealthToolsOpen(false);
   }, [pathname]);
 
   // Close dropdowns on outside click
@@ -127,6 +146,9 @@ export default function Navbar() {
     const handleClickOutside = (event: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
         setUserDropdownOpen(false);
+      }
+      if (healthToolsRef.current && !healthToolsRef.current.contains(event.target as Node)) {
+        setHealthToolsOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -610,9 +632,59 @@ export default function Navbar() {
                 );
               })}
 
+              {/* "HEALTH TOOLS" Navigation Dropdown Button */}
+              <div className="relative shrink-0 flex items-center">
+                <Link
+                  href="/health-tools"
+                  onClick={() => setHealthToolsOpen(false)}
+                  className={`min-w-fit whitespace-nowrap pl-2.5 sm:pl-3.5 pr-1.5 py-1.5 sm:py-2.5 rounded-l-xl flex items-center justify-center gap-1 sm:gap-1.5 transition-all duration-200 text-center group cursor-pointer ${
+                    (pathname && pathname.startsWith("/health-tools")) || healthToolsOpen
+                      ? "bg-gradient-to-r from-[#16A34A] via-[#15803D] to-[#0D5C3A] text-white font-black shadow-md shadow-emerald-700/25 scale-[1.02]"
+                      : "text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 hover:scale-[1.03]"
+                  }`}
+                >
+                  <Calculator
+                    size={14}
+                    className={`shrink-0 transition-transform group-hover:scale-110 sm:w-[15px] sm:h-[15px] ${
+                      (pathname && pathname.startsWith("/health-tools")) || healthToolsOpen
+                        ? "text-white"
+                        : "text-[#16A34A]"
+                    }`}
+                  />
+                  <span>Health Tools</span>
+                </Link>
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setHealthToolsOpen(!healthToolsOpen);
+                    setMegaMenuOpen(false);
+                  }}
+                  className={`py-1.5 sm:py-2.5 px-2 rounded-r-xl border-l flex items-center justify-center cursor-pointer transition-all ${
+                    (pathname && pathname.startsWith("/health-tools")) || healthToolsOpen
+                      ? "bg-[#0D5C3A] text-white border-emerald-600/50"
+                      : "text-slate-400 hover:bg-emerald-50 hover:text-emerald-700 border-gray-200/80"
+                  }`}
+                  aria-expanded={healthToolsOpen}
+                  title="Toggle Health Tools menu"
+                  aria-label="Toggle Health Tools menu"
+                >
+                  <ChevronDown
+                    size={13}
+                    className={`transition-transform duration-200 ${
+                      healthToolsOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+              </div>
+
               {/* "MORE ▼" Mega Menu Trigger */}
               <button
-                onClick={() => setMegaMenuOpen(!megaMenuOpen)}
+                onClick={() => {
+                  setMegaMenuOpen(!megaMenuOpen);
+                  setHealthToolsOpen(false);
+                }}
                 className={`min-w-fit whitespace-nowrap px-2.5 sm:px-3.5 lg:px-4 py-1.5 sm:py-2.5 rounded-xl flex items-center justify-center gap-1 sm:gap-1.5 transition-all font-heading font-extrabold text-xs sm:text-sm lg:text-[14px] uppercase tracking-wider text-center group cursor-pointer ${
                   megaMenuOpen
                     ? "bg-gradient-to-r from-[#ea580c] to-[#f06d2f] text-white shadow-md shadow-orange-600/25 scale-[1.02]"
@@ -631,6 +703,74 @@ export default function Navbar() {
             </div>
           </div>
         </div>
+
+        {/* 3. Health Tools Dropdown (Outside overflow-x-auto so it is never clipped) */}
+        {healthToolsOpen && (
+          <div
+            ref={healthToolsRef}
+            className="absolute top-full left-0 right-0 w-full bg-white border-b-2 border-emerald-600 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+            onMouseLeave={() => setHealthToolsOpen(false)}
+          >
+            <div className="max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto p-4 sm:p-6 lg:p-7">
+              <div className="flex items-center justify-between pb-3 mb-4 border-b border-gray-100">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-100 text-[#16A34A] flex items-center justify-center shadow-2xs">
+                    <Calculator size={18} />
+                  </div>
+                  <div>
+                    <h3 className="font-heading font-black text-sm sm:text-base text-slate-900 tracking-tight">
+                      Health Tools &amp; Clinical Calculators
+                    </h3>
+                    <p className="text-[11px] text-slate-500 font-normal">
+                      Simple tools to help you understand and manage your health
+                    </p>
+                  </div>
+                </div>
+
+                <Link
+                  href="/health-tools"
+                  onClick={() => setHealthToolsOpen(false)}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#16A34A] hover:text-[#15803D] bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200/80 transition-colors"
+                >
+                  <span>Explore Tools Landing Page</span>
+                  <ArrowRight size={13} />
+                </Link>
+              </div>
+
+              {/* 9 Calculators in a Responsive 3-Column Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                {HEALTH_TOOLS_NAV.map((tool) => {
+                  const ToolIcon = tool.icon;
+                  const isToolActive = pathname === tool.href;
+                  return (
+                    <Link
+                      key={tool.href}
+                      href={tool.href}
+                      onClick={() => setHealthToolsOpen(false)}
+                      className={`flex items-start gap-3 p-3 rounded-xl border transition-all duration-150 group ${
+                        isToolActive
+                          ? "bg-emerald-50 border-emerald-400 text-emerald-950 font-bold shadow-xs"
+                          : "bg-slate-50/70 hover:bg-white border-gray-100 hover:border-emerald-300 text-slate-700 hover:shadow-xs"
+                      }`}
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-white border border-gray-200 text-[#16A34A] group-hover:bg-[#16A34A] group-hover:text-white flex items-center justify-center shrink-0 transition-colors shadow-2xs">
+                        <ToolIcon size={16} />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-[#16A34A] transition-colors truncate">
+                          {tool.label}
+                        </div>
+                        <div className="text-[11px] text-slate-500 font-normal truncate mt-0.5">
+                          {tool.desc}
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* 4. Mega Menu Dropdown */}
         <MegaMenu isOpen={megaMenuOpen} onClose={() => setMegaMenuOpen(false)} />
@@ -856,6 +996,41 @@ export default function Navbar() {
                 </div>
               </div>
 
+              {/* Health Tools & Calculators Section */}
+              <div className="border-t border-gray-100 pt-2.5">
+                <div className="flex items-center justify-between mb-1.5 px-0.5">
+                  <p className="text-[9.5px] font-mono uppercase tracking-widest text-[#16A34A] font-bold flex items-center gap-1">
+                    <Calculator size={11} />
+                    <span>Health Tools &amp; Calculators</span>
+                  </p>
+                  <Link
+                    href="/health-tools"
+                    onClick={() => setMobileDrawerOpen(false)}
+                    className="text-[9px] font-bold text-[#16A34A] hover:underline"
+                  >
+                    View All 9 &rarr;
+                  </Link>
+                </div>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {HEALTH_TOOLS_NAV.map((tool) => {
+                    const ToolIcon = tool.icon;
+                    return (
+                      <Link
+                        key={tool.href}
+                        href={tool.href}
+                        onClick={() => setMobileDrawerOpen(false)}
+                        className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg border border-emerald-100/80 bg-emerald-50/40 hover:bg-emerald-50 text-slate-800 transition-all text-[11px] font-heading font-bold"
+                      >
+                        <div className="w-5 h-5 rounded-md bg-white text-[#16A34A] flex items-center justify-center shrink-0 shadow-2xs">
+                          <ToolIcon size={12} />
+                        </div>
+                        <span className="truncate">{tool.label}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+
               {/* Clinical & Platform Services (Trending 2-Column Grid) */}
               <div className="border-t border-gray-100 pt-2.5">
                 <div className="flex items-center justify-between mb-1.5 px-0.5">
@@ -868,8 +1043,8 @@ export default function Navbar() {
                     { label: 'Doctor Directory', href: '/doctors', icon: Stethoscope, color: '#16A34A' },
                     { label: 'Hospitals & Clinics', href: '/hospitals', icon: Building2, color: '#2563EB' },
                     { label: 'Medical Research', href: '/research', icon: Sparkles, color: '#9333EA' },
-                    { label: 'Calculators (BMI)', href: '/tools', icon: Activity, color: '#EA580C' },
                     { label: 'Health Magazines', href: '/magazines', icon: ShieldCheck, color: '#059669' },
+                    { label: 'All 9 Health Tools', href: '/health-tools', icon: Calculator, color: '#16A34A' },
                     { label: 'Advertise With Us', href: '/advertise', icon: Megaphone, color: '#f06d2f', isAd: true },
                   ].map((service) => {
                     const IconComp = service.icon;

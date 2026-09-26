@@ -69,7 +69,7 @@ const MEDICAL_ECOSYSTEM = [
   { name: "Doctor Video Interviews", href: "/interviews", icon: Video, highlight: false },
   { name: "Health Videos & Documentaries", href: "/videos", icon: Video, highlight: false },
   { name: "Health Magazines & Journals", href: "/magazines", icon: BookOpen, highlight: false },
-  { name: "Interactive Health Tools & BMI", href: "/tools", icon: Calculator, highlight: false },
+  { name: "Health Tools & 9 Calculators", href: "/health-tools", icon: Calculator, highlight: true },
   { name: "Editorial Medical Reviews", href: "/about/medical-review", icon: ShieldCheck, highlight: false },
 ];
 

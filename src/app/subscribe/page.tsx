@@ -21,12 +21,21 @@ import {
   CheckCheck,
   CreditCard,
   Smartphone,
+  Activity,
+  Droplet,
+  Moon,
+  Scale,
+  Utensils,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { PillBadge } from "@/components/ui/PillBadge";
 import { SubscriptionPlan, DEFAULT_SUBSCRIPTION_PLANS } from "@/lib/types/subscription-plan";
 
 const FAQS = [
+  {
+    q: "Are the Health Tools & Calculators included in my subscription?",
+    a: "Yes! All subscription plans grant 100% full, unlimited access to all 9 Health Tools (BMI, BMR, Calorie Deficits, Hydration, Sleep Cycles, Pregnancy Due Date, Heart Rate, and Macronutrients) to help you manage your daily body routine.",
+  },
   {
     q: "Can I cancel my subscription anytime?",
     a: "Yes, you can cancel or switch your subscription tier at any time with a single click from your account dashboard with no hidden fees.",
@@ -462,7 +471,99 @@ export default function SubscribePage() {
             })}
           </div>
 
+          {/* Member Exclusive Health Tools & Daily Body Routine Showcase */}
+          <div className="mt-16 max-w-5xl mx-auto rounded-3xl bg-gradient-to-br from-white via-white to-emerald-50/60 p-8 sm:p-10 border-2 border-[#16A34A]/30 shadow-xl shadow-emerald-950/5 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-br from-[#16A34A]/10 to-[#f06d2f]/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="h-1.5 w-full bg-gradient-to-r from-[#16A34A] via-emerald-400 to-[#f06d2f] absolute top-0 left-0 right-0" />
+
+            <div className="relative z-10 space-y-6">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300/80 text-xs font-bold uppercase tracking-wider">
+                  <Sparkles size={14} className="text-[#16A34A]" />
+                  <span>Enabled With Every Subscription</span>
+                </div>
+                <span className="text-xs font-mono font-bold text-[#f06d2f] bg-orange-50 border border-orange-200 px-3 py-1 rounded-full">
+                  All 9 Health Calculators Unlocked
+                </span>
+              </div>
+
+              <div className="max-w-3xl space-y-2">
+                <h3 className="font-heading text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                  Master Your Daily Body Routine With Clinical Precision
+                </h3>
+                <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
+                  When you subscribe to HealthGhuru, you unlock our comprehensive suite of 9 clinical health calculators to measure, monitor, and optimize every phase of your daily wellness routine.
+                </p>
+              </div>
+
+              {/* 4 Routine Pillars Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2">
+                  <div className="w-10 h-10 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center font-bold">
+                    <Droplet size={20} />
+                  </div>
+                  <h4 className="font-heading text-sm font-bold text-slate-900">
+                    1. Morning Hydration
+                  </h4>
+                  <p className="text-xs text-slate-500 font-normal leading-relaxed">
+                    Calculate your exact 35 ml/kg baseline fluid goal + workout sweat replenishment offsets.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-100 text-[#16A34A] flex items-center justify-center font-bold">
+                    <Utensils size={20} />
+                  </div>
+                  <h4 className="font-heading text-sm font-bold text-slate-900">
+                    2. Daily Calories & Macros
+                  </h4>
+                  <p className="text-xs text-slate-500 font-normal leading-relaxed">
+                    Set precise TDEE deficit or surplus targets with personalized protein, carbs, and fat splits.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2">
+                  <div className="w-10 h-10 rounded-xl bg-orange-100 text-[#f06d2f] flex items-center justify-center font-bold">
+                    <Activity size={20} />
+                  </div>
+                  <h4 className="font-heading text-sm font-bold text-slate-900">
+                    3. Cardio Target Zones
+                  </h4>
+                  <p className="text-xs text-slate-500 font-normal leading-relaxed">
+                    Tanaka & Karvonen formulas delineate Zone 2 fat oxidation and aerobic threshold zones.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-2">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold">
+                    <Moon size={20} />
+                  </div>
+                  <h4 className="font-heading text-sm font-bold text-slate-900">
+                    4. Circadian Sleep Cycles
+                  </h4>
+                  <p className="text-xs text-slate-500 font-normal leading-relaxed">
+                    Align your bedtime to 90-minute REM cycles so you wake up refreshed without sleep inertia.
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-100 text-xs">
+                <span className="text-slate-600 font-medium">
+                  Included automatically in all 1-Month, 6-Months, 1-Year, and Lifetime memberships.
+                </span>
+                <Link
+                  href="/health-tools"
+                  className="font-bold text-[#16A34A] hover:underline flex items-center gap-1 shrink-0"
+                >
+                  <span>Preview the 9 Health Tools</span>
+                  <ArrowRight size={13} />
+                </Link>
+              </div>
+            </div>
+          </div>
+
           {/* Trust Banner */}
+
           <div className="mt-16 max-w-4xl mx-auto bg-white rounded-2xl p-6 sm:p-8 border border-primary/10 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">

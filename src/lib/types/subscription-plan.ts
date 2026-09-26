@@ -23,9 +23,10 @@ export const DEFAULT_SUBSCRIPTION_PLANS: Omit<SubscriptionPlan, 'created_at' | '
     duration_months: 1,
     is_recommended: false,
     benefits: [
+      'Full Access to Health Tools & Daily Body Routine Manager',
+      'All 9 Clinical Calculators Unlocked (BMI, BMR, Sleep, Macros)',
       'Unlimited Access to Premium Medical Reports',
       'Ad-Free Reading Experience Across All Devices',
-      'Weekly Clinical Editorial & Research Digest',
       'Personalized Health & Wellness Dashboard',
     ],
     display_order: 1,
@@ -41,6 +42,7 @@ export const DEFAULT_SUBSCRIPTION_PLANS: Omit<SubscriptionPlan, 'created_at' | '
     is_recommended: false,
     benefits: [
       'All 1-Month Plan Benefits Included',
+      'Full Health Tools & Daily Body Routine Optimization',
       'Full Digital Magazine Archive Access (PDF & Web)',
       'Early Access to Clinical Studies & Medical Insights',
       'Exclusive Dietary Guides & Evidence Protocols',
@@ -58,6 +60,7 @@ export const DEFAULT_SUBSCRIPTION_PLANS: Omit<SubscriptionPlan, 'created_at' | '
     is_recommended: true,
     benefits: [
       'All 6-Month Plan Benefits Included',
+      'Full Health Tools & Daily Body Routine Optimization',
       'VIP Doctor Webinar & Interview Replays',
       'Priority Access to Medical Review Board Insights',
       'Family Health Vault Sync & Record Storage',
@@ -76,7 +79,8 @@ export const DEFAULT_SUBSCRIPTION_PLANS: Omit<SubscriptionPlan, 'created_at' | '
     is_recommended: false,
     benefits: [
       'Permanent VIP Ad-Free Lifetime Access',
-      'All Future Premium Features Included Automatically',
+      'Lifetime Access to All Health Tools & Body Routine Features',
+      'All Future Premium Tools Included Automatically',
       'Full Archive of Downloadable Health Guides & eBooks',
       'Dedicated VIP Priority Support Channel',
     ],
@@ -84,3 +88,4 @@ export const DEFAULT_SUBSCRIPTION_PLANS: Omit<SubscriptionPlan, 'created_at' | '
     is_active: true,
   },
 ];
+
