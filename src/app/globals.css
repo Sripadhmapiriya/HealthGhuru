@@ -431,10 +431,11 @@ video,
 
 .magazine-cover,
 .magazine-backcover {
-  width: 210mm;
+  width: 100%;
+  max-width: 210mm;
   min-height: 297mm;
   margin: 0 auto 30px auto;
-  padding: 16mm 18mm 20mm 18mm;
+  padding: 12mm 16mm 14mm 16mm;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
   position: relative;
   background-color: #CBF2DB !important;
@@ -446,10 +447,10 @@ video,
 }
 
 .magazine-content-flow {
-  width: 210mm;
+  width: 100%;
   max-width: 210mm;
   margin: 0 auto 30px auto;
-  padding: 16mm 18mm 22mm 18mm;
+  padding: 14mm 16mm 18mm 16mm;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
   background: #ffffff;
   box-sizing: border-box;
@@ -457,8 +458,8 @@ video,
 
 .magazine-article {
   break-inside: auto;
-  margin-bottom: 28px;
-  padding-bottom: 28px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
   border-bottom: 1px solid #e2e8f0;
 }
 
@@ -508,7 +509,7 @@ video,
     max-height: 297mm !important;
     box-sizing: border-box !important;
     margin: 0 auto !important;
-    padding: 16mm 18mm 20mm 18mm !important;
+    padding: 12mm 16mm 14mm 16mm !important;
     box-shadow: none !important;
     background-color: #CBF2DB !important;
     display: flex !important;
@@ -527,8 +528,8 @@ video,
   .magazine-article {
     break-inside: auto !important;
     page-break-inside: auto !important;
-    margin-bottom: 20px !important;
-    padding-bottom: 20px !important;
+    margin-bottom: 18px !important;
+    padding-bottom: 18px !important;
   }
   .magazine-article h2 {
     break-after: avoid !important;
@@ -546,7 +547,7 @@ video,
     max-height: 297mm !important;
     box-sizing: border-box !important;
     margin: 0 auto !important;
-    padding: 16mm 18mm 20mm 18mm !important;
+    padding: 12mm 16mm 14mm 16mm !important;
     box-shadow: none !important;
     background-color: #CBF2DB !important;
     display: flex !important;

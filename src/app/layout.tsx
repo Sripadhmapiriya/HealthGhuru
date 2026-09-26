@@ -5,7 +5,6 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import SmoothScroll from "@/components/layout/SmoothScroll";
 import ConditionalLayout from "@/components/layout/ConditionalLayout";
-import CustomCursor from "@/components/ui/CustomCursor";
 import { ToastProvider } from "@/components/providers/ToastProvider";
 import { DialogProvider } from "@/components/providers/DialogProvider";
 import { AuthProvider } from "@/components/providers/AuthProvider";
@@ -68,7 +67,6 @@ export default function RootLayout({
           <AuthModalProvider>
             <ToastProvider>
               <DialogProvider>
-                <CustomCursor />
                 <SmoothScroll>
                   <ConditionalLayout navbar={<Navbar />} footer={<Footer />}>
                     {children}

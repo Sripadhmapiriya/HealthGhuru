@@ -121,6 +121,41 @@ function getArticleParagraphs(article: MagazineArticle, maxCharsPerPara = 500): 
   return refined.length > 0 ? refined : [decodeHtml(rawText)];
 }
 
+/**
+ * Extracts 2 concise clinical takeaway highlights for the cover story
+ * to enrich the cover and eliminate empty dead space.
+ */
+function getCoverHighlights(article: MagazineArticle | undefined): string[] {
+  if (!article) return [];
+  const paragraphs = getArticleParagraphs(article, 220);
+  const highlights: string[] = [];
+
+  for (const p of paragraphs) {
+    const clean = p.replace(/^["'\s]+|["'\s]+$/g, '').trim();
+    if (clean.length > 30 && clean.length < 240) {
+      highlights.push(clean);
+      if (highlights.length >= 2) break;
+    }
+  }
+
+  if (highlights.length < 2 && article.excerpt) {
+    const cleanExcerpt = decodeHtml(article.excerpt).trim();
+    if (cleanExcerpt && !highlights.includes(cleanExcerpt)) {
+      highlights.push(cleanExcerpt);
+    }
+  }
+
+  // Fallbacks if paragraphs were too short or missing
+  if (highlights.length === 0) {
+    highlights.push('Evidence-based dietary protocols and clinical interventions to optimize long-term health.');
+    highlights.push('Practical, research-backed lifestyle modifications to improve metabolic and cardiovascular wellness.');
+  } else if (highlights.length === 1) {
+    highlights.push('Comprehensive clinical recommendations and actionable preventive health protocols.');
+  }
+
+  return highlights.slice(0, 2);
+}
+
 export function MagazinePrintView({
   year,
   monthName,
@@ -187,54 +222,86 @@ export function MagazinePrintView({
           </div>
         </div>
 
-        {/* Hero Cover Story Centerpiece */}
+        {/* Hero Cover Story Centerpiece (Fills space evenly, no empty voids) */}
         {coverArticle ? (
-          <div className="my-auto space-y-3">
-            {/* Feature Label & Category */}
-            <div className="flex items-center gap-2">
-              <span className="px-3 py-1 rounded bg-[#044E3B] text-white text-[10px] font-black uppercase tracking-wider shadow-2xs">
-                Special Cover Feature
-              </span>
-              <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-900 border border-orange-300 text-[10px] font-bold uppercase tracking-wider">
-                {coverArticle.category || 'Clinical Spotlight'}
-              </span>
+          <div className="flex-1 flex flex-col justify-between py-2 sm:py-3 space-y-2.5">
+            {/* Story Header & Kicker */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="px-3 py-1 rounded bg-[#044E3B] text-white text-[10px] font-black uppercase tracking-wider shadow-2xs">
+                    Special Cover Feature
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-950 border border-orange-300 text-[10px] font-bold uppercase tracking-wider">
+                    {coverArticle.category || 'Clinical Spotlight'}
+                  </span>
+                </div>
+                <span className="text-[10px] font-bold text-emerald-900 uppercase tracking-widest bg-emerald-800/10 px-2.5 py-0.5 rounded border border-emerald-600/30">
+                  Lead Clinical Report
+                </span>
+              </div>
+
+              {/* Bold Headline */}
+              <h1 className="text-3xl sm:text-4xl lg:text-[40px] font-black leading-[1.12] tracking-tight text-[#044E3B] font-editorial-heading">
+                {decodeHtml(coverArticle.title)}
+              </h1>
+
+              {/* Subtitle / Lead Excerpt in Normal Font */}
+              <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-normal line-clamp-2">
+                {decodeHtml(coverArticle.excerpt || coverArticle.description || '')}
+              </p>
+
+              {/* Byline */}
+              <div className="text-xs text-slate-700 font-medium flex items-center gap-2 pt-0.5">
+                <span className="font-bold text-slate-900">
+                  By {coverArticle.author_name || 'HealthGhuru Medical Board'}
+                  {coverArticle.author_credential ? `, ${coverArticle.author_credential}` : ''}
+                </span>
+                <span>&bull;</span>
+                <span>{coverArticle.reading_time || 5} min read</span>
+                <span>&bull;</span>
+                <span className="text-emerald-800 font-semibold">Evidence-Based Clinical Review</span>
+              </div>
             </div>
 
-            {/* Bold Headline */}
-            <h1 className="text-3xl sm:text-4xl font-black leading-[1.12] tracking-tight text-[#044E3B] font-editorial-heading">
-              {decodeHtml(coverArticle.title)}
-            </h1>
-
-            {/* Subtitle / Lead Excerpt in Normal Font */}
-            <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-normal line-clamp-2">
-              {decodeHtml(coverArticle.excerpt || coverArticle.description || '')}
-            </p>
-
-            {/* Byline */}
-            <div className="text-xs text-slate-700 font-medium flex items-center gap-2">
-              <span className="font-bold text-slate-900">
-                By {coverArticle.author_name || 'HealthGhuru Medical Board'}
-              </span>
-              <span>&bull;</span>
-              <span>{coverArticle.reading_time || 5} min read</span>
-            </div>
-
-            {/* Hero Image Container: Complete Non-Cropped Display */}
+            {/* Hero Image Container: Complete Non-Cropped Display with Frame & Subtitle */}
             {coverArticle.image_url ? (
-              <div className="magazine-img-container w-full my-2 flex justify-center items-center bg-white/70 p-2 rounded-xl border border-emerald-400/40 shadow-sm max-h-[290px] overflow-hidden">
+              <div className="magazine-img-container w-full my-1 flex flex-col justify-center items-center bg-white/80 p-2 sm:p-2.5 rounded-2xl border border-emerald-400/40 shadow-sm max-h-[330px] overflow-hidden">
                 <img
                   src={coverArticle.image_url}
                   alt={coverArticle.title}
-                  className="max-h-[270px] w-auto max-w-full object-contain rounded-lg"
+                  className="max-h-[290px] w-auto max-w-full object-contain rounded-xl"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src = fallbackImage;
                   }}
                 />
+                <div className="w-full pt-1.5 px-1 flex items-center justify-between text-[9px] text-slate-600 font-medium">
+                  <span>Cover Story Focus: Clinical Guidelines & Daily Wellness Protocols</span>
+                  <span className="font-mono text-emerald-800 font-bold">HealthGhuru Medical Bureau</span>
+                </div>
               </div>
             ) : null}
+
+            {/* Key Clinical Takeaways (Elegantly bridges spacing with valuable medical insights) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-0.5">
+              {getCoverHighlights(coverArticle).map((highlight, hIdx) => (
+                <div
+                  key={hIdx}
+                  className="bg-white/90 border border-emerald-500/35 rounded-xl p-2.5 flex items-start gap-2 shadow-2xs"
+                >
+                  <span className="text-emerald-700 font-black text-xs shrink-0 mt-0.5">✦</span>
+                  <div className="text-[11px] text-slate-800 leading-snug">
+                    <strong className="text-[#044E3B] font-bold block mb-0.5">
+                      {hIdx === 0 ? 'Clinical Insight:' : 'Actionable Guidance:'}
+                    </strong>
+                    <span className="line-clamp-2">{decodeHtml(highlight)}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         ) : (
-          <div className="my-auto text-center p-8 bg-white/60 rounded-2xl border border-emerald-300">
+          <div className="flex-1 flex flex-col justify-center text-center p-8 bg-white/60 rounded-2xl border border-emerald-300 my-4">
             <h2 className="text-3xl font-black text-[#044E3B] font-editorial-heading">
               {issueTitle}
             </h2>
@@ -245,26 +312,42 @@ export function MagazinePrintView({
         )}
 
         {/* Bottom Section: Feature Highlights & Professional Barcode Block */}
-        <div className="space-y-3 pt-2 border-t-2 border-emerald-900/20">
+        <div className="space-y-2.5 pt-2 border-t-2 border-emerald-900/20">
           {/* Inside This Issue Highlights */}
           {coverHighlights.length > 0 && (
             <div className="space-y-1.5">
               <div className="text-[10px] font-black uppercase tracking-wider text-emerald-900 flex items-center justify-between">
                 <span>Featured Inside This Issue</span>
-                <span className="text-[9px] text-emerald-700 font-semibold">{articles.length} Reports Total</span>
+                <span className="text-[9px] text-emerald-700 font-semibold">{articles.length} Reports Total &bull; Curated Monthly Digest</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 {coverHighlights.map((art, idx) => (
                   <div
                     key={art.id || idx}
-                    className="bg-white/80 border border-emerald-500/30 rounded-lg p-2.5 text-left space-y-1 shadow-2xs"
+                    className="bg-white/90 border border-emerald-500/35 rounded-xl p-2.5 text-left space-y-1.5 shadow-2xs flex flex-col justify-between"
                   >
-                    <span className="text-[9px] font-bold text-orange-600 uppercase tracking-wider block">
-                      {art.category || 'Report'}
-                    </span>
-                    <h4 className="text-[11px] font-bold text-slate-900 line-clamp-2 leading-snug font-editorial-heading">
-                      {decodeHtml(art.title)}
-                    </h4>
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[9px] font-bold text-orange-700 bg-orange-100/90 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                          {art.category || 'Report'}
+                        </span>
+                        <span className="text-[9px] text-slate-500 font-medium">
+                          {art.reading_time || 4}m read
+                        </span>
+                      </div>
+                      <h4 className="text-[11px] font-bold text-slate-900 line-clamp-2 leading-snug font-editorial-heading">
+                        {decodeHtml(art.title)}
+                      </h4>
+                      {art.excerpt && (
+                        <p className="text-[10px] text-slate-600 line-clamp-2 leading-tight font-normal">
+                          {decodeHtml(art.excerpt)}
+                        </p>
+                      )}
+                    </div>
+                    <div className="text-[9px] text-emerald-900 font-semibold pt-1 border-t border-emerald-100 flex items-center justify-between">
+                      <span>By {art.author_name?.split(' ')[0] || 'Medical Board'}</span>
+                      <span className="text-emerald-700 font-bold">Read Inside &rarr;</span>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -300,7 +383,7 @@ export function MagazinePrintView({
          ───────────────────────────────────────────────────────────── */}
       <div className="magazine-content-flow bg-white">
         {/* Running Editorial Header */}
-        <div className="border-b-2 border-emerald-900/20 pb-3 mb-6 flex items-center justify-between text-xs text-slate-500">
+        <div className="border-b-2 border-emerald-900/20 pb-3 mb-5 flex items-center justify-between text-xs text-slate-500">
           <div className="flex items-center gap-2 font-bold text-[#044E3B] tracking-wide uppercase text-[11px]">
             <span className="font-extrabold tracking-wider">HEALTHGHURU CLINICAL REPORTS</span>
             <span className="text-emerald-400">&bull;</span>
@@ -316,14 +399,14 @@ export function MagazinePrintView({
         </div>
 
         {/* Continuous Stream of All Articles */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           {articles.map((art, idx) => {
             const paragraphs = getArticleParagraphs(art);
 
             return (
               <article
                 key={art.id || idx}
-                className="magazine-article pb-6 border-b border-slate-200/90 last:border-b-0 last:pb-0"
+                className="magazine-article pb-4 border-b border-slate-200/90 last:border-b-0 last:pb-0"
               >
                 {/* Category Badge & Published Date */}
                 <div className="flex items-center justify-between mb-2">
@@ -373,7 +456,7 @@ export function MagazinePrintView({
 
                 {/* Full Non-Cropped Adaptive Image (Natural Aspect) */}
                 {art.image_url ? (
-                  <div className="magazine-img-container w-full my-3 flex justify-center items-center bg-slate-50 p-2 rounded-xl border border-slate-200 shadow-2xs max-h-[300px] overflow-hidden">
+                  <div className="magazine-img-container w-full my-2 flex justify-center items-center bg-slate-50 p-2 rounded-xl border border-slate-200 shadow-2xs max-h-[300px] overflow-hidden">
                     <img
                       src={art.image_url}
                       alt={art.title}
@@ -426,8 +509,8 @@ export function MagazinePrintView({
          ───────────────────────────────────────────────────────────── */}
       <div className="magazine-backcover magazine-page-mint border-t-4 border-[#16A34A] text-slate-900 select-none">
         {/* Top Branding Section */}
-        <div className="text-center space-y-2 pb-4 border-b-2 border-emerald-900/20">
-          <div className="w-14 h-14 rounded-2xl bg-white mx-auto flex items-center justify-center p-2 shadow-sm border border-emerald-300/80 mb-2">
+        <div className="text-center space-y-2 pb-3 border-b-2 border-emerald-900/20">
+          <div className="w-13 h-13 rounded-2xl bg-white mx-auto flex items-center justify-center p-2 shadow-sm border border-emerald-300/80 mb-1.5">
             <img
               src="/images/logo_transparent.png"
               alt="HealthGhuru"
@@ -443,10 +526,10 @@ export function MagazinePrintView({
         </div>
 
         {/* Center Backcover Content Card */}
-        <div className="my-auto max-w-xl mx-auto w-full space-y-4">
-          <div className="bg-white/85 border border-emerald-400/50 rounded-2xl p-6 sm:p-7 space-y-4 shadow-sm">
+        <div className="flex-1 flex flex-col justify-between max-w-xl mx-auto w-full my-2.5 space-y-3">
+          <div className="bg-white/90 border border-emerald-400/50 rounded-2xl p-5 sm:p-6 space-y-3 shadow-sm">
             {/* Brand Manifesto */}
-            <div className="space-y-1.5 text-center">
+            <div className="space-y-1 text-center">
               <h3 className="text-xl sm:text-2xl font-black text-[#044E3B] font-editorial-heading">
                 Your Trusted Journal in Clinical Truth
               </h3>
@@ -455,8 +538,20 @@ export function MagazinePrintView({
               </p>
             </div>
 
+            {/* Curated Disciplines Badges */}
+            <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1">
+              {['Cardiology', 'Clinical Nutrition', 'Sleep Medicine', 'Preventive Protocols', 'Metabolic Health', 'Oncology Insights'].map((field) => (
+                <span
+                  key={field}
+                  className="text-[9px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-100/90 text-emerald-950 border border-emerald-300/60"
+                >
+                  {field}
+                </span>
+              ))}
+            </div>
+
             {/* Monthly Compilation Metrics */}
-            <div className="grid grid-cols-2 gap-3 py-3 border-y border-emerald-200/80 text-center">
+            <div className="grid grid-cols-2 gap-3 py-2.5 border-y border-emerald-200/80 text-center">
               <div className="bg-emerald-50/70 p-2.5 rounded-lg">
                 <div className="text-2xl font-black text-[#044E3B] font-mono">{articles.length}</div>
                 <div className="text-[10px] text-emerald-800 font-bold uppercase tracking-wider">Reports Curated</div>
